@@ -1,0 +1,17 @@
+@font-face {
+    font-family: 'hytmr-45w';
+    font-display: swap;
+    src: url('hytmr/hytmr-45w.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'hytmr-55w';
+    font-display: swap;
+    src: url('hytmr/hytmr-55w.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'hytmr-65w';
+    font-display: swap;
+    src: url('hytmr/hytmr-65w.ttf') format('truetype');
+}
