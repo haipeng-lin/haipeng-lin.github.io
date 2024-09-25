@@ -6,7 +6,6 @@
     display: flex;
     white-space: nowrap;
     overflow: hidden;
-    margin-bottom: 1rem;
     border: var(--style-border);
 }
 
