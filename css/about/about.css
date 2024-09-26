@@ -1,7 +1,7 @@
 b,
 strong {
     font-weight: bolder;
-    color: var(--june-lighttext)
+    /* color: var(--june-lighttext) */
 }
 
 psw {
