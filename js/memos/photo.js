@@ -2,7 +2,7 @@
 function whenDOMReady() {
     console.log('进入whenDOMReady', location.pathname)
 
-    if (location.pathname == '/photo/') {
+    if (location.pathname == '/photo') {
         photos('相册'); // 首次进入需要刷新展示的相评分类
     }
 }
