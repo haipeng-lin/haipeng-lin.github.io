@@ -1,0 +1,301 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Redis之过期策略、内存淘汰策略 | 拾忆鱼's Blog</title><meta name="author" content="拾忆鱼"><meta name="copyright" content="拾忆鱼"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="referrer" content="no-referrer" /><meta name="description" content="7.Redis过期策略、内存淘汰策略  7.1过期策略 我们在set key的时候，可以给它设置一个过期时间，比如expire key 60。指定这key60s后过期。 60s后，redis是如何处理的嘛？我们先来介绍几种过期策略：  立即过期   每个设置过期时间的key都需要创建一个定时器，到过期时间就会立即对key进行清除。该策略可以立即清除过期的数据，对内存很友好；但是会占用大量的CPU">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis之过期策略、内存淘汰策略">
+<meta property="og:url" content="https://www.haipeng-lin.cn/posts/fe0ad18a.html">
+<meta property="og:site_name" content="拾忆鱼&#39;s Blog">
+<meta property="og:description" content="7.Redis过期策略、内存淘汰策略  7.1过期策略 我们在set key的时候，可以给它设置一个过期时间，比如expire key 60。指定这key60s后过期。 60s后，redis是如何处理的嘛？我们先来介绍几种过期策略：  立即过期   每个设置过期时间的key都需要创建一个定时器，到过期时间就会立即对key进行清除。该策略可以立即清除过期的数据，对内存很友好；但是会占用大量的CPU">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i-blog.csdnimg.cn/blog_migrate/a239af2f0f65c50288cc999013cb6b4d.jpeg#pic_center">
+<meta property="article:published_time" content="2024-08-30T09:22:47.000Z">
+<meta property="article:modified_time" content="2024-09-01T01:42:37.771Z">
+<meta property="article:author" content="拾忆鱼">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i-blog.csdnimg.cn/blog_migrate/a239af2f0f65c50288cc999013cb6b4d.jpeg#pic_center"><link rel="shortcut icon" href="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101530409.png"><link rel="canonical" href="https://www.haipeng-lin.cn/posts/fe0ad18a"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="msvalidate.01" content="7A691DA1ABC779E7F680EF66E1D934AA"/><meta name="google-site-verification"/><meta name="baidu-site-verification" content="XXXXX"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":250},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: 拾忆鱼","link":"链接: ","source":"来源: 拾忆鱼's Blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Redis之过期策略、内存淘汰策略',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-09-01 09:42:37'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/gitcalendar/css/gitcalendar.css"/><link rel="stylesheet" href="/css/tag_plugins.css"><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-swiper-anzhiyu@1.0.4/lib/swiper.min.css"><script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script><link rel="stylesheet" href="/css/tags.css"><link rel="stylesheet" href="/css/double_article.css"><link rel="stylesheet" href="/css/nav.css"><link rel="stylesheet" href="/css/essay_page.css"><script type="text/javascript" src="/js/echarts.min.js"></script><script type="text/javascript" src="/js/copy.js"></script><script src="https://cdn1.tianli0.top/npm/vue@2.6.14/dist/vue.min.js"></script><script src="https://cdn1.tianli0.top/npm/element-ui@2.15.6/lib/index.js"></script><link rel="stylesheet" href="https://cdn1.tianli0.top/npm/element-ui@2.15.6/packages/theme-chalk/lib/index.css"><link rel="stylesheet" href="/css/copyright.css"><link rel="stylesheet" href="/css/progress_bar.css"><link rel="stylesheet" href="/css/footer.css"><link rel="stylesheet" href="/css/page.css"><link rel="stylesheet" href="/css/layout.css"><link rel="stylesheet" href="/css/color.css"><link rel="stylesheet" href="/css/cursors/cursors.css"><link rel="stylesheet" href="/css/fonts/font.css"><link rel="stylesheet" href="/css/about/about.css"><link rel="stylesheet" href="/css/about/careers.css"><link rel="stylesheet" href="/css/about/genshinimpact.css"><link rel="stylesheet" href="/css/about/hello-about.css"><link rel="stylesheet" href="/css/about/site.css"><link rel="stylesheet" href="/css/about/skills.css"><link rel="stylesheet" href="/css/photo.css"><link rel="stylesheet" href="/css/icat.css"><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="拾忆鱼's Blog" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101530409.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">59</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives"><i class="fa-fw fas fa-archive"></i><span> 全部</span></a></li><li><a class="site-page child" href="/categories"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heart"></i><span> 空间</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/essay"><i class="fa-fw fas fa-comments"></i><span> 碎碎念</span></a></li><li><a class="site-page child" href="/collect"><i class="fa-fw fas fa-walking"></i><span> 足迹阁</span></a></li><li><a class="site-page child" href="/photo"><i class="fa-fw fas fa-images"></i><span> 照片墙</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about"><i class="fa-fw fas fa-address-card"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">拾忆鱼's Blog</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives"><i class="fa-fw fas fa-archive"></i><span> 全部</span></a></li><li><a class="site-page child" href="/categories"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heart"></i><span> 空间</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/essay"><i class="fa-fw fas fa-comments"></i><span> 碎碎念</span></a></li><li><a class="site-page child" href="/collect"><i class="fa-fw fas fa-walking"></i><span> 足迹阁</span></a></li><li><a class="site-page child" href="/photo"><i class="fa-fw fas fa-images"></i><span> 照片墙</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about"><i class="fa-fw fas fa-address-card"></i><span> 关于</span></a></div></div><center id="name-container"><a id="page-name" href="javascript:btf.scrollToDest(0, 500)">PAGE_NAME</a></center></div><div id="toggleButtons"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">Redis之过期策略、内存淘汰策略</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-08-30T09:22:47.000Z" title="发表于 2024-08-30 17:22:47">2024-08-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-09-01T01:42:37.771Z" title="更新于 2024-09-01 09:42:37">2024-09-01</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E3%80%90Redis%E3%80%91/">【Redis】</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Redis之过期策略、内存淘汰策略"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="post-content" id="article-container"><h1 id="7redis过期策略-内存淘汰策略"><a class="markdownIt-Anchor" href="#7redis过期策略-内存淘汰策略"></a> 7.Redis过期策略、内存淘汰策略</h1>
+<h2 id="71过期策略"><a class="markdownIt-Anchor" href="#71过期策略"></a> 7.1过期策略</h2>
+<p>我们在set key的时候，可以给它设置一个过期时间，比如<mark>expire key 60。指定这key60s后过期</mark>。</p>
+<p>60s后，redis是如何处理的嘛？我们先来介绍几种过期策略：</p>
+<ul>
+<li><mark><strong>立即过期</strong></mark></li>
+</ul>
+<blockquote>
+<p>每个设置过期时间的key都需要创建一个定时器，到过期时间就会立即<mark>对key进行清除</mark>。该策略可以立即清除过期的数据，对内存很友好；但是会占用大量的CPU资源去处理过期的数据，从而影响缓存的响应时间和吞吐量。</p>
+</blockquote>
+<ul>
+<li><mark><strong>惰性过期</strong></mark></li>
+</ul>
+<blockquote>
+<p><mark>只有当访问一个key时，才会判断该key是否已过期</mark>，过期则清除。该策略可以最大化地节省CPU资源，却对内存非常不友好。极端情况可能出现大量的过期key没有再次被访问，从而不会被清除，占用大量内存。</p>
+</blockquote>
+<ul>
+<li><mark><strong>定期过期</strong></mark></li>
+</ul>
+<blockquote>
+<p><mark>每隔一定的时间，会扫描一定数量的数据库的expires字典中一定数量的key，并清除其中已过期的key</mark>。该策略是前两者的一个折中方案。通过调整定时扫描的时间间隔和每次扫描的限定耗时，可以在不同情况下使得CPU和内存资源达到最优的平衡效果。</p>
+</blockquote>
+<p>Redis中同时使用了<mark>惰性过期和定期过期两种过期策略</mark>。</p>
+<ul>
+<li>假设Redis当前存放30万个key，并且都设置了过期时间，如果你每隔100ms就去检查这全部的key，CPU负载会特别高，最后可能会挂掉。</li>
+<li>因此，redis采取的是定期过期，<mark>每隔100ms就随机抽取一定数量的key来检查和删除</mark>的。</li>
+<li>但是呢，最后可能会有很多已经过期的key没被删除。这时候，redis采用惰性删除。在你获取某个key的时候，redis会检查一下，这个key如果设置了过期时间并且已经过期了，此时就会删除</li>
+</ul>
+<p>但是呀，如果定期删除漏掉了很多过期的key，然后也没走惰性删除。就会有很多过期key积在内存内存，直接会导致内存爆的。或者有些时候，业务量大起来了，redis的key被大量使用，内存直接不够了，运维小哥哥也忘记加大内存了。难道redis直接这样挂掉？不会的！Redis用<mark>8种内存淘汰策略</mark>保护自己~</p>
+<h2 id="72内存淘汰策略"><a class="markdownIt-Anchor" href="#72内存淘汰策略"></a> 7.2内存淘汰策略</h2>
+<p>8种：<mark><strong>lru两个、lfu两个、随机两个、根据过期时间淘汰、报错</strong></mark></p>
+<blockquote>
+<p>volatile-lru：当内存不足以容纳新写入数据时，从==设置了过期时间的key中使用LRU（最近最少使用）==算法进行淘汰；</p>
+<p>allkeys-lru：当内存不足以容纳新写入数据时，从所有key中使用LRU（最近最少使用）算法进行淘汰。</p>
+<p>volatile-lfu：4.0版本新增，当内存不足以容纳新写入数据时，在过期的key中，使用LFU（最少频率）算法进行删除key。</p>
+<p>allkeys-lfu：4.0版本新增，当内存不足以容纳新写入数据时，从所有key中使用LFU算法进行淘汰；</p>
+<p>volatile-random：当内存不足以容纳新写入数据时，从设置了过期时间的key中，随机淘汰数据；。</p>
+<p>allkeys-random：当内存不足以容纳新写入数据时，从所有key中随机淘汰数据。</p>
+<p>volatile-ttl：当内存不足以容纳新写入数据时，<mark>在设置了过期时间的key中，根据过期时间进行淘汰</mark>，越早过期的优先被淘汰；</p>
+<p>noeviction：默认策略，当内存不足以容纳新写入数据时，新写入操作会报错。</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__title"><span class="post-copyright-info"><h>Redis之过期策略、内存淘汰策略</h></span></div><div class="post-copyright__type"><span class="post-copyright-info"><a href="https://www.haipeng-lin.cn/posts/fe0ad18a.html">https://www.haipeng-lin.cn/posts/fe0ad18a.html</a></span></div><div class="post-copyright-m"><div class="post-copyright-m-info"><div class="post-copyright-a" style="display: inline-block;width: 120px"><h>作者</h><div class="post-copyright-cc-info"><h>拾忆鱼</h></div></div><div class="post-copyright-c" style="display: inline-block;width: 120px"><h>发布于</h><div class="post-copyright-cc-info"><h>2024-08-30</h></div></div><div class="post-copyright-u" style="display: inline-block;width: 120px"><h>更新于</h><div class="post-copyright-cc-info"><h>2024-09-01</h></div></div><div class="post-copyright-c" style="display: inline-block;width: 120px"><h>许可协议</h><div class="post-copyright-cc-info"><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a rel="noopener" target="_blank" title="CC BY 4.0" href="https://creativecommons.org/licenses/by/4.0/deed.zh">CC BY 4.0</a></div></div></div></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://i-blog.csdnimg.cn/blog_migrate/a239af2f0f65c50288cc999013cb6b4d.jpeg#pic_center" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://lib.baomitu.com/social-share.js/1.0.16/css/share.min.css" media="print" onload="this.media='all'"><script src="https://lib.baomitu.com/social-share.js/1.0.16/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/fcf86708.html"><img class="prev-cover" src="https://i-blog.csdnimg.cn/blog_migrate/c8c4df12c96e8ab6c67c29310caa9309.jpeg#pic_center" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Redis之持久化机制</div></div></a></div><div class="next-post pull-right"><a href="/posts/cc4d73b2.html"><img class="next-cover" src="https://i-blog.csdnimg.cn/blog_migrate/82f0e9cf62d4d9b22a56d31e2dae4314.jpeg#pic_center" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Redis分布式锁</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101530409.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">拾忆鱼</div><div class="author-info__description">一条菜鱼的小破站</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">59</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">小菜鱼正在从CSDN博客搬家，尽请期待　　      地址：<a target="_blank" rel="noopener" href="https://haipeng-lin.blog.csdn.net/">haipeng-lin.blog.csdn.net</a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#7redis%E8%BF%87%E6%9C%9F%E7%AD%96%E7%95%A5-%E5%86%85%E5%AD%98%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5"><span class="toc-text"> 7.Redis过期策略、内存淘汰策略</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#71%E8%BF%87%E6%9C%9F%E7%AD%96%E7%95%A5"><span class="toc-text"> 7.1过期策略</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#72%E5%86%85%E5%AD%98%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5"><span class="toc-text"> 7.2内存淘汰策略</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/8239deef.html" title="基于微信公众号+验证码实现微信登录"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410282106730.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="基于微信公众号+验证码实现微信登录"/></a><div class="content"><a class="title" href="/posts/8239deef.html" title="基于微信公众号+验证码实现微信登录">基于微信公众号+验证码实现微信登录</a><time datetime="2024-10-28T13:05:25.000Z" title="发表于 2024-10-28 21:05:25">2024-10-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/172c1a2d.html" title="ElasticSearch学习笔记"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410161138400.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ElasticSearch学习笔记"/></a><div class="content"><a class="title" href="/posts/172c1a2d.html" title="ElasticSearch学习笔记">ElasticSearch学习笔记</a><time datetime="2024-10-16T03:36:17.000Z" title="发表于 2024-10-16 11:36:17">2024-10-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/6982816f.html" title="RocketMQ学习笔记"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410131719724.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="RocketMQ学习笔记"/></a><div class="content"><a class="title" href="/posts/6982816f.html" title="RocketMQ学习笔记">RocketMQ学习笔记</a><time datetime="2024-10-13T09:17:30.000Z" title="发表于 2024-10-13 17:17:30">2024-10-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/d1f540b5.html" title="收集 | 有情怀的网站"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410111137749.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="收集 | 有情怀的网站"/></a><div class="content"><a class="title" href="/posts/d1f540b5.html" title="收集 | 有情怀的网站">收集 | 有情怀的网站</a><time datetime="2024-10-10T12:21:25.000Z" title="发表于 2024-10-10 20:21:25">2024-10-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/d0dd6ec8.html" title="为什么HashMap线程不安全"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101225904.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="为什么HashMap线程不安全"/></a><div class="content"><a class="title" href="/posts/d0dd6ec8.html" title="为什么HashMap线程不安全">为什么HashMap线程不安全</a><time datetime="2024-10-10T04:24:58.000Z" title="发表于 2024-10-10 12:24:58">2024-10-10</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div id="footer-left"><div class="footer-title"><span>拾忆鱼's Blog | </span><span class="footer-copyright">&copy;2024 By 拾忆鱼</span></div><div class="wordcount"></div><span>拾忆鱼 已经写了 260k 字，</span><span>好像写完一本 钱钟书 的 《围城》 了啊</span></div><div id="footer-right"><div class="footer_custom_text"><div id="runtime"></div></div><div class="footer-totop"><i class="fas fa-chevron-up" onclick="rmf.scrollToTop()"></i></div><div class="footer-info"><p>使用Hexo框架 | 基于butterfly修改 | 萌ICP备20240730号</p><!--a(title='湘公网安备 2023003198号' href='http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023003198')= '湘公网安备 2023003198号'--><!--a(title='湘ICP备2023003198号' href='https://beian.miit.gov.cn/')= '湘ICP备2023003198号'--></div><div class="footer-service"><a title="51LA" target="_blank" rel="noopener" href="https://www.51.la"><img alt="51LA" src="https://gitee.com/linhaipengg/md_-picture/raw/master/51la.png"/></a><a title="CC BY-NC-SA 4.0" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh"><img alt="CC BY-NC-SA 4.0" src="https://img.june-pj.cn/img/2024/01/16/cc.webp"/></a></div></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"><script>(()=>{
+  const init = () => {
+    twikoo.init(Object.assign({
+      el: '#twikoo-wrap',
+      envId: 'https://twikoo.haipeng-lin.cn',
+      region: '',
+      onCommentLoaded: function () {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      }
+    }, null))
+  }
+
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://twikoo.haipeng-lin.cn',
+      region: '',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(function (res) {
+      countELement.innerText = res[0].count
+    }).catch(function (err) {
+      console.error(err);
+    });
+  }
+
+  const runFn = () => {
+    init()
+    
+  }
+
+  const loadTwikoo = () => {
+    if (typeof twikoo === 'object') {
+      setTimeout(runFn,0)
+      return
+    } 
+    getScript('https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/twikoo/1.4.18/twikoo.all.min.js').then(runFn)
+  }
+
+  if ('Twikoo' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = () => {
+      loadTwikoo()
+    }
+  }
+})()</script></div><script data-pjax src="/gitcalendar/js/gitcalendar.js"></script><script data-pjax src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/js/swiper.min.js"></script><script src="/js/footer.js"></script><script type="text/javascript" src="/js/main.js"></script><script data-pjax type="text/javascript" src="/js/essay/essay.js"></script><script data-pjax type="text/javascript" src="/js/essay/waterfall.js"></script><link rel="stylesheet" href="/css/swiper.css"><script data-pjax src="/js/categoryBar/categoryBar.js"></script><link data-pjax defer="" rel="stylesheet" href="/css/categoryBar/heoMainColor.css"><link data-pjax defer="" rel="stylesheet" href="/css/categoryBar/categoryBar.css"><script type="text/javascript" src="/js/nav.js"></script><script src="/js/countup.js"></script><script data-pjax type="text/javascript" src="/js/memos/waterfall.min.js"></script><script data-pjax type="text/javascript" src="/js/memos/imgStatus.min.js"></script><script data-pjax type="text/javascript" src="/js/memos/lately.min.js"></script><script type="text/javascript" src="/js/memos/photo.js"></script><script type="text/javascript" src="/js/icat.js"></script><link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/aplayer/1.10.1/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/aplayer/1.10.1/APlayer.min.js"></script><script src="https://cdn1.tianli0.top/npm/js-heo@1.0.12/metingjs/Meting.min.js"></script><script src="https://lib.baomitu.com/pjax/0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  typeof disqusjs === 'object' && disqusjs.destroy()
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

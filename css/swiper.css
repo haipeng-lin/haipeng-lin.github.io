@@ -1,0 +1,92 @@
+#home_top {
+    margin: 1rem auto 0;
+    padding: 0px 15px;
+    max-width: 1170px;
+    width: 100%;
+}
+
+/* 轮播图片宽度 */
+.blog-slider__img {
+    width: 330px;
+    height: 200px
+}
+
+.blog-slider__content {
+    padding-right: 0px;
+    padding-left: 10px;
+}
+
+#random {
+    font-family: 'hytmr-55w';
+}
+
+#home_top {
+    max-width: 1300px;
+    padding-left: 15px;
+    padding-right: 15px;
+    z-index: 2;
+}
+
+#bannerGroup {
+    width: 43%;
+    margin-right: 25px
+}
+
+#swiper_container_blog {
+    width: 47%
+}
+
+/* 
+.fa-solid,
+.fas {
+    font-family: 'hytmr-55w';
+    font-weight: 900;
+} */
+
+a.categoryButton {
+    font-family: 'hytmr-55w';
+    color: white
+}
+
+#random #random-banner #skills-style-group-all .tags-group-wrapper {
+    display: flex !important;
+    margin-top: 1rem !important;
+    flex-wrap: nowrap !important;
+    animation: rowup 60s linear infinite !important;
+}
+
+
+/** 分类磁铁*/
+#category-bar {
+    border-radius: 8px;
+    /* height: 65px; */
+    font-size: 20px;
+    padding-bottom: 0px;
+}
+
+#category-bar a {
+    color: black;
+
+}
+
+#category-bar a:hover {
+    color: white;
+    background-color: var(--june-theme);
+
+}
+
+
+.category-bar-item {
+    border-radius: 15px;
+}
+
+
+
+.category-bar-items {
+    height: 50px;
+    position: relative;
+    top: 4px;
+    white-space: nowrap;
+    overflow-x: scroll;
+    overflow-y: hidden
+}

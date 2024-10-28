@@ -1,0 +1,568 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>深入理解Synchronized底层原理 | 拾忆鱼's Blog</title><meta name="author" content="拾忆鱼"><meta name="copyright" content="拾忆鱼"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="referrer" content="no-referrer" /><meta name="description" content="参考文章链接： Synchronized解析——如果你愿意一层一层剥开我的心 深入理解synchronized底层原理，一篇文章就够了！   5.深入理解Synchronized底层原理（Monitor对象、Synchronized锁优化）  5.1Synchronized的特性  Synchronized有以下四个特性：原子性、可见性、有序性、可重入性   5.1.1原子性  原子性：指一个操">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解Synchronized底层原理">
+<meta property="og:url" content="https://www.haipeng-lin.cn/posts/c74d47ad.html">
+<meta property="og:site_name" content="拾忆鱼&#39;s Blog">
+<meta property="og:description" content="参考文章链接： Synchronized解析——如果你愿意一层一层剥开我的心 深入理解synchronized底层原理，一篇文章就够了！   5.深入理解Synchronized底层原理（Monitor对象、Synchronized锁优化）  5.1Synchronized的特性  Synchronized有以下四个特性：原子性、可见性、有序性、可重入性   5.1.1原子性  原子性：指一个操">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i-blog.csdnimg.cn/blog_migrate/b856f93ec92bcd9328cfea3628fb85a7.jpeg#pic_center">
+<meta property="article:published_time" content="2024-08-26T00:17:11.000Z">
+<meta property="article:modified_time" content="2024-09-01T01:41:41.155Z">
+<meta property="article:author" content="拾忆鱼">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i-blog.csdnimg.cn/blog_migrate/b856f93ec92bcd9328cfea3628fb85a7.jpeg#pic_center"><link rel="shortcut icon" href="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101530409.png"><link rel="canonical" href="https://www.haipeng-lin.cn/posts/c74d47ad"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="msvalidate.01" content="7A691DA1ABC779E7F680EF66E1D934AA"/><meta name="google-site-verification"/><meta name="baidu-site-verification" content="XXXXX"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":250},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: 拾忆鱼","link":"链接: ","source":"来源: 拾忆鱼's Blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '深入理解Synchronized底层原理',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-09-01 09:41:41'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/gitcalendar/css/gitcalendar.css"/><link rel="stylesheet" href="/css/tag_plugins.css"><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-swiper-anzhiyu@1.0.4/lib/swiper.min.css"><script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script><link rel="stylesheet" href="/css/tags.css"><link rel="stylesheet" href="/css/double_article.css"><link rel="stylesheet" href="/css/nav.css"><link rel="stylesheet" href="/css/essay_page.css"><script type="text/javascript" src="/js/echarts.min.js"></script><script type="text/javascript" src="/js/copy.js"></script><script src="https://cdn1.tianli0.top/npm/vue@2.6.14/dist/vue.min.js"></script><script src="https://cdn1.tianli0.top/npm/element-ui@2.15.6/lib/index.js"></script><link rel="stylesheet" href="https://cdn1.tianli0.top/npm/element-ui@2.15.6/packages/theme-chalk/lib/index.css"><link rel="stylesheet" href="/css/copyright.css"><link rel="stylesheet" href="/css/progress_bar.css"><link rel="stylesheet" href="/css/footer.css"><link rel="stylesheet" href="/css/page.css"><link rel="stylesheet" href="/css/layout.css"><link rel="stylesheet" href="/css/color.css"><link rel="stylesheet" href="/css/cursors/cursors.css"><link rel="stylesheet" href="/css/fonts/font.css"><link rel="stylesheet" href="/css/about/about.css"><link rel="stylesheet" href="/css/about/careers.css"><link rel="stylesheet" href="/css/about/genshinimpact.css"><link rel="stylesheet" href="/css/about/hello-about.css"><link rel="stylesheet" href="/css/about/site.css"><link rel="stylesheet" href="/css/about/skills.css"><link rel="stylesheet" href="/css/photo.css"><link rel="stylesheet" href="/css/icat.css"><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="拾忆鱼's Blog" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101530409.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">59</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives"><i class="fa-fw fas fa-archive"></i><span> 全部</span></a></li><li><a class="site-page child" href="/categories"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heart"></i><span> 空间</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/essay"><i class="fa-fw fas fa-comments"></i><span> 碎碎念</span></a></li><li><a class="site-page child" href="/collect"><i class="fa-fw fas fa-walking"></i><span> 足迹阁</span></a></li><li><a class="site-page child" href="/photo"><i class="fa-fw fas fa-images"></i><span> 照片墙</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about"><i class="fa-fw fas fa-address-card"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">拾忆鱼's Blog</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives"><i class="fa-fw fas fa-archive"></i><span> 全部</span></a></li><li><a class="site-page child" href="/categories"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heart"></i><span> 空间</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/essay"><i class="fa-fw fas fa-comments"></i><span> 碎碎念</span></a></li><li><a class="site-page child" href="/collect"><i class="fa-fw fas fa-walking"></i><span> 足迹阁</span></a></li><li><a class="site-page child" href="/photo"><i class="fa-fw fas fa-images"></i><span> 照片墙</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about"><i class="fa-fw fas fa-address-card"></i><span> 关于</span></a></div></div><center id="name-container"><a id="page-name" href="javascript:btf.scrollToDest(0, 500)">PAGE_NAME</a></center></div><div id="toggleButtons"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">深入理解Synchronized底层原理</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-08-26T00:17:11.000Z" title="发表于 2024-08-26 08:17:11">2024-08-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-09-01T01:41:41.155Z" title="更新于 2024-09-01 09:41:41">2024-09-01</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E3%80%90Java%E5%B9%B6%E5%8F%91%E3%80%91/">【Java并发】</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="深入理解Synchronized底层原理"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="post-content" id="article-container"><blockquote>
+<p>参考文章链接：<br />
+<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/101156763">Synchronized解析——如果你愿意一层一层剥开我的心</a><br />
+<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1465413">深入理解synchronized底层原理，一篇文章就够了！</a></p>
+</blockquote>
+<h1 id="5深入理解synchronized底层原理monitor对象-synchronized锁优化"><a class="markdownIt-Anchor" href="#5深入理解synchronized底层原理monitor对象-synchronized锁优化"></a> 5.深入理解Synchronized底层原理（Monitor对象、Synchronized锁优化）</h1>
+<h2 id="51synchronized的特性"><a class="markdownIt-Anchor" href="#51synchronized的特性"></a> 5.1Synchronized的特性</h2>
+<ul>
+<li>Synchronized有以下四个特性：原子性、可见性、有序性、可重入性</li>
+</ul>
+<h3 id="511原子性"><a class="markdownIt-Anchor" href="#511原子性"></a> 5.1.1原子性</h3>
+<ul>
+<li><strong>原子性</strong>：指一个操作或者多个操作，<mark>要么全部执行</mark>并且执行的过程不会被任何因素打断，<mark>要么就都不执行</mark>。</li>
+<li>被synchronized修饰的类或对象的所有操作都是原子的，因为在执行操作之前必须先获得类或对象的锁，直到执行完才能释放，这中间的过程无法被中断（除了已经废弃的stop()方法），即保证了原子性。</li>
+</ul>
+<h3 id="512可见性"><a class="markdownIt-Anchor" href="#512可见性"></a> 5.1.2可见性</h3>
+<ul>
+<li><strong>可见性</strong>：指多个线程访问一个资源时，<mark>该资源的状态、值信息等对于其他线程都是可见的</mark>。</li>
+<li>一个线程如果要访问该类或对象必须先获得它的锁，而这个锁的状态对于其他任何线程都是可见的，并且在释放锁之前会将对变量的修改刷新到主存当中，保证资源变量的可见性，如果某个线程占用了该锁，其他线程就必须在锁池中等待锁的释放。</li>
+</ul>
+<h3 id="513有序性"><a class="markdownIt-Anchor" href="#513有序性"></a> 5.1.3有序性</h3>
+<ul>
+<li>
+<p>Synchronized保证了每个时刻都只有一个线程访问同步代码块，也就确定了线程执行同步代码块是分先后顺序的，保证了有序性。</p>
+</li>
+<li>
+<p>Java允许编译器和处理器对指令进行重排，但是<mark>指令重排并不会影响单线程的顺序</mark>，它影响的是多线程并发执行的顺序性。</p>
+</li>
+</ul>
+<h3 id="514可重入性"><a class="markdownIt-Anchor" href="#514可重入性"></a> 5.1.4可重入性</h3>
+<ul>
+<li>当一个线程试图操作一个由其他线程持有的对象锁的临界资源时，将会处于阻塞状态，</li>
+<li><mark>但当一个线程再次请求自己持有对象锁的临界资源时，这种情况属于重入锁</mark>。通俗一点讲就是说一个线程拥有了锁仍然还可以重复申请锁。</li>
+</ul>
+<h2 id="52synchronized的用法"><a class="markdownIt-Anchor" href="#52synchronized的用法"></a> 5.2Synchronized的用法</h2>
+<ol>
+<li>
+<p>Synchronized<mark>可以修饰的地方</mark>：</p>
+<ul>
+<li><mark>修饰静态方法</mark></li>
+<li><mark>修饰成员函数</mark></li>
+<li><mark>直接定义代码块</mark></li>
+</ul>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/04648615e609a285757f40fe6a545a02.png" alt="image-20240326150207416" /></p>
+</li>
+<li>
+<p>但是归根结底它上锁的资源只有两类：</p>
+<ul>
+<li>一个是 <strong><mark>对象</mark></strong></li>
+<li>一个是 <strong><mark>类</mark></strong>。</li>
+</ul>
+</li>
+<li>
+<p>普通的成员函数，归该类的<mark>实例对象</mark>所有，即若需要访问该方法，需要拿到<mark>该类的实例对象</mark>相应的锁；</p>
+</li>
+<li>
+<p>被static修饰的静态方法、静态属性<mark>归类</mark>所有，即若需要访问该方法，需要拿到该类相应的锁；</p>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Testl</span> &#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="type">int</span> i=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">int</span> j=<span class="number">0</span>;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> <span class="type">Testl</span> <span class="variable">instance</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Test1</span>();</span><br><span class="line">	<span class="comment">//对成员函数加锁，必须获得该类的实例对象的锁才能进入同步块</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">add1</span><span class="params">()</span>&#123;</span><br><span class="line">        i++;</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">//对静态方法加锁，必须获得类的锁才能进入同步块</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">add2</span><span class="params">()</span>&#123;</span><br><span class="line">        i++;   </span><br><span class="line">    &#125;</span><br><span class="line">                                           </span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">method</span><span class="params">()</span>&#123;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 同步块，执行前必须获得Test1类的锁</span></span><br><span class="line">		<span class="keyword">synchronized</span>(Testl.class)&#123;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//同步块，执行前必须先获得实例对象的锁</span></span><br><span class="line">		<span class="keyword">synchronized</span>(instance)&#123;</span><br><span class="line">    	&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="53synchronized的两种同步方式"><a class="markdownIt-Anchor" href="#53synchronized的两种同步方式"></a> 5.3Synchronized的两种同步方式</h2>
+<ol>
+<li>Synchronized有两种形式上锁，一个是对方法上锁，一个是构造同步代码块。</li>
+<li>他们的底层实现其实都一样，在进入同步代码之前先获取锁，<mark>获取到锁之后锁的计数器+1</mark>，<mark>同步代码执行完，锁的计数器-1</mark>，如果获取失败就阻塞式等待锁的释放。</li>
+<li>只是他们在同步块识别方式上有所不一样，从class字节码文件可以表现出来
+<ul>
+<li><mark><strong>同步方法</strong></mark>：<mark>通过方法flags标志，</mark></li>
+<li><mark><strong>同步代码块</strong></mark>：<mark>monitorenter和monitorexit指令操作。</mark></li>
+</ul>
+</li>
+</ol>
+<h3 id="431同步代码块"><a class="markdownIt-Anchor" href="#431同步代码块"></a> 4.3.1同步代码块</h3>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/7a6b5efe1475c4782e70af9692c1d2ad.png" alt="image-20240326150940681" /></p>
+<p>反编译，可得如下图：</p>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/ed47799a3a3d617c54e2dda893c55219.png" alt="image-20240326150956120" /></p>
+<ol>
+<li>由图可得，添加了synchronized关键字的代码块，多了两个指令**<mark>monitorenter、monitorexit</mark>**。即JVM使用monitorenter和monitorexit两个指令实现同步。</li>
+<li>同步块是由monitorenter指令进入，然后monitorexit释放锁</li>
+<li>在执行monitorenter之前需要尝试获取锁，如果这个对象没有被锁定，或者当前线程已经拥有了这个对象的锁，那么<mark>就把锁的计数器加1</mark>。<mark>当执行monitorexit指令时，锁的计数器也会减1</mark>。当获取锁失败时会被阻塞，一直等待锁被释放。</li>
+<li><mark>第二个monitorexit是来处理异常的</mark>，仔细看反编译的字节码，正常情况下第一个monitorexit之后会执行<code>goto</code>指令，而该指令转向的就是23行的<code>return</code>，也就是说正常情况下只会执行第一个monitorexit释放锁，然后返回。而<mark>如果在执行中发生了异常，第二个monitorexit就起作用了</mark>，它是由编译器自动生成的，在发生异常时处理异常然后释放掉锁。</li>
+</ol>
+<h3 id="532同步方法"><a class="markdownIt-Anchor" href="#532同步方法"></a> 5.3.2同步方法</h3>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/b5c57997f7a01d2e02a2aed02e69c65e.png" alt="image-20240326150416061" /></p>
+<p>反编译，可得如下图：</p>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/223345f96b4beccd395212de021705ff.png" alt="image-20240326150433433" /></p>
+<p>由图可得，添加了synchronized关键字的方法，<mark>多了<strong>ACC_SYNCHRONIZED</strong>标记</mark>。即JVM通<mark>过在方法访问标识符(flags)中加入ACC_SYNCHRONIZED来实现同步功能</mark>。</p>
+<h2 id="54synchronized的底层实现"><a class="markdownIt-Anchor" href="#54synchronized的底层实现"></a> 5.4Synchronized的底层实现</h2>
+<h3 id="541-monitorenter-monitorexit指令和acc_synchronized标志"><a class="markdownIt-Anchor" href="#541-monitorenter-monitorexit指令和acc_synchronized标志"></a> 5.4.1 monitorenter、monitorexit指令和ACC_SYNCHRONIZED标志</h3>
+<h4 id="1monitorenter指令"><a class="markdownIt-Anchor" href="#1monitorenter指令"></a> （1）monitorenter指令</h4>
+<ol>
+<li>每个对象都与一个<strong>monitor</strong> 相关联。当且仅当拥有所有者时（被拥有），monitor才会被锁定。</li>
+<li>执行到monitorenter指令的线程，<mark>会尝试去获得对应的monitor</mark>，如下：
+<ul>
+<li>每个对象维护着一个记录着被锁次数的计数器, 对象未被锁定时，<mark>该计数器为0。线程进入monitor</mark>（执行monitorenter指令）时，会<mark>把计数器设置为1</mark></li>
+<li>当同一个线程再次获得该对象的锁的时候，计数器再次自增.</li>
+</ul>
+</li>
+<li><mark>当其他线程想获得该monitor的时候，就会阻塞</mark>，直到计数器为0才能成功。</li>
+</ol>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/693c31ce8522509e233050cbc321f46a.png" alt="image-20240326152514500" /></p>
+<h4 id="2monitorexit指令"><a class="markdownIt-Anchor" href="#2monitorexit指令"></a> （2）monitorexit指令</h4>
+<ol>
+<li>monitor的拥有者线程才能执行 monitorexit指令。</li>
+<li>线程执行monitorexit指令，就会<mark>让monitor的计数器减一</mark>。</li>
+<li>如果<mark>计数器为0，表明该线程不再拥有monitor</mark>。其他线程就允许尝试去获得该monitor了。</li>
+</ol>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/9123456ff97af8ecf8fc4bcf703e7faf.png" alt="image-20240326152618288" /></p>
+<h4 id="3acc_synchronized标志"><a class="markdownIt-Anchor" href="#3acc_synchronized标志"></a> （3）ACC_SYNCHRONIZED标志</h4>
+<ol>
+<li>方法级别的同步是隐式的，作为方法调用的一部分。同步方法的常量池中会有一个ACC_SYNCHRONIZED标志。</li>
+<li>当<mark>调用一个设置了ACC_SYNCHRONIZED标志的方法</mark>，执行线程==<strong>需要先获得monitor锁</strong>==，然后开始执行方法，方法执行之后再释放monitor锁，当方法不管是正常return还是抛出异常都会释放对应的monitor锁。</li>
+<li>在这期间，如果其他线程来请求执行方法，会因为无法获得监视器锁而被阻断住。</li>
+<li>如果在方法执行过程中，发生了异常，并且方法内部并没有处理该异常，那么在异常被抛到方法外面之前监视器锁会被自动释放。</li>
+</ol>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/17c87e74a3ebce2cc7f1a963a6b93e82.png" alt="image-20240326152800585" /></p>
+<h4 id="4总结"><a class="markdownIt-Anchor" href="#4总结"></a> （4）总结</h4>
+<ol>
+<li>同步代码块是通过monitorenter和monitorexit来实现，当<mark>线程执行到monitorenter的时候要先获得monitor锁</mark>，才能执行后面的方法。当线程执行到monitorexit的时候则要释放锁。</li>
+<li>同步方法是通过中设置ACC_SYNCHRONIZED标志来实现，<mark>当线程执行有ACC_SYNCHRONI标志的方法，需要获得monitor锁</mark>。</li>
+<li>每个对象维护一个加锁计数器，为0表示可以被其他线程获得锁，不为0时，只有当前锁的线程才能再次获得锁。</li>
+<li>同步方法和同步代码块底层都是通过monitor来实现同步的。</li>
+<li><mark><strong>每个对象都与一个monitor相关联</strong></mark>，线程可以占有或者释放monitor。</li>
+</ol>
+<h3 id="542-monitor监视器"><a class="markdownIt-Anchor" href="#542-monitor监视器"></a> 5.4.2 monitor监视器</h3>
+<ol>
+<li>一种<strong>同步工具</strong>，或者说是<strong>同步机制</strong>，它通常<mark>被描述成一个对象</mark>。</li>
+<li>操作系统的<strong>管程</strong>是概念原理，<strong>ObjectMonitor</strong>是它的原理实现。</li>
+</ol>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/055e402370ede65d9e443e0a183a9887.png" alt="img" /></p>
+<h4 id="1操作系统的管程"><a class="markdownIt-Anchor" href="#1操作系统的管程"></a> （1）操作系统的管程</h4>
+<ol>
+<li>管程 (英语：Monitors，也称为监视器) 是<mark>一种程序结构</mark>，结构内的多个子程序（对象或模块）形成的多个工作线程<mark>互斥访问共享资源</mark>。</li>
+<li>这些共享资源一般是硬件设备或一群变量。管程实现了在一个时间点，最多只有一个线程在执行管程的某个子程序。</li>
+<li>与那些通过修改数据结构实现互斥访问的并发程序设计相比，管程实现很大程度上简化了程序设计。</li>
+<li>管程提供了一种机制，线程可以临时放弃互斥访问，等待某些条件得到满足后，重新获得执行权恢复它的互斥访问。</li>
+</ol>
+<h4 id="2objectmonitor"><a class="markdownIt-Anchor" href="#2objectmonitor"></a> （2）ObjectMonitor</h4>
+<p>在Java虚拟机（HotSpot）中，Monitor（管程）是由ObjectMonitor实现的，其主要数据结构如下：</p>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/63b590696b67da2fe374a9a6b7067806.png" alt="image-20240326154435898" /></p>
+<p>ObjectMonitor中几个关键字段的含义如图所示：</p>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/353fbf033131a7583f61352d44b2cce4.png" alt="img" /></p>
+<h4 id="3java-monitor的工作机理"><a class="markdownIt-Anchor" href="#3java-monitor的工作机理"></a> （3）Java Monitor的工作机理</h4>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/60e26a51cec606da723c0c19b95b470b.png" alt="img" /></p>
+<ol>
+<li>想要获取monitor的线程,首先会进入_EntryList队列。</li>
+<li>当<mark>某个线程获取到对象的monitor后,进入Owner区域</mark>，设置为当前线程,同时计数器_count加1。_</li>
+<li>如果线程调用了wait()方法，则会进入WaitSet队列。它会释放monitor锁，即将owner赋值为null,count自减1,进入WaitSet队列阻塞等待。</li>
+<li>如果其他线程调用 notify() / notifyAll() ，会唤醒WaitSet中的某个线程，<mark>该线程再次尝试获取monitor锁，成功即进入_Owner区域</mark>。</li>
+<li>同步方法执行完毕了，线程退出临界区，会将monitor的owner设为null，并释放监视锁。</li>
+</ol>
+<h3 id="543-java对象头与monitor关联"><a class="markdownIt-Anchor" href="#543-java对象头与monitor关联"></a> 5.4.3 Java对象头与monitor关联</h3>
+<h4 id="1java对象头"><a class="markdownIt-Anchor" href="#1java对象头"></a> （1）Java对象头</h4>
+<p>在JVM中，对象是分成三部分存在的：对象头、实例数据、对其填充。</p>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/e48ef6836a784c44a17dad00b47fb204.png" alt="img" /></p>
+<ol>
+<li><strong>实例数据</strong>：对象真正存储的有效信息，存放类的属性数据信息，包括父类的属性信息；</li>
+<li><strong>对齐填充</strong>：由于虚拟机要求 对象起始地址必须是8字节的整数倍。填充数据不是必须存在的，仅仅是为了字节对齐。</li>
+<li><strong><mark>对象头</mark></strong>：Hotspot虚拟机的对象头主要包括两部分数据：<mark>Mark Word（标记字段）、Class Pointer（类型指针）</mark>。</li>
+<li><mark><strong>对象头</strong></mark>，是synchronized实现锁的基础，因为<mark>synchronized申请锁、上锁、释放锁</mark>都与对象头有关。
+<ul>
+<li>对象头主要结构是由<code>Mark Word</code> 和 <code>Class Metadata Address</code>组成</li>
+<li>其中<code>Mark Word</code>存储对象的<mark>hashCode、锁信息或分代年龄或GC标志等信息</mark><strong>，</strong></li>
+<li><code>Class Metadata Address</code>是<mark>类型指针指向对象的类元数据</mark> <mark>，JVM通过该指针确定该对象是哪个类的实例</mark></li>
+</ul>
+</li>
+</ol>
+<h4 id="2mark-word"><a class="markdownIt-Anchor" href="#2mark-word"></a> （2）Mark Word</h4>
+<ol>
+<li>Mark Word 用于存储对象自身的运行时数据，如哈希码（HashCode）、GC分代年龄、锁状态标志、线程持有的锁、偏向线程 ID、偏向时间戳等。</li>
+<li>在32位的HotSpot虚拟机中，如果对象处于未被锁定的状态下
+<ul>
+<li>那么Mark Word的32bit空间里的25位用于存储对象哈希；</li>
+<li>4bit用于存储对象分代年龄；</li>
+<li><mark>2bit用于存储锁标志位</mark></li>
+<li><mark>1bit固定为0，表示非偏向锁</mark>。其他状态如下图所示：</li>
+</ul>
+</li>
+<li><mark><strong>锁标志位（2bit）：</strong></mark>
+<ul>
+<li>01：该对象为无锁状态</li>
+<li>00：该对象为轻量级锁，指向栈中锁记录的指针</li>
+<li>10：<mark>重量级锁，指向互斥量的指针</mark></li>
+</ul>
+</li>
+</ol>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/8de1c2313de27e27aa0de91df4bf3acb.png" alt="img" /></p>
+<h4 id="2对象头和monitor关联"><a class="markdownIt-Anchor" href="#2对象头和monitor关联"></a> （2）对象头和monitor关联</h4>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/71ac7640cb753110c9c9da338261000a.png" alt="img" /></p>
+<ul>
+<li><mark><strong>对象怎么和monitor实现关联</strong></mark>？</li>
+</ul>
+<ol>
+<li>对象里有对象头</li>
+<li>对象头里面有Mark Word</li>
+<li><mark>Mark Word指针指向了monitor</mark></li>
+</ol>
+<h2 id="55synchronized的优化"><a class="markdownIt-Anchor" href="#55synchronized的优化"></a> 5.5Synchronized的优化</h2>
+<ol>
+<li>JDK6的时候，新增了两个锁状态（偏向锁、轻量级锁），通过锁消除、锁粗化、自旋锁等方法使用各种场景，给synchronized性能带来了很大的提升。</li>
+</ol>
+<h3 id="551锁膨胀"><a class="markdownIt-Anchor" href="#551锁膨胀"></a> 5.5.1锁膨胀</h3>
+<p>上面讲到锁有四种状态，并且会因实际情况进行膨胀升级，其膨胀方向是：<strong>无锁——&gt;偏向锁——&gt;轻量级锁——&gt;重量级锁</strong>，并且膨胀方向不可逆。</p>
+<h3 id="552偏向锁"><a class="markdownIt-Anchor" href="#552偏向锁"></a> 5.5.2偏向锁</h3>
+<ol>
+<li>作用：<strong>减少统一线程获取锁的代价</strong>。在大多数情况下，锁不存在多线程竞争，总是<mark>由同一线程多次获得，那么此时就是偏向锁</mark>。</li>
+<li><mark><strong>核心思想</strong></mark>：<mark>让同一个线程一直拥有同一个锁，直到出现竞争，才去释放锁</mark></li>
+<li>举例：如果一个线程获得了锁，那么锁就进入偏向模式，此时<code>Mark Word</code>的结构也就变为偏向锁结构，当该线程再次请求锁时，无需再做任何同步操作，即获取锁的过程只<mark>需要检查 <strong><code>Mark Word</code></strong> 的锁标记位为偏向锁以及当前线程ID等于<code>Mark Word</code>的ThreadID</mark>即可，这样就省去了大量有关锁申请的操作。</li>
+</ol>
+<h3 id="553轻量级锁"><a class="markdownIt-Anchor" href="#553轻量级锁"></a> 5.5.3轻量级锁</h3>
+<ol>
+<li>轻量级锁是由偏向锁升级而来，当存在<mark>第二个线程申请同一个锁对象</mark>时，偏向锁就会立即升级为轻量级锁。</li>
+<li>注意这里的第二个线程只是申请锁，不存在两个线程同时竞争锁，可以是一前一后地交替执行同步块。</li>
+<li><mark>使用轻量级锁</mark>，那些等待竞争锁的线程不需要切 换到阻塞状态，只需等一等（自旋），等持有锁 的线程释放锁，即可获取锁</li>
+</ol>
+<h3 id="554重量级锁"><a class="markdownIt-Anchor" href="#554重量级锁"></a> 5.5.4重量级锁</h3>
+<p>重量级锁是由轻量级锁升级而来，当<strong>同一时间</strong>有多个线程竞争锁时，锁就会被升级成重量级锁，此时其申请锁带来的开销也就变大。</p>
+<p>重量级锁一般使用场景会在追求吞吐量，同步块或者同步方法执行时间较长的场景。</p>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/722429cc662a4a3f93dc78b1d310fe14.png" alt="image-20240326161403407" /></p>
+<h3 id="555锁消除"><a class="markdownIt-Anchor" href="#555锁消除"></a> 5.5.5锁消除</h3>
+<p>消除锁是虚拟机另外一种锁的优化，这种优化更彻底，在JIT编译时，<mark>对运行上下文进行扫描，去除不可能存在竞争的锁。</mark> 比如下面代码的method1和method2的执行效率是一样的，因为object锁是私有变量，不存在所得竞争关系。</p>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/ed02c6c978afbb70d2a0c1e0f506c8f6.png" alt="img" /></p>
+<h3 id="556锁粗化"><a class="markdownIt-Anchor" href="#556锁粗化"></a> 5.5.6锁粗化</h3>
+<p>锁粗化是虚拟机对另一种极端情况的优化处理，<mark>通过扩大锁的范围，避免反复加锁和释放锁</mark>。比如下面method3经过锁粗化优化之后就和method4执行效率一样了。</p>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/c2077fd63259f43f8b7989f3ec6aad5a.png" alt="img" /></p>
+<h3 id="557自旋锁和自适应自旋锁"><a class="markdownIt-Anchor" href="#557自旋锁和自适应自旋锁"></a> 5.5.7自旋锁和自适应自旋锁</h3>
+<p>轻量级锁失败后，虚拟机为了避免线程真实地在操作系统层面挂起，还会进行一项称为自旋锁的优化手段。</p>
+<p>自旋锁：许多情况下，共享数据的锁定状态持续时间较短，切换线程不值得，通过让线程执行循环等待锁的释放，不让出CPU。如果得到锁，就顺利进入临界区。如果还不能获得锁，那就会将线程在操作系统层面挂起，这就是自旋锁的优化方式。但是它也存在缺点：如果锁被其他线程长时间占用，一直不释放CPU，会带来许多的性能开销。</p>
+<p><strong>自适应自旋锁</strong>：这种相当于是对上面自旋锁优化方式的进一步优化，它的自旋的次数不再固定，其自旋的次数由前一次在同一个锁上的自旋时间及锁的拥有者的状态来决定，这就解决了自旋锁带来的缺点。</p>
+<h2 id="56常见面试题"><a class="markdownIt-Anchor" href="#56常见面试题"></a> 5.6常见面试题</h2>
+<h3 id="561synchronized和lock两者区别"><a class="markdownIt-Anchor" href="#561synchronized和lock两者区别"></a> 5.6.1Synchronized和Lock两者区别？</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center">Synchronized</th>
+<th style="text-align:center">Lock</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><mark><strong>形态不同</strong></mark></td>
+<td style="text-align:center">java关键字、jvm层次</td>
+<td style="text-align:center">接口</td>
+</tr>
+<tr>
+<td style="text-align:center"><mark><strong>锁的释放不同</strong></mark></td>
+<td style="text-align:center">1.执行完同步代码，自动释放锁<br>2.发生异常，jvm释放锁</td>
+<td style="text-align:center">1.手动释放锁 unlock()<br>2.在finally里必须释放，不然会死锁</td>
+</tr>
+<tr>
+<td style="text-align:center"><mark><strong>锁类型不同</strong></mark></td>
+<td style="text-align:center">可重入、非公平</td>
+<td style="text-align:center">可重入、可公平（非公平）</td>
+</tr>
+<tr>
+<td style="text-align:center"><mark><strong>是否可以尝试获取锁</strong></mark></td>
+<td style="text-align:center">不可以</td>
+<td style="text-align:center">可以，tryLock()</td>
+</tr>
+<tr>
+<td style="text-align:center"><mark><strong>粒度</strong></mark></td>
+<td style="text-align:center">粗</td>
+<td style="text-align:center">细</td>
+</tr>
+</tbody>
+</table>
+<h3 id="562synchronized和reentrantlock两者区别"><a class="markdownIt-Anchor" href="#562synchronized和reentrantlock两者区别"></a> 5.6.2Synchronized和ReentrantLock两者区别？</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center">Synchronized</th>
+<th style="text-align:center">ReentrantLock</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong><mark>锁类型不同</mark></strong></td>
+<td style="text-align:center">非公平锁</td>
+<td style="text-align:center">非公平锁、公平锁</td>
+</tr>
+<tr>
+<td style="text-align:center"><mark><strong>锁的释放不同</strong></mark></td>
+<td style="text-align:center">1.执行完同步代码，自动释放锁<br/>2.发生异常，jvm释放锁</td>
+<td style="text-align:center">手动释放锁</td>
+</tr>
+<tr>
+<td style="text-align:center"><mark><strong>是否可以尝试获取锁</strong></mark></td>
+<td style="text-align:center">不可以</td>
+<td style="text-align:center">可以，tryLock()</td>
+</tr>
+<tr>
+<td style="text-align:center"><mark><strong>是否可以超时获取锁</strong></mark></td>
+<td style="text-align:center">不支持</td>
+<td style="text-align:center">可以，tryLock(time)</td>
+</tr>
+<tr>
+<td style="text-align:center"><mark><strong>是否可响应中断</strong></mark></td>
+<td style="text-align:center">不支持，不可响应线程的interrupt信号</td>
+<td style="text-align:center">支持，lockInterruptibly()</td>
+</tr>
+<tr>
+<td style="text-align:center"><mark><strong>性能</strong></mark></td>
+<td style="text-align:center">较差</td>
+<td style="text-align:center">比Synchronized优20%</td>
+</tr>
+</tbody>
+</table>
+</article><div class="post-copyright"><div class="post-copyright__title"><span class="post-copyright-info"><h>深入理解Synchronized底层原理</h></span></div><div class="post-copyright__type"><span class="post-copyright-info"><a href="https://www.haipeng-lin.cn/posts/c74d47ad.html">https://www.haipeng-lin.cn/posts/c74d47ad.html</a></span></div><div class="post-copyright-m"><div class="post-copyright-m-info"><div class="post-copyright-a" style="display: inline-block;width: 120px"><h>作者</h><div class="post-copyright-cc-info"><h>拾忆鱼</h></div></div><div class="post-copyright-c" style="display: inline-block;width: 120px"><h>发布于</h><div class="post-copyright-cc-info"><h>2024-08-26</h></div></div><div class="post-copyright-u" style="display: inline-block;width: 120px"><h>更新于</h><div class="post-copyright-cc-info"><h>2024-09-01</h></div></div><div class="post-copyright-c" style="display: inline-block;width: 120px"><h>许可协议</h><div class="post-copyright-cc-info"><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a rel="noopener" target="_blank" title="CC BY 4.0" href="https://creativecommons.org/licenses/by/4.0/deed.zh">CC BY 4.0</a></div></div></div></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://i-blog.csdnimg.cn/blog_migrate/b856f93ec92bcd9328cfea3628fb85a7.jpeg#pic_center" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://lib.baomitu.com/social-share.js/1.0.16/css/share.min.css" media="print" onload="this.media='all'"><script src="https://lib.baomitu.com/social-share.js/1.0.16/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/8141c840.html"><img class="prev-cover" src="https://i-blog.csdnimg.cn/blog_migrate/7dbec79bc28104e325ab0353bc645b6e.jpeg#pic_center" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">MyBatis框架学习</div></div></a></div><div class="next-post pull-right"><a href="/posts/f49b5869.html"><img class="next-cover" src="https://i-blog.csdnimg.cn/blog_migrate/8f417fd14c02d97ac0cf0d6bf61b21fa.jpeg#pic_center" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Java线程池详讲</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101530409.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">拾忆鱼</div><div class="author-info__description">一条菜鱼的小破站</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">59</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">小菜鱼正在从CSDN博客搬家，尽请期待　　      地址：<a target="_blank" rel="noopener" href="https://haipeng-lin.blog.csdn.net/">haipeng-lin.blog.csdn.net</a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#5%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3synchronized%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86monitor%E5%AF%B9%E8%B1%A1-synchronized%E9%94%81%E4%BC%98%E5%8C%96"><span class="toc-text"> 5.深入理解Synchronized底层原理（Monitor对象、Synchronized锁优化）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#51synchronized%E7%9A%84%E7%89%B9%E6%80%A7"><span class="toc-text"> 5.1Synchronized的特性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#511%E5%8E%9F%E5%AD%90%E6%80%A7"><span class="toc-text"> 5.1.1原子性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#512%E5%8F%AF%E8%A7%81%E6%80%A7"><span class="toc-text"> 5.1.2可见性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#513%E6%9C%89%E5%BA%8F%E6%80%A7"><span class="toc-text"> 5.1.3有序性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#514%E5%8F%AF%E9%87%8D%E5%85%A5%E6%80%A7"><span class="toc-text"> 5.1.4可重入性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#52synchronized%E7%9A%84%E7%94%A8%E6%B3%95"><span class="toc-text"> 5.2Synchronized的用法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#53synchronized%E7%9A%84%E4%B8%A4%E7%A7%8D%E5%90%8C%E6%AD%A5%E6%96%B9%E5%BC%8F"><span class="toc-text"> 5.3Synchronized的两种同步方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#431%E5%90%8C%E6%AD%A5%E4%BB%A3%E7%A0%81%E5%9D%97"><span class="toc-text"> 4.3.1同步代码块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#532%E5%90%8C%E6%AD%A5%E6%96%B9%E6%B3%95"><span class="toc-text"> 5.3.2同步方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#54synchronized%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0"><span class="toc-text"> 5.4Synchronized的底层实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#541-monitorenter-monitorexit%E6%8C%87%E4%BB%A4%E5%92%8Cacc_synchronized%E6%A0%87%E5%BF%97"><span class="toc-text"> 5.4.1 monitorenter、monitorexit指令和ACC_SYNCHRONIZED标志</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1monitorenter%E6%8C%87%E4%BB%A4"><span class="toc-text"> （1）monitorenter指令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2monitorexit%E6%8C%87%E4%BB%A4"><span class="toc-text"> （2）monitorexit指令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3acc_synchronized%E6%A0%87%E5%BF%97"><span class="toc-text"> （3）ACC_SYNCHRONIZED标志</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%E6%80%BB%E7%BB%93"><span class="toc-text"> （4）总结</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#542-monitor%E7%9B%91%E8%A7%86%E5%99%A8"><span class="toc-text"> 5.4.2 monitor监视器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%AE%A1%E7%A8%8B"><span class="toc-text"> （1）操作系统的管程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2objectmonitor"><span class="toc-text"> （2）ObjectMonitor</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3java-monitor%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%9C%BA%E7%90%86"><span class="toc-text"> （3）Java Monitor的工作机理</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#543-java%E5%AF%B9%E8%B1%A1%E5%A4%B4%E4%B8%8Emonitor%E5%85%B3%E8%81%94"><span class="toc-text"> 5.4.3 Java对象头与monitor关联</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1java%E5%AF%B9%E8%B1%A1%E5%A4%B4"><span class="toc-text"> （1）Java对象头</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2mark-word"><span class="toc-text"> （2）Mark Word</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E5%AF%B9%E8%B1%A1%E5%A4%B4%E5%92%8Cmonitor%E5%85%B3%E8%81%94"><span class="toc-text"> （2）对象头和monitor关联</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#55synchronized%E7%9A%84%E4%BC%98%E5%8C%96"><span class="toc-text"> 5.5Synchronized的优化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#551%E9%94%81%E8%86%A8%E8%83%80"><span class="toc-text"> 5.5.1锁膨胀</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#552%E5%81%8F%E5%90%91%E9%94%81"><span class="toc-text"> 5.5.2偏向锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#553%E8%BD%BB%E9%87%8F%E7%BA%A7%E9%94%81"><span class="toc-text"> 5.5.3轻量级锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#554%E9%87%8D%E9%87%8F%E7%BA%A7%E9%94%81"><span class="toc-text"> 5.5.4重量级锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#555%E9%94%81%E6%B6%88%E9%99%A4"><span class="toc-text"> 5.5.5锁消除</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#556%E9%94%81%E7%B2%97%E5%8C%96"><span class="toc-text"> 5.5.6锁粗化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#557%E8%87%AA%E6%97%8B%E9%94%81%E5%92%8C%E8%87%AA%E9%80%82%E5%BA%94%E8%87%AA%E6%97%8B%E9%94%81"><span class="toc-text"> 5.5.7自旋锁和自适应自旋锁</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#56%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98"><span class="toc-text"> 5.6常见面试题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#561synchronized%E5%92%8Clock%E4%B8%A4%E8%80%85%E5%8C%BA%E5%88%AB"><span class="toc-text"> 5.6.1Synchronized和Lock两者区别？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#562synchronized%E5%92%8Creentrantlock%E4%B8%A4%E8%80%85%E5%8C%BA%E5%88%AB"><span class="toc-text"> 5.6.2Synchronized和ReentrantLock两者区别？</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/8239deef.html" title="基于微信公众号+验证码实现微信登录"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410282106730.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="基于微信公众号+验证码实现微信登录"/></a><div class="content"><a class="title" href="/posts/8239deef.html" title="基于微信公众号+验证码实现微信登录">基于微信公众号+验证码实现微信登录</a><time datetime="2024-10-28T13:05:25.000Z" title="发表于 2024-10-28 21:05:25">2024-10-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/172c1a2d.html" title="ElasticSearch学习笔记"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410161138400.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ElasticSearch学习笔记"/></a><div class="content"><a class="title" href="/posts/172c1a2d.html" title="ElasticSearch学习笔记">ElasticSearch学习笔记</a><time datetime="2024-10-16T03:36:17.000Z" title="发表于 2024-10-16 11:36:17">2024-10-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/6982816f.html" title="RocketMQ学习笔记"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410131719724.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="RocketMQ学习笔记"/></a><div class="content"><a class="title" href="/posts/6982816f.html" title="RocketMQ学习笔记">RocketMQ学习笔记</a><time datetime="2024-10-13T09:17:30.000Z" title="发表于 2024-10-13 17:17:30">2024-10-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/d1f540b5.html" title="收集 | 有情怀的网站"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410111137749.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="收集 | 有情怀的网站"/></a><div class="content"><a class="title" href="/posts/d1f540b5.html" title="收集 | 有情怀的网站">收集 | 有情怀的网站</a><time datetime="2024-10-10T12:21:25.000Z" title="发表于 2024-10-10 20:21:25">2024-10-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/d0dd6ec8.html" title="为什么HashMap线程不安全"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101225904.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="为什么HashMap线程不安全"/></a><div class="content"><a class="title" href="/posts/d0dd6ec8.html" title="为什么HashMap线程不安全">为什么HashMap线程不安全</a><time datetime="2024-10-10T04:24:58.000Z" title="发表于 2024-10-10 12:24:58">2024-10-10</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div id="footer-left"><div class="footer-title"><span>拾忆鱼's Blog | </span><span class="footer-copyright">&copy;2024 By 拾忆鱼</span></div><div class="wordcount"></div><span>拾忆鱼 已经写了 260k 字，</span><span>好像写完一本 钱钟书 的 《围城》 了啊</span></div><div id="footer-right"><div class="footer_custom_text"><div id="runtime"></div></div><div class="footer-totop"><i class="fas fa-chevron-up" onclick="rmf.scrollToTop()"></i></div><div class="footer-info"><p>使用Hexo框架 | 基于butterfly修改 | 萌ICP备20240730号</p><!--a(title='湘公网安备 2023003198号' href='http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023003198')= '湘公网安备 2023003198号'--><!--a(title='湘ICP备2023003198号' href='https://beian.miit.gov.cn/')= '湘ICP备2023003198号'--></div><div class="footer-service"><a title="51LA" target="_blank" rel="noopener" href="https://www.51.la"><img alt="51LA" src="https://gitee.com/linhaipengg/md_-picture/raw/master/51la.png"/></a><a title="CC BY-NC-SA 4.0" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh"><img alt="CC BY-NC-SA 4.0" src="https://img.june-pj.cn/img/2024/01/16/cc.webp"/></a></div></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"><script>(()=>{
+  const init = () => {
+    twikoo.init(Object.assign({
+      el: '#twikoo-wrap',
+      envId: 'https://twikoo.haipeng-lin.cn',
+      region: '',
+      onCommentLoaded: function () {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      }
+    }, null))
+  }
+
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://twikoo.haipeng-lin.cn',
+      region: '',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(function (res) {
+      countELement.innerText = res[0].count
+    }).catch(function (err) {
+      console.error(err);
+    });
+  }
+
+  const runFn = () => {
+    init()
+    
+  }
+
+  const loadTwikoo = () => {
+    if (typeof twikoo === 'object') {
+      setTimeout(runFn,0)
+      return
+    } 
+    getScript('https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/twikoo/1.4.18/twikoo.all.min.js').then(runFn)
+  }
+
+  if ('Twikoo' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = () => {
+      loadTwikoo()
+    }
+  }
+})()</script></div><script data-pjax src="/gitcalendar/js/gitcalendar.js"></script><script data-pjax src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/js/swiper.min.js"></script><script src="/js/footer.js"></script><script type="text/javascript" src="/js/main.js"></script><script data-pjax type="text/javascript" src="/js/essay/essay.js"></script><script data-pjax type="text/javascript" src="/js/essay/waterfall.js"></script><link rel="stylesheet" href="/css/swiper.css"><script data-pjax src="/js/categoryBar/categoryBar.js"></script><link data-pjax defer="" rel="stylesheet" href="/css/categoryBar/heoMainColor.css"><link data-pjax defer="" rel="stylesheet" href="/css/categoryBar/categoryBar.css"><script type="text/javascript" src="/js/nav.js"></script><script src="/js/countup.js"></script><script data-pjax type="text/javascript" src="/js/memos/waterfall.min.js"></script><script data-pjax type="text/javascript" src="/js/memos/imgStatus.min.js"></script><script data-pjax type="text/javascript" src="/js/memos/lately.min.js"></script><script type="text/javascript" src="/js/memos/photo.js"></script><script type="text/javascript" src="/js/icat.js"></script><link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/aplayer/1.10.1/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/aplayer/1.10.1/APlayer.min.js"></script><script src="https://cdn1.tianli0.top/npm/js-heo@1.0.12/metingjs/Meting.min.js"></script><script src="https://lib.baomitu.com/pjax/0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  typeof disqusjs === 'object' && disqusjs.destroy()
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

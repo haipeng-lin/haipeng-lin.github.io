@@ -1,0 +1,731 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Java集合类使用总结（List、Set、Map接口及常见实现类）以及常见面试题 | 拾忆鱼's Blog</title><meta name="author" content="拾忆鱼"><meta name="copyright" content="拾忆鱼"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="referrer" content="no-referrer" /><meta name="description" content="1.Java集合类使用总结  1.1概览 Java 集合， 也叫作容器，主要是由两大接口派生而来：一个是 Collection接口，主要用于存放单一元素；另一个是 Map 接口，主要用于存放键值对。对于Collection 接口，下面又有两个个主要的子接口：List、Set   1.1.1集合接口类特性  Collection接口：存储无序，不唯一的对象 List接口：存储有序，不唯一的对象 S">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java集合类使用总结（List、Set、Map接口及常见实现类）以及常见面试题">
+<meta property="og:url" content="https://www.haipeng-lin.cn/posts/b258c0a4.html">
+<meta property="og:site_name" content="拾忆鱼&#39;s Blog">
+<meta property="og:description" content="1.Java集合类使用总结  1.1概览 Java 集合， 也叫作容器，主要是由两大接口派生而来：一个是 Collection接口，主要用于存放单一元素；另一个是 Map 接口，主要用于存放键值对。对于Collection 接口，下面又有两个个主要的子接口：List、Set   1.1.1集合接口类特性  Collection接口：存储无序，不唯一的对象 List接口：存储有序，不唯一的对象 S">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i-blog.csdnimg.cn/blog_migrate/a298ba8d635a1bbadd0a0a27a2585535.jpeg#pic_center">
+<meta property="article:published_time" content="2024-07-23T10:00:33.000Z">
+<meta property="article:modified_time" content="2024-09-01T01:42:17.674Z">
+<meta property="article:author" content="拾忆鱼">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i-blog.csdnimg.cn/blog_migrate/a298ba8d635a1bbadd0a0a27a2585535.jpeg#pic_center"><link rel="shortcut icon" href="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101530409.png"><link rel="canonical" href="https://www.haipeng-lin.cn/posts/b258c0a4"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="msvalidate.01" content="7A691DA1ABC779E7F680EF66E1D934AA"/><meta name="google-site-verification"/><meta name="baidu-site-verification" content="XXXXX"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":250},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: 拾忆鱼","link":"链接: ","source":"来源: 拾忆鱼's Blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Java集合类使用总结（List、Set、Map接口及常见实现类）以及常见面试题',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-09-01 09:42:17'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/gitcalendar/css/gitcalendar.css"/><link rel="stylesheet" href="/css/tag_plugins.css"><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-swiper-anzhiyu@1.0.4/lib/swiper.min.css"><script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script><link rel="stylesheet" href="/css/tags.css"><link rel="stylesheet" href="/css/double_article.css"><link rel="stylesheet" href="/css/nav.css"><link rel="stylesheet" href="/css/essay_page.css"><script type="text/javascript" src="/js/echarts.min.js"></script><script type="text/javascript" src="/js/copy.js"></script><script src="https://cdn1.tianli0.top/npm/vue@2.6.14/dist/vue.min.js"></script><script src="https://cdn1.tianli0.top/npm/element-ui@2.15.6/lib/index.js"></script><link rel="stylesheet" href="https://cdn1.tianli0.top/npm/element-ui@2.15.6/packages/theme-chalk/lib/index.css"><link rel="stylesheet" href="/css/copyright.css"><link rel="stylesheet" href="/css/progress_bar.css"><link rel="stylesheet" href="/css/footer.css"><link rel="stylesheet" href="/css/page.css"><link rel="stylesheet" href="/css/layout.css"><link rel="stylesheet" href="/css/color.css"><link rel="stylesheet" href="/css/cursors/cursors.css"><link rel="stylesheet" href="/css/fonts/font.css"><link rel="stylesheet" href="/css/about/about.css"><link rel="stylesheet" href="/css/about/careers.css"><link rel="stylesheet" href="/css/about/genshinimpact.css"><link rel="stylesheet" href="/css/about/hello-about.css"><link rel="stylesheet" href="/css/about/site.css"><link rel="stylesheet" href="/css/about/skills.css"><link rel="stylesheet" href="/css/photo.css"><link rel="stylesheet" href="/css/icat.css"><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="拾忆鱼's Blog" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101530409.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">59</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives"><i class="fa-fw fas fa-archive"></i><span> 全部</span></a></li><li><a class="site-page child" href="/categories"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heart"></i><span> 空间</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/essay"><i class="fa-fw fas fa-comments"></i><span> 碎碎念</span></a></li><li><a class="site-page child" href="/collect"><i class="fa-fw fas fa-walking"></i><span> 足迹阁</span></a></li><li><a class="site-page child" href="/photo"><i class="fa-fw fas fa-images"></i><span> 照片墙</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about"><i class="fa-fw fas fa-address-card"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">拾忆鱼's Blog</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives"><i class="fa-fw fas fa-archive"></i><span> 全部</span></a></li><li><a class="site-page child" href="/categories"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heart"></i><span> 空间</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/essay"><i class="fa-fw fas fa-comments"></i><span> 碎碎念</span></a></li><li><a class="site-page child" href="/collect"><i class="fa-fw fas fa-walking"></i><span> 足迹阁</span></a></li><li><a class="site-page child" href="/photo"><i class="fa-fw fas fa-images"></i><span> 照片墙</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about"><i class="fa-fw fas fa-address-card"></i><span> 关于</span></a></div></div><center id="name-container"><a id="page-name" href="javascript:btf.scrollToDest(0, 500)">PAGE_NAME</a></center></div><div id="toggleButtons"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">Java集合类使用总结（List、Set、Map接口及常见实现类）以及常见面试题</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-07-23T10:00:33.000Z" title="发表于 2024-07-23 18:00:33">2024-07-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-09-01T01:42:17.674Z" title="更新于 2024-09-01 09:42:17">2024-09-01</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91/">【Java基础】</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Java集合类使用总结（List、Set、Map接口及常见实现类）以及常见面试题"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="post-content" id="article-container"><h1 id="1java集合类使用总结"><a class="markdownIt-Anchor" href="#1java集合类使用总结"></a> 1.Java集合类使用总结</h1>
+<h2 id="11概览"><a class="markdownIt-Anchor" href="#11概览"></a> 1.1概览</h2>
+<p>Java 集合， 也叫作容器，主要是由两大接口派生而来：一个是 <code>Collection</code>接口，主要用于存放单一元素；另一个是 <code>Map</code> 接口，主要用于存放键值对。对于<code>Collection</code> 接口，下面又有两个个主要的子接口：<code>List</code>、<code>Set</code></p>
+<p><img src="https://gitee.com/linhaipengg/md_-picture/raw/master/image-20240307154735800.png" alt="image-20240307154735800" /></p>
+<h3 id="111集合接口类特性"><a class="markdownIt-Anchor" href="#111集合接口类特性"></a> 1.1.1集合接口类特性</h3>
+<ul>
+<li>Collection接口：存储无序，不唯一的对象</li>
+<li>List接口：存储有序，不唯一的对象</li>
+<li>Set接口：存储无序，唯一的对象</li>
+<li>Map接口：存储键值(key-value)对象</li>
+</ul>
+<h3 id="112list接口和set接口的区别"><a class="markdownIt-Anchor" href="#112list接口和set接口的区别"></a> 1.1.2List接口和Set接口的区别</h3>
+<ol>
+<li>存储元素不同：
+<ol>
+<li>List接口存储不唯一，有序的对象</li>
+<li>Set接口存储唯一，不唯一的对象</li>
+</ol>
+</li>
+<li>查找/删除和插入效率不同：
+<ol>
+<li>Set 查找效率低，删除和插入效率高，插入和删除不会引起元素位置改变。</li>
+<li>List查找元素效率高，插入删除效率低，因为会引起其他元素位置改变</li>
+</ol>
+</li>
+</ol>
+<h3 id="113简要介绍"><a class="markdownIt-Anchor" href="#113简要介绍"></a> 1.1.3简要介绍</h3>
+<h4 id="1list接口"><a class="markdownIt-Anchor" href="#1list接口"></a> （1）List接口</h4>
+<ul>
+<li><code>ArrayList</code>：<code>Object[]</code> 数组。。</li>
+<li><code>LinkedList</code>：双向链表(JDK1.6 之前为循环链表，JDK1.7 取消了循环)</li>
+</ul>
+<h4 id="2set接口"><a class="markdownIt-Anchor" href="#2set接口"></a> （2）Set接口</h4>
+<ul>
+<li><code>HashSet</code>(无序，唯一): 基于 <code>HashMap</code> 实现的，底层采用 <code>HashMap</code> 来保存元素。</li>
+<li><code>LinkedHashSet</code>: <code>LinkedHashSet</code> 是 <code>HashSet</code> 的子类，并且其内部是通过 <code>LinkedHashMap</code> 来实现的。</li>
+<li><code>TreeSet</code>(有序，唯一): 红黑树(自平衡的排序二叉树)</li>
+</ul>
+<h4 id="3map接口"><a class="markdownIt-Anchor" href="#3map接口"></a> （3）Map接口</h4>
+<ul>
+<li><code>HashMap</code>：JDK1.8 之前 <code>HashMap</code> 由数组+链表组成的，数组是 <code>HashMap</code> 的主体，链表则是主要为了解决哈希冲突而存在的（“拉链法”解决冲突）。JDK1.8 以后在解决哈希冲突时有了较大的变化，当链表长度大于阈值（默认为 8）（将链表转换成红黑树前会判断，如果当前数组的长度小于 64，那么会选择先进行数组扩容，而不是转换为红黑树）时，将链表转化为红黑树，以减少搜索时间。</li>
+<li>LinkedHashMap<code>：</code>LinkedHashMap<code>继承自</code>HashMap<code>，所以它的底层仍然是基于拉链式散列结构即由数组和链表或红黑树组成。另外，</code>LinkedHashMap<code>在上面结构的基础上，增加了一条双向链表，使得上面的结构可以保持键值对的插入顺序。同时通过对链表进行相应的操作，实现了访问顺序相关逻辑。详细可以查看：[LinkedHashMap 源码分析]()</code></li>
+<li>Hashtable<code>：数组+链表组成的，数组是</code>Hashtable<code>的主体，链表则是主要为了解决哈希冲突而存在的。</code></li>
+<li>TreeMap`：红黑树（自平衡的排序二叉树）</li>
+</ul>
+<h2 id="12collection接口"><a class="markdownIt-Anchor" href="#12collection接口"></a> 1.2Collection接口</h2>
+<p>Collection 接口是层次结构中的根接口。构成 Collection 的单位称为元素。Collection 接口通常不能直接使用，但该接口提供了添加元素、删除元素、管理数据的方法。由于 List 接口与 Set 接口都继承了 Collection 接口，因此这些方法对 List 集合与 Set 集合是通用的。</p>
+<ul>
+<li>常用方法：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><strong>方法</strong></th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">add(E e)</td>
+<td style="text-align:center">将指定的对象添加到该集合中</td>
+</tr>
+<tr>
+<td style="text-align:center">remove(Object o)</td>
+<td style="text-align:center">将指定的对象从该集合中移除</td>
+</tr>
+<tr>
+<td style="text-align:center">isEmpty()</td>
+<td style="text-align:center">返回 boolean 值，用于判断当前集合是否为空</td>
+</tr>
+<tr>
+<td style="text-align:center">iterator()</td>
+<td style="text-align:center">返回在此 Collection 的元素上进行迭代的迭代器。用于遍历集合中的对象</td>
+</tr>
+<tr>
+<td style="text-align:center">size()</td>
+<td style="text-align:center">返回 int 型值，获取该集合中元素的个数</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>遍历集合</li>
+</ul>
+<h2 id="13list接口"><a class="markdownIt-Anchor" href="#13list接口"></a> 1.3List接口</h2>
+<h3 id="131arraylist"><a class="markdownIt-Anchor" href="#131arraylist"></a> 1.3.1ArrayList</h3>
+<ol>
+<li><strong>存储对象</strong>：<code>ArrayList</code> 中只能存储引用类型数据的对象。对于基本类型数据，需要使用其对应的包装类</li>
+<li><strong>底层数据结构</strong>：底层使用 <code>Object[]</code>存储，适用于频繁的查找工作，线程不安全</li>
+<li><strong>null值问题</strong>：可以添加null值</li>
+<li><strong>线程安全问题</strong>：不安全</li>
+<li><strong>数组大小</strong>：<code>ArrayList</code>创建时不需要指定大小，会根据实际存储的元素动态地扩容或缩容，<code>ArrayList</code> 允许使用泛型来确保类型安全</li>
+</ol>
+<h3 id="132linkedlist不常用"><a class="markdownIt-Anchor" href="#132linkedlist不常用"></a> 1.3.2LinkedList—不常用</h3>
+<ol>
+<li><strong>存储对象</strong>：存储对象：LinkedList 可以存储任意类型的对象，包括基本数据类型和引用数据类型</li>
+<li><strong>底层数据结构</strong>：LinkedList 的底层数据结构是双向链表，通过一个 Node 内部类实现的这种链表结构</li>
+<li><strong>null值问题</strong>：LinkedList 允许存储 null 值作为元素</li>
+<li><strong>线程安全问题</strong>：不安全</li>
+</ol>
+<h3 id="133区分arraylist与linkedlist"><a class="markdownIt-Anchor" href="#133区分arraylist与linkedlist"></a> 1.3.3区分ArrayList与LinkedList</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center">ArrayList</th>
+<th style="text-align:center">LinkedList</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>线程安全</strong></td>
+<td style="text-align:center">不安全</td>
+<td style="text-align:center">不安全</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>底层数据结构</strong></td>
+<td style="text-align:center">Object数组</td>
+<td style="text-align:center">双向链表（JDK1.6 之前为循环链表，<strong>JDK1.7 取消了循环</strong>。注意双向链表和双向循环链表的区别）</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>插入和删除是否受元素位置的影响</strong></td>
+<td style="text-align:center">采用数组存储，受影响（O(1)或者O(n)）</td>
+<td style="text-align:center">链表存储，指定位置插入删除、首尾(O(1))、O(n)</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>是否支持快速随机访问</strong></td>
+<td style="text-align:center">实现了 <code>RandomAccess</code> 接口，通过元素的序号快速获取元素对象(对应于<code>get(int index)</code>方法)</td>
+<td style="text-align:center">不支持</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>内存空间占用</strong></td>
+<td style="text-align:center">空间浪费主要体现在在 list 列表的结尾会预留一定的容量空间</td>
+<td style="text-align:center">LinkedList 的空间花费则体现在它的每一个元素都需要消耗比 ArrayList 更多的空间（前驱和后驱）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="14set接口"><a class="markdownIt-Anchor" href="#14set接口"></a> 1.4Set接口</h2>
+<p>Set 接口常用的实现类有 HashSet 、LinkedHashSet、TreeSet。</p>
+<h3 id="141hashset"><a class="markdownIt-Anchor" href="#141hashset"></a> 1.4.1HashSet</h3>
+<ol>
+<li><strong>存储对象</strong>：HashSet 存储对象采用哈希表的方式，它不允许重复元素，即集合中不会包含相同的元素。当向 HashSet 中添加元素时，会根据元素的 hashCode() 方法和 equals() 方法来判断元素是否重复。</li>
+<li><strong>底层数据结构</strong>：HashSet 的底层数据结构是基于 HashMap 实现的，实际上 HashSet 的元素就是作为 HashMap 的 key 存储的。</li>
+<li><strong>null 值问题</strong>：HashSet 允许存储一个 null 元素。</li>
+<li><strong>线程安全问题</strong>：不安全</li>
+</ol>
+<h3 id="642linkhashset"><a class="markdownIt-Anchor" href="#642linkhashset"></a> 6.4.2LinkHashSet</h3>
+<ol>
+<li><strong>存储对象</strong>：LinkedHashSet 也存储唯一的对象，不允许重复元素。当向 LinkedHashSet 中添加元素时，会根据元素的 hashCode() 方法和 equals() 方法来判断元素是否重复。</li>
+<li><strong>底层数据结构</strong>：LinkedHashSet 的底层数据结构是基于 LinkedHashMap 实现的，实际上 LinkedHashSet 内部维护了一个 LinkedHashMap 对象。LinkedHashMap 通过维护一个双向链表来保持元素的插入顺序，因此 LinkedHashSet 可以保持元素的插入顺序。</li>
+<li><strong>null 值问题</strong>：LinkedHashSet 允许存储一个 null 元素。与 HashSet 类似，null 值在计算哈希值时会被映射到哈希表中的一个位置，并且 LinkedHashSet 会保证集合中只有一个 null 元素。</li>
+<li><strong>线程安全问题</strong>：不安全</li>
+</ol>
+<h3 id="143treeset"><a class="markdownIt-Anchor" href="#143treeset"></a> 1.4.3TreeSet</h3>
+<ol>
+<li><strong>存储对象</strong>：TreeSet 存储唯一的对象，不允许重复元素。当向 TreeSet 中添加元素时，会根据元素的比较规则（通过实现 Comparable 接口或者提供 Comparator）来判断元素是否重复。</li>
+<li><strong>底层数据结构</strong>：TreeSet 的底层数据结构是基于红黑树实现的。红黑树是一种自平衡的二叉查找树，可以保持元素的<strong>有序性</strong></li>
+<li><strong>null 值问题</strong>：TreeSet 不允许存储 null 元素，如果向 TreeSet 中添加 null 元素，会抛出 NullPointerException 异常。</li>
+<li><strong>线程安全问题</strong>：TreeSet 不是线程安全的</li>
+</ol>
+<h2 id="15map接口"><a class="markdownIt-Anchor" href="#15map接口"></a> 1.5Map接口</h2>
+<p>Map接口常见的实现类有HashMap、LinkedHashMap、HashTable、TreeMap、ConcurrentHashMap</p>
+<h3 id="151hashmap"><a class="markdownIt-Anchor" href="#151hashmap"></a> 1.5.1HashMap</h3>
+<ol>
+<li><strong>存储对象</strong>：HashMap 存储键值对（key-value pair），其中 key 是唯一的，不允许重复。</li>
+<li><strong>底层数据结构</strong>：HashMap 的底层数据结构是一个数组和链表/红黑树的组合，即数组加链表（或红黑树）解决冲突。当多个键的哈希值相同时，它们会存储在同一个桶中，并以链表（JDK7）或者红黑树（JDK8）的形式进行存储，以提高查找、插入和删除的效率。</li>
+<li><strong>null 值问题</strong>：HashMap 允许一个键为 null 的键值对</li>
+<li><strong>线程安全</strong>：HashMap 不是线程安全的</li>
+</ol>
+<h3 id="152linkedhashmap"><a class="markdownIt-Anchor" href="#152linkedhashmap"></a> 1.5.2LinkedHashMap</h3>
+<ol>
+<li><strong>存储对象</strong>：LinkedHashMap 也是基于键值对的存储结构，可以存储键值对</li>
+<li><strong>底层数据结构</strong>：LinkedHashMap 的底层数据结构是基于哈希表和双向链表实现的</li>
+<li><strong>null 值问题</strong>：与 HashMap 类似，可以存储一个键为 null 的键值对。</li>
+<li><strong>线程安全</strong>：LinkedHashMap 不是线程安全的</li>
+</ol>
+<h3 id="153hashtable"><a class="markdownIt-Anchor" href="#153hashtable"></a> 1.5.3HashTable</h3>
+<ol>
+<li><strong>存储对象</strong>：HashTable 也是基于键值对的存储结构，可以存储键值对</li>
+<li><strong>底层数据结构</strong>：HashTable 的底层数据结构是基于哈希表实现的，类似于 HashMap。当发生哈希冲突时，HashTable 使用<strong>开放寻址法</strong>来解决，即在冲突位置的下一个可用位置插入元素。</li>
+<li><strong>null 值问题</strong>：HashTable 不允许存储 null 键和 null 值。如果尝试将 null 键或 null 值放入 HashTable 中，将会抛出 NullPointerException 异常。</li>
+<li><strong>线程安全</strong>：HashTable 是线程安全的，所有的方法都是同步的。</li>
+</ol>
+<h3 id="154treemap"><a class="markdownIt-Anchor" href="#154treemap"></a> 1.5.4TreeMap</h3>
+<ol>
+<li><strong>存储对象</strong>：TreeMap 也是基于键值对的存储结构，可以存储键值对，并且会根据键的自然排序或自定义排序进行排序。根据键的比较结果，TreeMap 中的键值对会按照升序排列。</li>
+<li><strong>底层数据结构</strong>：TreeMap 的底层数据结构是红黑树（Red-Black Tree）。红黑树是一种自平衡的二叉搜索树，通过保持树的平衡性，可以在 O(logN) 的时间复杂度下进行插入、删除和查找操作。</li>
+<li><strong>null 值问题</strong>：TreeMap 不允许键为 null，因为需要根据键的比较进行排序</li>
+<li><strong>线程安全</strong>：TreeMap 不是线程安全的</li>
+</ol>
+<h3 id="155concurrenthashmap"><a class="markdownIt-Anchor" href="#155concurrenthashmap"></a> 1.5.5ConcurrentHashMap</h3>
+<ol>
+<li><strong>存储对象</strong>：ConcurrentHashMap 也是基于键值对的存储结构，可以存储键值对</li>
+<li><strong>底层数据结构</strong>：ConcurrentHashMap 的底层数据结构是分段锁（Segmented Array），即将整个 Map 分成多个小的 Segment，在每个 Segment 上都可以单独加锁，从而实现更细粒度的并发控制。这样可以在大部分操作上实现并发访问，提高了并发性能。</li>
+<li><strong>null 值问题</strong>：ConcurrentHashMap 允许键和值为 null</li>
+<li><strong>线程安全</strong>：ConcurrentHashMap 是线程安全的</li>
+</ol>
+<h2 id="16collections工具类"><a class="markdownIt-Anchor" href="#16collections工具类"></a> 1.6Collections工具类</h2>
+<p>Java 提供了一个操作 List、Set 和 Map 等集合的工具类：Collections，该工具类提供了大量方法对集合进行排序、查询和修改等操作，还提供了将集合对象置为不可变、对集合对象实现同步控制等方法。</p>
+<p>这个类不需要创建对象，内部提供的都是静态方法。</p>
+<h3 id="161排序方法"><a class="markdownIt-Anchor" href="#161排序方法"></a> 1.6.1排序方法</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">方法</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">static void reverse(List&lt;?&gt; list)</td>
+<td style="text-align:center">反转列表中元素的顺序。</td>
+</tr>
+<tr>
+<td style="text-align:center">static void shuffle(List&lt;?&gt; list)</td>
+<td style="text-align:center">对List集合元素进行随机排序。</td>
+</tr>
+<tr>
+<td style="text-align:center">static void sort(List list)</td>
+<td style="text-align:center">根据元素的自然顺序 对指定列表按升序进行排序 。</td>
+</tr>
+<tr>
+<td style="text-align:center">static void sort(List list, Comparator&lt;? super T&gt; c)</td>
+<td style="text-align:center">根据指定比较器产生的顺序对指定列表进行排序。</td>
+</tr>
+<tr>
+<td style="text-align:center">static void swap(List&lt;?&gt; list, int i, int j)</td>
+<td style="text-align:center">在指定List的指定位置i,j处交换元素。</td>
+</tr>
+<tr>
+<td style="text-align:center">static void rotate(List&lt;?&gt; list, int distance)</td>
+<td style="text-align:center">当distance为正数时，将List集合的后distance个元素“整体”移到前面； 当distance为负数时，将list集合的前distance个元素“整体”移到后边。该方法不会改变集合的长度。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="162查找替换方法"><a class="markdownIt-Anchor" href="#162查找替换方法"></a> 1.6.2查找替换方法</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">方法</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">static int binarySearch(List&lt;? extends Comparable&lt;? super T&gt;&gt;list, T key)</td>
+<td style="text-align:center">使用二分搜索法搜索指定列表，以获得指定对象在List集合中的索引。</td>
+</tr>
+<tr>
+<td style="text-align:center">static Object max(Collection coll)</td>
+<td style="text-align:center">根据元素的自然顺序，返回给定collection 的最大元素。</td>
+</tr>
+<tr>
+<td style="text-align:center">static Object max(Collection coll,Comparator comp)</td>
+<td style="text-align:center">根据指定比较器产生的顺序，返回给定 collection 的最大元素。</td>
+</tr>
+<tr>
+<td style="text-align:center">static Object min(Collection coll)</td>
+<td style="text-align:center">根据元素的自然顺序，返回给定collection 的最小元素。</td>
+</tr>
+<tr>
+<td style="text-align:center">static Object min(Collection coll,Comparator comp)</td>
+<td style="text-align:center">根据指定比较器产生的顺序，返回给定 collection 的最小元素。</td>
+</tr>
+<tr>
+<td style="text-align:center">static void fill(List&lt;? super T&gt; list, T obj)</td>
+<td style="text-align:center">使用指定元素替换指定列表中的所有元素。</td>
+</tr>
+<tr>
+<td style="text-align:center">static int frequency(Collection&lt;?&gt; c, Object o)</td>
+<td style="text-align:center">返回指定 collection 中等于指定对象的出现次数。</td>
+</tr>
+<tr>
+<td style="text-align:center">static int indexOfSubList(List<?> source, List<?> target)</td>
+<td style="text-align:center">返回指定源列表中第一次出现指定目标列表的起始位置；如果没有出现这样的列表，则返回 -1。</td>
+</tr>
+<tr>
+<td style="text-align:center">static int lastIndexOfSubList(List<?> source, List<?> target)</td>
+<td style="text-align:center">返回指定源列表中最后一次出现指定目标列表的起始位置；如果没有出现这样的列表，则返回 -1。</td>
+</tr>
+<tr>
+<td style="text-align:center">static boolean replaceAll(List list, T oldVal, T newVal)</td>
+<td style="text-align:center">使用一个新值替换List对象的所有旧值oldVal</td>
+</tr>
+</tbody>
+</table>
+<h3 id="163同步控制"><a class="markdownIt-Anchor" href="#163同步控制"></a> 1.6.3同步控制</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">方法</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">static Collection synchronizedCollection(Collection c)</td>
+<td style="text-align:center">返回指定 collection 支持的同步（线程安全的）collection。</td>
+</tr>
+<tr>
+<td style="text-align:center">static List synchronizedList(List list)</td>
+<td style="text-align:center">返回指定列表支持的同步（线程安全的）列表。</td>
+</tr>
+<tr>
+<td style="text-align:center">static &lt;K,V&gt; Map&lt;K,V&gt; synchronizedMap(Map&lt;K,V&gt; m)</td>
+<td style="text-align:center">返回由指定映射支持的同步（线程安全的）映射。</td>
+</tr>
+<tr>
+<td style="text-align:center">static Set synchronizedSet(Set s)</td>
+<td style="text-align:center">返回指定 set 支持的同步（线程安全的）set。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="164不可变集合"><a class="markdownIt-Anchor" href="#164不可变集合"></a> 1.6.4不可变集合</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">方法</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">emptyXxx()</td>
+<td style="text-align:center">返回一个空的、不可变的集合对象。</td>
+</tr>
+<tr>
+<td style="text-align:center">singletonXxx()</td>
+<td style="text-align:center">返回一个只包含指定对象（只有一个或一个元素）的不可变的集合对象。</td>
+</tr>
+<tr>
+<td style="text-align:center">unmodifiableXxx()</td>
+<td style="text-align:center">返回指定集合对象的不可变视图。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="17常见面试题"><a class="markdownIt-Anchor" href="#17常见面试题"></a> 1.7常见面试题</h2>
+<h3 id="171比较arraylist与linkedlist的异同"><a class="markdownIt-Anchor" href="#171比较arraylist与linkedlist的异同"></a> 1.7.1比较ArrayList与LinkedList的异同？</h3>
+<ul>
+<li>相同：两者都继承了list接口，存储的元素有序、不唯一，可存储null，线程不安全</li>
+<li>不同
+<ul>
+<li>存储的元素类型不同：ArrayList只能存储引用类型的数据（基本类型数据需要用到包装类）；LinkedList则可以存储基本类型、引用类型数据</li>
+<li>底层数据结构不同：ArrrayList底层是动态数组；LinkedList底层是双向链表</li>
+<li>查找/插入删除效率不同：ArrayList查找效率更高，LinkedList插入删除效率更高</li>
+<li>ArrrayList支持快速访问，LinkedList不支持</li>
+</ul>
+</li>
+</ul>
+<h3 id="172比较hashset-linkhashset-treeset的异同"><a class="markdownIt-Anchor" href="#172比较hashset-linkhashset-treeset的异同"></a> 1.7.2比较HashSet、LinkHashSet、TreeSet的异同？</h3>
+<ul>
+<li>相同：<code>HashSet</code>、<code>LinkedHashSet</code> 和 <code>TreeSet</code> 都是 <code>Set</code> 接口的实现类，都能保证元素唯一，并且都不是线程安全的</li>
+<li>不同
+<ul>
+<li>底层数据结构不同：
+<ul>
+<li><code>HashSet</code> 的底层数据结构是哈希表（基于 <code>HashMap</code> 实现）。</li>
+<li><code>LinkedHashSet</code> 的底层数据结构是链表和哈希表，元素的插入和取出顺序满足 FIFO。</li>
+<li><code>TreeSet</code> 底层数据结构是红黑树，元素是有序的，排序的方式有自然排序和定制排序。</li>
+</ul>
+</li>
+<li>应用不同：
+<ul>
+<li><code>HashSet</code> 用于不需要保证元素插入和取出顺序的场景</li>
+<li><code>LinkedHashSet</code> 用于保证元素的插入和取出顺序满足 FIFO 的场景</li>
+<li><code>TreeSet</code> 用于支持对元素自定义排序规则的场景。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="173如何选用集合"><a class="markdownIt-Anchor" href="#173如何选用集合"></a> 1.7.3如何选用集合？</h3>
+<ol>
+<li>我们需要根据键值获取到元素值时就选用 <code>Map</code> 接口下的集合
+<ol>
+<li>需要排序时选择 <code>TreeMap</code></li>
+<li>不需要排序时就选择 <code>HashMap</code></li>
+<li>需要保证线程安全就选用 <code>ConcurrentHashMap</code>。</li>
+</ol>
+</li>
+<li>我们只需要存放元素值时，就选择实现<code>Collection</code> 接口的集合
+<ol>
+<li>需要保证元素唯一时选择实现 <code>Set</code> 接口的集合比如 <code>TreeSet</code> 或 <code>HashSet</code></li>
+<li>不需要就选择实现 <code>List</code> 接口的比如 <code>ArrayList</code> 或 <code>LinkedList</code>，然后再根据实现这些接口的集合的特点来选用</li>
+</ol>
+</li>
+</ol>
+<h3 id="174arraylist插入和删除元素的时间复杂度"><a class="markdownIt-Anchor" href="#174arraylist插入和删除元素的时间复杂度"></a> 1.7.4ArrayList插入和删除元素的时间复杂度？</h3>
+<h4 id="1插入"><a class="markdownIt-Anchor" href="#1插入"></a> （1）插入</h4>
+<ol>
+<li>头部插入：由于需要将所有元素都依次向后移动一个位置，因此时间复杂度是 O(n)。</li>
+<li>尾部插入：当 <code>ArrayList</code> 的容量未达到极限时，往列表末尾插入元素的时间复杂度是 O(1)，因为它只需要在数组末尾添加一个元素即可；当容量已达到极限并且需要扩容时，则需要执行一次 O(n) 的操作将原数组复制到新的更大的数组中，然后再执行 O(1) 的操作添加元素。</li>
+<li>指定位置插入：需要将目标位置之后的所有元素都向后移动一个位置，然后再把新元素放入指定位置。这个过程需要移动平均 n/2 个元素，因此时间复杂度为 O(n)</li>
+</ol>
+<h4 id="2删除"><a class="markdownIt-Anchor" href="#2删除"></a> （2）删除</h4>
+<ol>
+<li>头部删除：由于需要将所有元素依次向前移动一个位置，因此时间复杂度是 O(n)。</li>
+<li>尾部删除：当删除的元素位于列表末尾时，时间复杂度为 O(1)。</li>
+<li>指定位置删除：需要将目标元素之后的所有元素向前移动一个位置以填补被删除的空白位置，因此需要移动平均 n/2 个元素，时间复杂度为 O(n)。</li>
+</ol>
+<h3 id="175linkedlist-插入和删除元素的时间复杂度"><a class="markdownIt-Anchor" href="#175linkedlist-插入和删除元素的时间复杂度"></a> 1.7.5LinkedList 插入和删除元素的时间复杂度？</h3>
+<ol>
+<li>头部插入/删除：只需要修改头结点的指针即可完成插入/删除操作，因此时间复杂度为 O(1)。</li>
+<li>尾部插入/删除：只需要修改尾结点的指针即可完成插入/删除操作，因此时间复杂度为 O(1)。</li>
+<li>指定位置插入/删除：需要先移动到指定位置，再修改指定节点的指针完成插入/删除，因此需要移动平均 n/2 个元素，时间复杂度为 O(n)</li>
+</ol>
+<h3 id="176比较hashmap和hashtable的异同"><a class="markdownIt-Anchor" href="#176比较hashmap和hashtable的异同"></a> 1.7.6比较HashMap和HashTable的异同？</h3>
+<ol>
+<li>相同：两者均实现了Map接口，用于存储key-value键值对的数据</li>
+<li>不同：
+<ol>
+<li><strong>底层数据结构不同</strong>：HashMap底层为（数组+链表或者数组+红黑树）、HashTable底层为哈希表（哈希数组）+链表，使用寻址开放法解决哈希冲突</li>
+<li><strong>null值问题不同</strong>：HashMap支持null键（一个）和null值（多个）；HashTable不支持null键和null值</li>
+<li><strong>线程安全问题不同</strong>：HashMap不安全，HashTable安全</li>
+<li><strong>初始化机制和扩容机制不同</strong>：
+<ol>
+<li>HashMap的初始化容量为16，若容量超出阈值（数组容量16*负载因子0.75=12）的话，则扩容为原来的2倍</li>
+<li>HashTable的初始化容量为11，之后每次扩容，容量变为原来的2n+1</li>
+<li>HashMap若指定容量初始值，HashMap会将其扩充为最近的2的幂次方大小（HashMap中的tableSizeFor()方法保证）</li>
+<li>HashTable若指定容量初始值，直接使用该指定大小</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="177比较hashmap和hashset的异同"><a class="markdownIt-Anchor" href="#177比较hashmap和hashset的异同"></a> 1.7.7比较HashMap和HashSet的异同？</h3>
+<blockquote>
+<p>ps：<code>HashSet</code> 底层就是基于 <code>HashMap</code> 实现的。（<code>HashSet</code> 的源码非常非常少，因为除了 <code>clone()</code>、<code>writeObject()</code>、<code>readObject()</code>是 <code>HashSet</code> 自己不得不实现之外，其他方法都是直接调用 <code>HashMap</code> 中的方法。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align:center"><code>HashMap</code></th>
+<th style="text-align:center"><code>HashSet</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. 实现的接口及存储的对象不同</td>
+<td style="text-align:center">实现了 <code>Map</code> 接口，存储键值对</td>
+<td style="text-align:center">实现 <code>Set</code> 接口，仅存储对象</td>
+</tr>
+<tr>
+<td>2.添加方法不同</td>
+<td style="text-align:center">调用 <code>put()</code>向 map 中添加元素</td>
+<td style="text-align:center">调用 <code>add()</code>方法向 <code>Set</code> 中添加元素</td>
+</tr>
+<tr>
+<td>3.比较对象是否相同方法不同</td>
+<td style="text-align:center"><code>HashMap</code> 使用键（Key）计算 <code>hashcode</code></td>
+<td style="text-align:center"><code>HashSet</code> 使用成员对象来计算 <code>hashcode</code> 值，对于两个对象来说 <code>hashcode</code> 可能相同，所以<code>equals()</code>方法用来判断对象的相等性</td>
+</tr>
+</tbody>
+</table>
+<h3 id="178比较hashmap和treemap的异同"><a class="markdownIt-Anchor" href="#178比较hashmap和treemap的异同"></a> 1.7.8比较HashMap和TreeMap的异同？</h3>
+<ul>
+<li>相同：两者都实现Map接口，存储key-value，线程不安全</li>
+<li>不同：
+<ul>
+<li>底层数据结构不同：TreeMap底层是一棵自平衡的多路查找树（红黑树）</li>
+<li>null值问题不同：TreeMap不能存储null键的数据，因为需要排序</li>
+<li>排序问题不同：TreeMap强大的功能点在于可以排序</li>
+</ul>
+</li>
+</ul>
+<h4 id="1treemap自定义排序比较器"><a class="markdownIt-Anchor" href="#1treemap自定义排序比较器"></a> （1）TreeMap自定义排序比较器</h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Integer age;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Person</span><span class="params">(Integer age)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Integer <span class="title function_">getAge</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        TreeMap&lt;Person, String&gt; treeMap = <span class="keyword">new</span> <span class="title class_">TreeMap</span>&lt;&gt;(<span class="keyword">new</span> <span class="title class_">Comparator</span>&lt;Person&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">compare</span><span class="params">(Person person1, Person person2)</span> &#123;</span><br><span class="line">                <span class="type">int</span> <span class="variable">num</span> <span class="operator">=</span> person1.getAge() - person2.getAge();</span><br><span class="line">                <span class="keyword">return</span> Integer.compare(num, <span class="number">0</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        treeMap.put(<span class="keyword">new</span> <span class="title class_">Person</span>(<span class="number">3</span>), <span class="string">&quot;person1&quot;</span>);</span><br><span class="line">        treeMap.put(<span class="keyword">new</span> <span class="title class_">Person</span>(<span class="number">18</span>), <span class="string">&quot;person2&quot;</span>);</span><br><span class="line">        treeMap.put(<span class="keyword">new</span> <span class="title class_">Person</span>(<span class="number">35</span>), <span class="string">&quot;person3&quot;</span>);</span><br><span class="line">        treeMap.put(<span class="keyword">new</span> <span class="title class_">Person</span>(<span class="number">16</span>), <span class="string">&quot;person4&quot;</span>);</span><br><span class="line">        treeMap.entrySet().stream().forEach(personStringEntry -&gt; &#123;</span><br><span class="line">            System.out.println(personStringEntry.getValue());</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出：<code>TreeMap</code> 中的元素已经是按照 <code>Person</code> 的 age 字段的升序来排列了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">person1</span><br><span class="line">person4</span><br><span class="line">person2</span><br><span class="line">person3</span><br></pre></td></tr></table></figure>
+<p>我们是通过传入匿名内部类的方式实现的，你可以将代码替换成 Lambda 表达式实现的方式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">TreeMap&lt;Person, String&gt; treeMap = <span class="keyword">new</span> <span class="title class_">TreeMap</span>&lt;&gt;((person1, person2) -&gt; &#123;</span><br><span class="line">  <span class="type">int</span> <span class="variable">num</span> <span class="operator">=</span> person1.getAge() - person2.getAge();</span><br><span class="line">  <span class="keyword">return</span> Integer.compare(num, <span class="number">0</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__title"><span class="post-copyright-info"><h>Java集合类使用总结（List、Set、Map接口及常见实现类）以及常见面试题</h></span></div><div class="post-copyright__type"><span class="post-copyright-info"><a href="https://www.haipeng-lin.cn/posts/b258c0a4.html">https://www.haipeng-lin.cn/posts/b258c0a4.html</a></span></div><div class="post-copyright-m"><div class="post-copyright-m-info"><div class="post-copyright-a" style="display: inline-block;width: 120px"><h>作者</h><div class="post-copyright-cc-info"><h>拾忆鱼</h></div></div><div class="post-copyright-c" style="display: inline-block;width: 120px"><h>发布于</h><div class="post-copyright-cc-info"><h>2024-07-23</h></div></div><div class="post-copyright-u" style="display: inline-block;width: 120px"><h>更新于</h><div class="post-copyright-cc-info"><h>2024-09-01</h></div></div><div class="post-copyright-c" style="display: inline-block;width: 120px"><h>许可协议</h><div class="post-copyright-cc-info"><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a rel="noopener" target="_blank" title="CC BY 4.0" href="https://creativecommons.org/licenses/by/4.0/deed.zh">CC BY 4.0</a></div></div></div></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://i-blog.csdnimg.cn/blog_migrate/a298ba8d635a1bbadd0a0a27a2585535.jpeg#pic_center" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://lib.baomitu.com/social-share.js/1.0.16/css/share.min.css" media="print" onload="this.media='all'"><script src="https://lib.baomitu.com/social-share.js/1.0.16/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/b7a59eca.html"><img class="prev-cover" src="https://i-blog.csdnimg.cn/blog_migrate/2a33856a6b6d504a7ea70f992ff5e5ad.jpeg#pic_center" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">一篇文章读懂HashMap（存储、扩容、初始化过程）</div></div></a></div><div class="next-post pull-right"><a href="/posts/397c083a.html"><img class="next-cover" src="https://i-blog.csdnimg.cn/blog_migrate/54a93cd0a1e449dadd74105957907e14.jpeg#pic_center" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Java8新特性</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101530409.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">拾忆鱼</div><div class="author-info__description">一条菜鱼的小破站</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">59</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">小菜鱼正在从CSDN博客搬家，尽请期待　　      地址：<a target="_blank" rel="noopener" href="https://haipeng-lin.blog.csdn.net/">haipeng-lin.blog.csdn.net</a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1java%E9%9B%86%E5%90%88%E7%B1%BB%E4%BD%BF%E7%94%A8%E6%80%BB%E7%BB%93"><span class="toc-text"> 1.Java集合类使用总结</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#11%E6%A6%82%E8%A7%88"><span class="toc-text"> 1.1概览</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#111%E9%9B%86%E5%90%88%E6%8E%A5%E5%8F%A3%E7%B1%BB%E7%89%B9%E6%80%A7"><span class="toc-text"> 1.1.1集合接口类特性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#112list%E6%8E%A5%E5%8F%A3%E5%92%8Cset%E6%8E%A5%E5%8F%A3%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text"> 1.1.2List接口和Set接口的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#113%E7%AE%80%E8%A6%81%E4%BB%8B%E7%BB%8D"><span class="toc-text"> 1.1.3简要介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1list%E6%8E%A5%E5%8F%A3"><span class="toc-text"> （1）List接口</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2set%E6%8E%A5%E5%8F%A3"><span class="toc-text"> （2）Set接口</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3map%E6%8E%A5%E5%8F%A3"><span class="toc-text"> （3）Map接口</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12collection%E6%8E%A5%E5%8F%A3"><span class="toc-text"> 1.2Collection接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#13list%E6%8E%A5%E5%8F%A3"><span class="toc-text"> 1.3List接口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#131arraylist"><span class="toc-text"> 1.3.1ArrayList</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#132linkedlist%E4%B8%8D%E5%B8%B8%E7%94%A8"><span class="toc-text"> 1.3.2LinkedList—不常用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#133%E5%8C%BA%E5%88%86arraylist%E4%B8%8Elinkedlist"><span class="toc-text"> 1.3.3区分ArrayList与LinkedList</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#14set%E6%8E%A5%E5%8F%A3"><span class="toc-text"> 1.4Set接口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#141hashset"><span class="toc-text"> 1.4.1HashSet</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#642linkhashset"><span class="toc-text"> 6.4.2LinkHashSet</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#143treeset"><span class="toc-text"> 1.4.3TreeSet</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#15map%E6%8E%A5%E5%8F%A3"><span class="toc-text"> 1.5Map接口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#151hashmap"><span class="toc-text"> 1.5.1HashMap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#152linkedhashmap"><span class="toc-text"> 1.5.2LinkedHashMap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#153hashtable"><span class="toc-text"> 1.5.3HashTable</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#154treemap"><span class="toc-text"> 1.5.4TreeMap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#155concurrenthashmap"><span class="toc-text"> 1.5.5ConcurrentHashMap</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#16collections%E5%B7%A5%E5%85%B7%E7%B1%BB"><span class="toc-text"> 1.6Collections工具类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#161%E6%8E%92%E5%BA%8F%E6%96%B9%E6%B3%95"><span class="toc-text"> 1.6.1排序方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#162%E6%9F%A5%E6%89%BE%E6%9B%BF%E6%8D%A2%E6%96%B9%E6%B3%95"><span class="toc-text"> 1.6.2查找替换方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#163%E5%90%8C%E6%AD%A5%E6%8E%A7%E5%88%B6"><span class="toc-text"> 1.6.3同步控制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#164%E4%B8%8D%E5%8F%AF%E5%8F%98%E9%9B%86%E5%90%88"><span class="toc-text"> 1.6.4不可变集合</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#17%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98"><span class="toc-text"> 1.7常见面试题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#171%E6%AF%94%E8%BE%83arraylist%E4%B8%8Elinkedlist%E7%9A%84%E5%BC%82%E5%90%8C"><span class="toc-text"> 1.7.1比较ArrayList与LinkedList的异同？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#172%E6%AF%94%E8%BE%83hashset-linkhashset-treeset%E7%9A%84%E5%BC%82%E5%90%8C"><span class="toc-text"> 1.7.2比较HashSet、LinkHashSet、TreeSet的异同？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#173%E5%A6%82%E4%BD%95%E9%80%89%E7%94%A8%E9%9B%86%E5%90%88"><span class="toc-text"> 1.7.3如何选用集合？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#174arraylist%E6%8F%92%E5%85%A5%E5%92%8C%E5%88%A0%E9%99%A4%E5%85%83%E7%B4%A0%E7%9A%84%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="toc-text"> 1.7.4ArrayList插入和删除元素的时间复杂度？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E6%8F%92%E5%85%A5"><span class="toc-text"> （1）插入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E5%88%A0%E9%99%A4"><span class="toc-text"> （2）删除</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#175linkedlist-%E6%8F%92%E5%85%A5%E5%92%8C%E5%88%A0%E9%99%A4%E5%85%83%E7%B4%A0%E7%9A%84%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="toc-text"> 1.7.5LinkedList 插入和删除元素的时间复杂度？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#176%E6%AF%94%E8%BE%83hashmap%E5%92%8Chashtable%E7%9A%84%E5%BC%82%E5%90%8C"><span class="toc-text"> 1.7.6比较HashMap和HashTable的异同？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#177%E6%AF%94%E8%BE%83hashmap%E5%92%8Chashset%E7%9A%84%E5%BC%82%E5%90%8C"><span class="toc-text"> 1.7.7比较HashMap和HashSet的异同？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#178%E6%AF%94%E8%BE%83hashmap%E5%92%8Ctreemap%E7%9A%84%E5%BC%82%E5%90%8C"><span class="toc-text"> 1.7.8比较HashMap和TreeMap的异同？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1treemap%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8E%92%E5%BA%8F%E6%AF%94%E8%BE%83%E5%99%A8"><span class="toc-text"> （1）TreeMap自定义排序比较器</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/8239deef.html" title="基于微信公众号+验证码实现微信登录"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410282106730.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="基于微信公众号+验证码实现微信登录"/></a><div class="content"><a class="title" href="/posts/8239deef.html" title="基于微信公众号+验证码实现微信登录">基于微信公众号+验证码实现微信登录</a><time datetime="2024-10-28T13:05:25.000Z" title="发表于 2024-10-28 21:05:25">2024-10-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/172c1a2d.html" title="ElasticSearch学习笔记"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410161138400.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ElasticSearch学习笔记"/></a><div class="content"><a class="title" href="/posts/172c1a2d.html" title="ElasticSearch学习笔记">ElasticSearch学习笔记</a><time datetime="2024-10-16T03:36:17.000Z" title="发表于 2024-10-16 11:36:17">2024-10-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/6982816f.html" title="RocketMQ学习笔记"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410131719724.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="RocketMQ学习笔记"/></a><div class="content"><a class="title" href="/posts/6982816f.html" title="RocketMQ学习笔记">RocketMQ学习笔记</a><time datetime="2024-10-13T09:17:30.000Z" title="发表于 2024-10-13 17:17:30">2024-10-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/d1f540b5.html" title="收集 | 有情怀的网站"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410111137749.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="收集 | 有情怀的网站"/></a><div class="content"><a class="title" href="/posts/d1f540b5.html" title="收集 | 有情怀的网站">收集 | 有情怀的网站</a><time datetime="2024-10-10T12:21:25.000Z" title="发表于 2024-10-10 20:21:25">2024-10-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/d0dd6ec8.html" title="为什么HashMap线程不安全"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101225904.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="为什么HashMap线程不安全"/></a><div class="content"><a class="title" href="/posts/d0dd6ec8.html" title="为什么HashMap线程不安全">为什么HashMap线程不安全</a><time datetime="2024-10-10T04:24:58.000Z" title="发表于 2024-10-10 12:24:58">2024-10-10</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div id="footer-left"><div class="footer-title"><span>拾忆鱼's Blog | </span><span class="footer-copyright">&copy;2024 By 拾忆鱼</span></div><div class="wordcount"></div><span>拾忆鱼 已经写了 260k 字，</span><span>好像写完一本 钱钟书 的 《围城》 了啊</span></div><div id="footer-right"><div class="footer_custom_text"><div id="runtime"></div></div><div class="footer-totop"><i class="fas fa-chevron-up" onclick="rmf.scrollToTop()"></i></div><div class="footer-info"><p>使用Hexo框架 | 基于butterfly修改 | 萌ICP备20240730号</p><!--a(title='湘公网安备 2023003198号' href='http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023003198')= '湘公网安备 2023003198号'--><!--a(title='湘ICP备2023003198号' href='https://beian.miit.gov.cn/')= '湘ICP备2023003198号'--></div><div class="footer-service"><a title="51LA" target="_blank" rel="noopener" href="https://www.51.la"><img alt="51LA" src="https://gitee.com/linhaipengg/md_-picture/raw/master/51la.png"/></a><a title="CC BY-NC-SA 4.0" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh"><img alt="CC BY-NC-SA 4.0" src="https://img.june-pj.cn/img/2024/01/16/cc.webp"/></a></div></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"><script>(()=>{
+  const init = () => {
+    twikoo.init(Object.assign({
+      el: '#twikoo-wrap',
+      envId: 'https://twikoo.haipeng-lin.cn',
+      region: '',
+      onCommentLoaded: function () {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      }
+    }, null))
+  }
+
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://twikoo.haipeng-lin.cn',
+      region: '',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(function (res) {
+      countELement.innerText = res[0].count
+    }).catch(function (err) {
+      console.error(err);
+    });
+  }
+
+  const runFn = () => {
+    init()
+    
+  }
+
+  const loadTwikoo = () => {
+    if (typeof twikoo === 'object') {
+      setTimeout(runFn,0)
+      return
+    } 
+    getScript('https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/twikoo/1.4.18/twikoo.all.min.js').then(runFn)
+  }
+
+  if ('Twikoo' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = () => {
+      loadTwikoo()
+    }
+  }
+})()</script></div><script data-pjax src="/gitcalendar/js/gitcalendar.js"></script><script data-pjax src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/js/swiper.min.js"></script><script src="/js/footer.js"></script><script type="text/javascript" src="/js/main.js"></script><script data-pjax type="text/javascript" src="/js/essay/essay.js"></script><script data-pjax type="text/javascript" src="/js/essay/waterfall.js"></script><link rel="stylesheet" href="/css/swiper.css"><script data-pjax src="/js/categoryBar/categoryBar.js"></script><link data-pjax defer="" rel="stylesheet" href="/css/categoryBar/heoMainColor.css"><link data-pjax defer="" rel="stylesheet" href="/css/categoryBar/categoryBar.css"><script type="text/javascript" src="/js/nav.js"></script><script src="/js/countup.js"></script><script data-pjax type="text/javascript" src="/js/memos/waterfall.min.js"></script><script data-pjax type="text/javascript" src="/js/memos/imgStatus.min.js"></script><script data-pjax type="text/javascript" src="/js/memos/lately.min.js"></script><script type="text/javascript" src="/js/memos/photo.js"></script><script type="text/javascript" src="/js/icat.js"></script><link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/aplayer/1.10.1/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/aplayer/1.10.1/APlayer.min.js"></script><script src="https://cdn1.tianli0.top/npm/js-heo@1.0.12/metingjs/Meting.min.js"></script><script src="https://lib.baomitu.com/pjax/0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  typeof disqusjs === 'object' && disqusjs.destroy()
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

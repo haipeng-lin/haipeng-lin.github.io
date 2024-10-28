@@ -1,0 +1,505 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Redis的五种数据类型和相关命令 | 拾忆鱼's Blog</title><meta name="author" content="拾忆鱼"><meta name="copyright" content="拾忆鱼"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="referrer" content="no-referrer" /><meta name="description" content="Redis支持五种数据类型：string（字符串），hash（哈希），list（列表），set（集合）及zset(sorted set：有序集合)  2.1常用数据类型  字符串（String）：最基本的数据类型，可以存储任意二进制数据，以及普通的文本字符串。 哈希（Hash）：包含键值对的无序散列，适合保存对象信息，每个键值对存储了字段和值之间的映射关系。 列表（List）：按照插入顺序排序的字">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis的五种数据类型和相关命令">
+<meta property="og:url" content="https://www.haipeng-lin.cn/posts/121a9280.html">
+<meta property="og:site_name" content="拾忆鱼&#39;s Blog">
+<meta property="og:description" content="Redis支持五种数据类型：string（字符串），hash（哈希），list（列表），set（集合）及zset(sorted set：有序集合)  2.1常用数据类型  字符串（String）：最基本的数据类型，可以存储任意二进制数据，以及普通的文本字符串。 哈希（Hash）：包含键值对的无序散列，适合保存对象信息，每个键值对存储了字段和值之间的映射关系。 列表（List）：按照插入顺序排序的字">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i-blog.csdnimg.cn/blog_migrate/e6dda8ebe0dccc64ded2ec9b653f79ee.jpeg#pic_center">
+<meta property="article:published_time" content="2024-08-30T09:19:49.000Z">
+<meta property="article:modified_time" content="2024-09-01T01:42:30.840Z">
+<meta property="article:author" content="拾忆鱼">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i-blog.csdnimg.cn/blog_migrate/e6dda8ebe0dccc64ded2ec9b653f79ee.jpeg#pic_center"><link rel="shortcut icon" href="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101530409.png"><link rel="canonical" href="https://www.haipeng-lin.cn/posts/121a9280"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="msvalidate.01" content="7A691DA1ABC779E7F680EF66E1D934AA"/><meta name="google-site-verification"/><meta name="baidu-site-verification" content="XXXXX"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":250},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: 拾忆鱼","link":"链接: ","source":"来源: 拾忆鱼's Blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Redis的五种数据类型和相关命令',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-09-01 09:42:30'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/gitcalendar/css/gitcalendar.css"/><link rel="stylesheet" href="/css/tag_plugins.css"><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-swiper-anzhiyu@1.0.4/lib/swiper.min.css"><script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script><link rel="stylesheet" href="/css/tags.css"><link rel="stylesheet" href="/css/double_article.css"><link rel="stylesheet" href="/css/nav.css"><link rel="stylesheet" href="/css/essay_page.css"><script type="text/javascript" src="/js/echarts.min.js"></script><script type="text/javascript" src="/js/copy.js"></script><script src="https://cdn1.tianli0.top/npm/vue@2.6.14/dist/vue.min.js"></script><script src="https://cdn1.tianli0.top/npm/element-ui@2.15.6/lib/index.js"></script><link rel="stylesheet" href="https://cdn1.tianli0.top/npm/element-ui@2.15.6/packages/theme-chalk/lib/index.css"><link rel="stylesheet" href="/css/copyright.css"><link rel="stylesheet" href="/css/progress_bar.css"><link rel="stylesheet" href="/css/footer.css"><link rel="stylesheet" href="/css/page.css"><link rel="stylesheet" href="/css/layout.css"><link rel="stylesheet" href="/css/color.css"><link rel="stylesheet" href="/css/cursors/cursors.css"><link rel="stylesheet" href="/css/fonts/font.css"><link rel="stylesheet" href="/css/about/about.css"><link rel="stylesheet" href="/css/about/careers.css"><link rel="stylesheet" href="/css/about/genshinimpact.css"><link rel="stylesheet" href="/css/about/hello-about.css"><link rel="stylesheet" href="/css/about/site.css"><link rel="stylesheet" href="/css/about/skills.css"><link rel="stylesheet" href="/css/photo.css"><link rel="stylesheet" href="/css/icat.css"><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="拾忆鱼's Blog" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101530409.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">59</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives"><i class="fa-fw fas fa-archive"></i><span> 全部</span></a></li><li><a class="site-page child" href="/categories"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heart"></i><span> 空间</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/essay"><i class="fa-fw fas fa-comments"></i><span> 碎碎念</span></a></li><li><a class="site-page child" href="/collect"><i class="fa-fw fas fa-walking"></i><span> 足迹阁</span></a></li><li><a class="site-page child" href="/photo"><i class="fa-fw fas fa-images"></i><span> 照片墙</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about"><i class="fa-fw fas fa-address-card"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">拾忆鱼's Blog</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives"><i class="fa-fw fas fa-archive"></i><span> 全部</span></a></li><li><a class="site-page child" href="/categories"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heart"></i><span> 空间</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/essay"><i class="fa-fw fas fa-comments"></i><span> 碎碎念</span></a></li><li><a class="site-page child" href="/collect"><i class="fa-fw fas fa-walking"></i><span> 足迹阁</span></a></li><li><a class="site-page child" href="/photo"><i class="fa-fw fas fa-images"></i><span> 照片墙</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about"><i class="fa-fw fas fa-address-card"></i><span> 关于</span></a></div></div><center id="name-container"><a id="page-name" href="javascript:btf.scrollToDest(0, 500)">PAGE_NAME</a></center></div><div id="toggleButtons"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">Redis的五种数据类型和相关命令</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-08-30T09:19:49.000Z" title="发表于 2024-08-30 17:19:49">2024-08-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-09-01T01:42:30.840Z" title="更新于 2024-09-01 09:42:30">2024-09-01</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E3%80%90Redis%E3%80%91/">【Redis】</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Redis的五种数据类型和相关命令"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="post-content" id="article-container"><p>Redis支持五种数据类型：string（字符串），hash（哈希），list（列表），set（集合）及zset(sorted set：有序集合)</p>
+<h2 id="21常用数据类型"><a class="markdownIt-Anchor" href="#21常用数据类型"></a> 2.1常用数据类型</h2>
+<ol>
+<li><mark><strong>字符串</strong></mark>（String）：最基本的数据类型，可以存储任意二进制数据，以及普通的文本字符串。</li>
+<li><mark><strong>哈希</strong></mark>（Hash）：包含键值对的无序散列，适合保存对象信息，每个键值对存储了字段和值之间的映射关系。</li>
+<li><mark><strong>列表</strong></mark>（List）：按照插入顺序排序的字符串元素列表，支持在列表的两端进行插入、删除、获取等操作，可实现栈和队列的功能。</li>
+<li><mark><strong>集合</strong></mark>（Set）：无序且不可重复的字符串元素集合，支持集合的交集、并集、差集等操作，以及添加、删除、随机获取元素。</li>
+<li><mark><strong>有序集合</strong></mark>（Sorted Set）：与集合类似，但每个元素都关联着一个分数（score）用于排序，可以按分数范围或成员值获取元素。</li>
+</ol>
+<blockquote>
+<p>注意：Redis的数据类型，是指**<mark>value的数据类型，而Key普遍都是字符串类型</mark>**</p>
+</blockquote>
+<h2 id="22特性和用途"><a class="markdownIt-Anchor" href="#22特性和用途"></a> 2.2特性和用途</h2>
+<h3 id="221字符串string"><a class="markdownIt-Anchor" href="#221字符串string"></a> 2.2.1字符串（String）</h3>
+<ul>
+<li>
+<p>特点：</p>
+<ul>
+<li>string 是 redis 最基本的类型，你可以理解成与 Memcached 一模一样的类型，一个 key 对应一个 value。</li>
+<li>string 类型是二进制安全的。意思是 redis 的 string 可以包含任何数据。比如jpg图片或者序列化的对象。</li>
+<li><mark><strong>string 类型的值最大能存储 512MB</strong></mark>。</li>
+</ul>
+</li>
+<li>
+<p>用途：字符串常用于缓存、计数器、分布式锁等场景。可以用于存储简单的键值对数据，或者用作复杂的数据结构的序列化存储。</p>
+</li>
+<li>
+<p>实战：将字符串用于存储较大的值时，要注意数据大小的限制。合理利用字符串操作函数，如使用 incr 自增计数器，或使用 append 追加字符串值。</p>
+</li>
+<li>
+<p>举例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">redis 127.0.0.1:6379&gt; SET aaaa &quot;菜鸟教程&quot;</span><br><span class="line">OK</span><br><span class="line">redis 127.0.0.1:6379&gt; GET aaaa</span><br><span class="line">&quot;菜鸟教程&quot;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="222哈希hash"><a class="markdownIt-Anchor" href="#222哈希hash"></a> 2.2.2哈希（Hash）</h3>
+<ul>
+<li>
+<p>特性：哈希类型是一个<mark>键值对的无序散列表</mark>，适合<mark>存储对象的多个属性</mark>。哈希可以嵌套多层，支持单独的字段的读取、更新和删除操作</p>
+</li>
+<li>
+<p>用途：哈希常用于存储和操作对象的属性，如<mark>用户信息、文章信息</mark>等。可以减少键名的冗余，提高数据结构的可读性和可维护性</p>
+</li>
+<li>
+<p>实战：使用哈希可以更好地组织复杂的数据结构，充分利用字段级别的读取和更新操作。<mark>可以使用 HSET 和 HMSET 分别设置单个和多个字段的值</mark></p>
+</li>
+<li>
+<p>举例</p>
+<blockquote>
+<p>使用了 Redis <strong>HMSET, HGET</strong> 命令，<strong>HMSET</strong> 设置了两个 <strong>field=&gt;value</strong> 对, HGET 获取对应 <strong>field</strong> 对应的 <strong>value</strong>。</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">redis 127.0.0.1:6379&gt; HMSET aa field1 &quot;Hello&quot; field2 &quot;World&quot;</span><br><span class="line">&quot;OK&quot;</span><br><span class="line">redis 127.0.0.1:6379&gt; HGET aa field1</span><br><span class="line">&quot;Hello&quot;</span><br><span class="line">redis 127.0.0.1:6379&gt; HGET aa field2</span><br><span class="line">&quot;World&quot;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="223列表list"><a class="markdownIt-Anchor" href="#223列表list"></a> 2.2.3列表（List）</h3>
+<ul>
+<li>
+<p>特性：列表是一个<mark>按照插入顺序排序的字符串元素集合，支持在列表的两端（头部为左边，尾部为右边）进行插入、删除和获取元素</mark>。元素可以重复，列表的长度可以动态变化。</p>
+</li>
+<li>
+<p>用途：列表常用于实现消息队列、任务队列、操作日志、聊天消息记录等。可以实现先进先出（FIFO）或后进先出（LIFO）的数据结构。</p>
+</li>
+<li>
+<p>实战：使用列表操作函数，如 LPUSH、RPUSH、LPOP、RPOP 可以方便地操作列表。在读取大型列表时，要注意时间复杂度和性能问题。</p>
+</li>
+<li>
+<p>举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">redis 127.0.0.1:6379&gt; lpush aa redis</span><br><span class="line">(integer) 1</span><br><span class="line">redis 127.0.0.1:6379&gt; lpush aa mongodb</span><br><span class="line">(integer) 2</span><br><span class="line">redis 127.0.0.1:6379&gt; lpush aa rabbitmq</span><br><span class="line">(integer) 3</span><br><span class="line">redis 127.0.0.1:6379&gt; lrange aa 0 10</span><br><span class="line">1) &quot;rabbitmq&quot;</span><br><span class="line">2) &quot;mongodb&quot;</span><br><span class="line">3) &quot;redis&quot;</span><br><span class="line">redis 127.0.0.1:6379&gt;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="224集合set"><a class="markdownIt-Anchor" href="#224集合set"></a> 2.2.4集合（Set）</h3>
+<ul>
+<li>
+<p>特性：集合是一个<mark>无序且不可重复</mark>的字符串元素集合，支持集合的交集、并集、差集等操作，以及添加、删除、随机获取元素等。</p>
+</li>
+<li>
+<p>用途：集合常用于<mark>去重、关注列表、标签、好友列表</mark>等场景。由于集合元素是无序的，可以快速进行成员检测和集合操作。</p>
+</li>
+<li>
+<p>最佳实战：使用集合的交集、并集、差集操作可以方便地进行数据筛选和计算。使用 <mark>SADD、SREM 进行成员添加和删除</mark>。</p>
+</li>
+<li>
+<p>举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">redis 127.0.0.1:6379&gt; sadd runoob redis</span><br><span class="line">(integer) 1</span><br><span class="line">redis 127.0.0.1:6379&gt; sadd runoob mongodb</span><br><span class="line">(integer) 1</span><br><span class="line">redis 127.0.0.1:6379&gt; sadd runoob rabbitmq</span><br><span class="line">(integer) 1</span><br><span class="line">redis 127.0.0.1:6379&gt; sadd runoob rabbitmq</span><br><span class="line">(integer) 0</span><br><span class="line">redis 127.0.0.1:6379&gt; smembers runoob</span><br><span class="line"></span><br><span class="line">1) &quot;redis&quot;</span><br><span class="line">2) &quot;rabbitmq&quot;</span><br><span class="line">3) &quot;mongodb&quot;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="225有序集合sorted-set"><a class="markdownIt-Anchor" href="#225有序集合sorted-set"></a> 2.2.5有序集合（Sorted Set）</h3>
+<ul>
+<li>
+<p>特性：有序集合是一个与每个成员关联的浮点数分数（score），可用于对成员进行排序。支持按照分数范围或成员值获取元素。</p>
+</li>
+<li>
+<p>用途：有序集合常用于排行榜、计分系统、优先级队列等场景。可以按照分数进行排名和排序。</p>
+</li>
+<li>
+<p>最佳实战：利用有序集合的分数，可以快速进行成员的增删改查操作。使用 <mark>ZADD、ZREM 进行成员的添加和删除</mark>，使用 ZRANGE 和 ZREVRANGE 进行范围查询。</p>
+</li>
+<li>
+<p>举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">redis 127.0.0.1:6379&gt; zadd runoob 0 redis</span><br><span class="line">(integer) 1</span><br><span class="line">redis 127.0.0.1:6379&gt; zadd runoob 0 mongodb</span><br><span class="line">(integer) 1</span><br><span class="line">redis 127.0.0.1:6379&gt; zadd runoob 0 rabbitmq</span><br><span class="line">(integer) 1</span><br><span class="line">redis 127.0.0.1:6379&gt; zadd runoob 0 rabbitmq</span><br><span class="line">(integer) 0</span><br><span class="line">redis 127.0.0.1:6379&gt; ZRANGEBYSCORE runoob 0 1000</span><br><span class="line">1) &quot;mongodb&quot;</span><br><span class="line">2) &quot;rabbitmq&quot;</span><br><span class="line">3) &quot;redis&quot;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="23小结"><a class="markdownIt-Anchor" href="#23小结"></a> 2.3小结</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">类型</th>
+<th style="text-align:center">简介</th>
+<th style="text-align:center">特性</th>
+<th style="text-align:center">场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">String(字符串)</td>
+<td style="text-align:center">二进制安全</td>
+<td style="text-align:center">可以包含任何数据,比如jpg图片或者序列化的对象,一个键最大能存储512M</td>
+<td style="text-align:center">—</td>
+</tr>
+<tr>
+<td style="text-align:center">Hash(字典)</td>
+<td style="text-align:center">键值对集合,即编程语言中的Map类型</td>
+<td style="text-align:center">适合存储对象,并且可以像数据库中update一个属性一样只修改某一项属性值(Memcached中需要取出整个字符串反序列化成对象修改完再序列化存回去)</td>
+<td style="text-align:center">存储、读取、修改用户属性</td>
+</tr>
+<tr>
+<td style="text-align:center">List(列表)</td>
+<td style="text-align:center">链表(双向链表)</td>
+<td style="text-align:center">增删快,提供了操作某一段元素的API</td>
+<td style="text-align:center">1==,最新消息排行等功能==(比如朋友圈的时间线) 2,<mark>消息队列</mark></td>
+</tr>
+<tr>
+<td style="text-align:center">Set(集合)</td>
+<td style="text-align:center">哈希表实现,元素不重复</td>
+<td style="text-align:center">1、添加、删除,查找的复杂度都是O(1) 2、为集合提供了求交集、并集、差集等操作</td>
+<td style="text-align:center">1、共同好友 2、利用唯一性,统计访问网站的所有独立ip 3、好友推荐时,根据tag求交集,大于某个阈值就可以推荐</td>
+</tr>
+<tr>
+<td style="text-align:center">Sorted Set(有序集合)</td>
+<td style="text-align:center">将Set中的元素增加一个权重参数score,元素按score有序排列</td>
+<td style="text-align:center">数据插入集合时,已经进行天然排序</td>
+<td style="text-align:center">1、排行榜 2、带权重的消息队列</td>
+</tr>
+</tbody>
+</table>
+<h2 id="24连接命令"><a class="markdownIt-Anchor" href="#24连接命令"></a> 2.4连接命令</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#基本语法</span><br><span class="line">#redis-clis</span><br><span class="line"></span><br><span class="line">#远程服务连接redis命令</span><br><span class="line">$ redis-cli -h host -p port -a password</span><br></pre></td></tr></table></figure>
+<h2 id="25字符串keys命令重要"><a class="markdownIt-Anchor" href="#25字符串keys命令重要"></a> 2.5字符串—keys命令（重要）</h2>
+<ol>
+<li><mark>SET key value</mark>：设置指定 key 的值为给定的 value。</li>
+<li><mark>GET key</mark>：获取指定 key 的值。</li>
+<li><mark>DEL key</mark>：删除指定 key。</li>
+<li><mark>INCR key</mark>：将指定 key 的值增加1。</li>
+<li>DECR key：将指定 key 的值减少1。</li>
+<li>APPEND key value：将指定 value 追加到指定 key 的值末尾。</li>
+<li>STRLEN key：返回指定 key 值的字符串长度。</li>
+<li><mark>SETEX key seconds value</mark>：设置指定 key 的值，并设置过期时间（秒）。</li>
+<li><mark>SETNX key value</mark>：只在指定 key 不存在时，设置 key 的值为给定的 value。</li>
+<li><mark>GETSET key value</mark>：设置指定 key 的值，并返回旧值。</li>
+<li><mark>MSET key1 value1 key2 value2</mark> …：设置多个 key-value 对。</li>
+<li><mark>MGET key1 key2 …</mark>：获取多个 key 的值。</li>
+<li><mark>STRLEN key</mark>：返回指定 key 值的字符串长度。</li>
+</ol>
+<h2 id="26哈希hash命令"><a class="markdownIt-Anchor" href="#26哈希hash命令"></a> 2.6哈希—hash命令</h2>
+<ol>
+<li><mark>HSET key field value</mark>：设置哈希类型中指定 key 的 field 域的值为给定的 value。</li>
+<li><mark>HGET key field</mark>：获取哈希类型中指定 key 的 field 域的值。</li>
+<li><mark>HDEL key field1 field2</mark> …：删除哈希类型中指定 key 的一个或多个 field 域。</li>
+<li>HEXISTS key field：检查哈希类型中指定 key 是否存在指定的 field 域。</li>
+<li>HGETALL key：获取哈希类型中指定 key 的所有 field 和 value。</li>
+<li><mark>HKEYS key</mark>：获取哈希类型中指定 key 的所有 field。</li>
+<li><mark>HVALS key</mark>：获取哈希类型中指定 key 的所有 value。</li>
+<li>HINCRBY key field increment：将哈希类型中指定 key 的 field 域的值增加指定的 increment 值。</li>
+<li><mark>HMSET key field1 value1 field2 value2 …：设置哈希类型中指定 key 的多个 field 和 value</mark>。</li>
+<li>HMGET key field1 field2 …：获取哈希类型中指定 key 的多个 field 的值。</li>
+<li>HLEN key：获取哈希类型中指定 key 的 field 数量。</li>
+<li>HSTRLEN key field：获取哈希类型中指定 key 的 field 域的字符串长度。</li>
+</ol>
+<h2 id="27列表list命令"><a class="markdownIt-Anchor" href="#27列表list命令"></a> 2.7列表—list命令</h2>
+<ol>
+<li><mark>LPUSH key value1 [value2 …]</mark>：将一个或多个值插入到列表的左侧（头部）。</li>
+<li>RPUSH key value1 [value2 …]：将一个或多个值插入到列表的右侧（尾部）。</li>
+<li><mark>LPOP key</mark>：获取并删除列表左侧的第一个元素。</li>
+<li>RPOP key：获取并删除列表右侧的第一个元素。</li>
+<li><mark>LLEN key</mark>：获取列表的长度。</li>
+<li>LRANGE key start stop：获取指定范围内的元素，包括 start 和 stop，索引从0开始。</li>
+<li>LINDEX key index：获取列表中指定索引位置的元素。</li>
+<li>LSET key index value：设置列表中指定索引位置的元素值。</li>
+<li>LREM key count value：从列表中删除指定个数的元素。</li>
+<li>LTRIM key start stop：修剪（按照索引范围）列表，只保留指定范围内的元素。</li>
+<li>RPOPLPUSH source destination：从源列表右侧弹出最后一个元素，并将其插入目标列表的左侧。</li>
+<li>BLPOP key1 [key2 …] timeout：从左侧阻塞地弹出一个或多个列表的元素，如果列表是空的，则会阻塞直到有元素可用或者超过超时时间。</li>
+<li>BRPOP key1 [key2 …] timeout：从右侧阻塞地弹出一个或多个列表的元素，如果列表是空的，则会阻塞直到有元素可用或者超过超时时间。</li>
+</ol>
+<h2 id="28集合set命令"><a class="markdownIt-Anchor" href="#28集合set命令"></a> 2.8集合—set命令</h2>
+<ol>
+<li><mark>SADD key member1 [member2 …]</mark>：向集合中添加一个或多个成员。</li>
+<li><mark>SMEMBERS key</mark>：获取集合中的所有成员。</li>
+<li>SISMEMBER key member：判断指定成员是否存在于集合中。</li>
+<li>SCARD key：获取集合中的成员数量。</li>
+<li>SREM key member1 [member2 …]：移除集合中的一个或多个成员。</li>
+<li>SRANDMEMBER key [count]：从集合中随机获取一个或多个成员。</li>
+<li>SPOP key [count]：随机移除并返回集合中的一个或多个成员。</li>
+<li>SMOVE source destination member：将指定成员从一个集合移动到另一个集合。</li>
+<li><mark>SUNION key1 [key2 …]</mark>：获取多个集合的并集。</li>
+<li><mark>SINTER key1 [key2 …]</mark>：获取多个集合的交集。</li>
+<li>SDIFF key1 [key2 …]：获取多个集合的差集（属于第一个集合，但不属于其他集合）。</li>
+<li>SDIFFSTORE destination key1 [key2 …]：计算多个集合的差集，并将结果存储在指定的目标集合中。</li>
+</ol>
+<h2 id="29有序集合sorted-set命令"><a class="markdownIt-Anchor" href="#29有序集合sorted-set命令"></a> 2.9有序集合—Sorted Set命令</h2>
+<ol>
+<li>ZADD key score1 member1 [score2 member2 …]：向有序集合中添加一个或多个成员，并指定对应的分数。</li>
+<li>ZRANGE key start stop [WITHSCORES]：按照分数从低到高的顺序，获取有序集合中指定范围内的成员。</li>
+<li>ZREVRANGE key start stop [WITHSCORES]：按照分数从高到低的顺序，获取有序集合中指定范围内的成员。</li>
+<li>ZRANK key member：获取有序集合中指定成员的排名（按照分数从低到高排序）。</li>
+<li>ZREVRANK key member：获取有序集合中指定成员的排名（按照分数从高到低排序）。</li>
+<li>ZSCORE key member：获取有序集合中指定成员的分数。</li>
+<li>ZCOUNT key min max：获取有序集合中分数范围内的成员数量。</li>
+<li>ZREM key member1 [member2 …]：从有序集合中移除一个或多个成员。</li>
+<li>ZINCRBY key increment member：将有序集合中指定成员的分数增加指定的增量值。</li>
+<li>ZUNIONSTORE destination numkeys key1 [key2 …] [WEIGHTS weight1 [weight2 …]] [AGGREGATE SUM|MIN|MAX]：计算多个有序集合的并集，并将结果存储在指定的目标有序集合中。</li>
+<li>ZINTERSTORE destination numkeys key1 [key2 …] [WEIGHTS weight1 [weight2 …]] [AGGREGATE SUM|MIN|MAX]：计算多个有序集合的交集，并将结果存储在指定的目标有序集合中。</li>
+</ol>
+<h2 id="210通用操作"><a class="markdownIt-Anchor" href="#210通用操作"></a> 2.10通用操作</h2>
+<ol>
+<li>SET key value：设置指定键的值。</li>
+<li>GET key：获取指定键的值。</li>
+<li>DEL key1 [key2 …]：删除一个或多个键。</li>
+<li>EXISTS key：检查指定键是否存在。</li>
+<li>KEYS pattern：查找与指定模式匹配的键集合。</li>
+<li>EXPIRE key seconds：设置键的过期时间，单位为秒。</li>
+<li>TTL key：获取键的剩余过期时间，单位为秒。</li>
+<li>INCR key：将键的值加一。</li>
+<li>DECR key：将键的值减一。</li>
+<li>INCRBY key increment：将键的值增加指定的增量。</li>
+<li>DECRBY key decrement：将键的值减少指定的增量。</li>
+<li>APPEND key value：将指定字符串追加到键的值末尾。</li>
+<li>HSET key field value：将哈希表中指定字段的值设置为指定值。</li>
+<li>HGET key field：获取哈希表中指定字段的值。</li>
+<li>HMSET key field1 value1 [field2 value2 …]：设置哈希表中多个字段的值。</li>
+<li>HMGET key field1 [field2 …]：获取哈希表中多个字段的值。</li>
+<li>HGETALL key：获取哈希表中所有字段和值。</li>
+<li>RPUSHX key value：将值插入到列表的右侧（尾部），仅当列表存在时。</li>
+<li>LPUSHX key value：将值插入到列表的左侧（头部），仅当列表存在时。</li>
+<li>PUBLISH channel message：将消息发布到指定的频道。</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__title"><span class="post-copyright-info"><h>Redis的五种数据类型和相关命令</h></span></div><div class="post-copyright__type"><span class="post-copyright-info"><a href="https://www.haipeng-lin.cn/posts/121a9280.html">https://www.haipeng-lin.cn/posts/121a9280.html</a></span></div><div class="post-copyright-m"><div class="post-copyright-m-info"><div class="post-copyright-a" style="display: inline-block;width: 120px"><h>作者</h><div class="post-copyright-cc-info"><h>拾忆鱼</h></div></div><div class="post-copyright-c" style="display: inline-block;width: 120px"><h>发布于</h><div class="post-copyright-cc-info"><h>2024-08-30</h></div></div><div class="post-copyright-u" style="display: inline-block;width: 120px"><h>更新于</h><div class="post-copyright-cc-info"><h>2024-09-01</h></div></div><div class="post-copyright-c" style="display: inline-block;width: 120px"><h>许可协议</h><div class="post-copyright-cc-info"><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a rel="noopener" target="_blank" title="CC BY 4.0" href="https://creativecommons.org/licenses/by/4.0/deed.zh">CC BY 4.0</a></div></div></div></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://i-blog.csdnimg.cn/blog_migrate/e6dda8ebe0dccc64ded2ec9b653f79ee.jpeg#pic_center" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://lib.baomitu.com/social-share.js/1.0.16/css/share.min.css" media="print" onload="this.media='all'"><script src="https://lib.baomitu.com/social-share.js/1.0.16/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/4ebad2d4.html"><img class="prev-cover" src="https://i-blog.csdnimg.cn/blog_migrate/fc6ebdd5464d6c592f3363bc942cf14f.jpeg#pic_center" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">SpringBoot整合Redis</div></div></a></div><div class="next-post pull-right"><a href="/posts/fa488bba.html"><img class="next-cover" src="/null" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">快速了解Redis</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101530409.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">拾忆鱼</div><div class="author-info__description">一条菜鱼的小破站</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">59</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">小菜鱼正在从CSDN博客搬家，尽请期待　　      地址：<a target="_blank" rel="noopener" href="https://haipeng-lin.blog.csdn.net/">haipeng-lin.blog.csdn.net</a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#21%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-text"> 2.1常用数据类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#22%E7%89%B9%E6%80%A7%E5%92%8C%E7%94%A8%E9%80%94"><span class="toc-text"> 2.2特性和用途</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#221%E5%AD%97%E7%AC%A6%E4%B8%B2string"><span class="toc-text"> 2.2.1字符串（String）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#222%E5%93%88%E5%B8%8Chash"><span class="toc-text"> 2.2.2哈希（Hash）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#223%E5%88%97%E8%A1%A8list"><span class="toc-text"> 2.2.3列表（List）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#224%E9%9B%86%E5%90%88set"><span class="toc-text"> 2.2.4集合（Set）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#225%E6%9C%89%E5%BA%8F%E9%9B%86%E5%90%88sorted-set"><span class="toc-text"> 2.2.5有序集合（Sorted Set）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#23%E5%B0%8F%E7%BB%93"><span class="toc-text"> 2.3小结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#24%E8%BF%9E%E6%8E%A5%E5%91%BD%E4%BB%A4"><span class="toc-text"> 2.4连接命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#25%E5%AD%97%E7%AC%A6%E4%B8%B2keys%E5%91%BD%E4%BB%A4%E9%87%8D%E8%A6%81"><span class="toc-text"> 2.5字符串—keys命令（重要）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#26%E5%93%88%E5%B8%8Chash%E5%91%BD%E4%BB%A4"><span class="toc-text"> 2.6哈希—hash命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#27%E5%88%97%E8%A1%A8list%E5%91%BD%E4%BB%A4"><span class="toc-text"> 2.7列表—list命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#28%E9%9B%86%E5%90%88set%E5%91%BD%E4%BB%A4"><span class="toc-text"> 2.8集合—set命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#29%E6%9C%89%E5%BA%8F%E9%9B%86%E5%90%88sorted-set%E5%91%BD%E4%BB%A4"><span class="toc-text"> 2.9有序集合—Sorted Set命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#210%E9%80%9A%E7%94%A8%E6%93%8D%E4%BD%9C"><span class="toc-text"> 2.10通用操作</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/8239deef.html" title="基于微信公众号+验证码实现微信登录"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410282106730.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="基于微信公众号+验证码实现微信登录"/></a><div class="content"><a class="title" href="/posts/8239deef.html" title="基于微信公众号+验证码实现微信登录">基于微信公众号+验证码实现微信登录</a><time datetime="2024-10-28T13:05:25.000Z" title="发表于 2024-10-28 21:05:25">2024-10-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/172c1a2d.html" title="ElasticSearch学习笔记"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410161138400.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ElasticSearch学习笔记"/></a><div class="content"><a class="title" href="/posts/172c1a2d.html" title="ElasticSearch学习笔记">ElasticSearch学习笔记</a><time datetime="2024-10-16T03:36:17.000Z" title="发表于 2024-10-16 11:36:17">2024-10-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/6982816f.html" title="RocketMQ学习笔记"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410131719724.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="RocketMQ学习笔记"/></a><div class="content"><a class="title" href="/posts/6982816f.html" title="RocketMQ学习笔记">RocketMQ学习笔记</a><time datetime="2024-10-13T09:17:30.000Z" title="发表于 2024-10-13 17:17:30">2024-10-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/d1f540b5.html" title="收集 | 有情怀的网站"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410111137749.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="收集 | 有情怀的网站"/></a><div class="content"><a class="title" href="/posts/d1f540b5.html" title="收集 | 有情怀的网站">收集 | 有情怀的网站</a><time datetime="2024-10-10T12:21:25.000Z" title="发表于 2024-10-10 20:21:25">2024-10-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/d0dd6ec8.html" title="为什么HashMap线程不安全"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101225904.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="为什么HashMap线程不安全"/></a><div class="content"><a class="title" href="/posts/d0dd6ec8.html" title="为什么HashMap线程不安全">为什么HashMap线程不安全</a><time datetime="2024-10-10T04:24:58.000Z" title="发表于 2024-10-10 12:24:58">2024-10-10</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div id="footer-left"><div class="footer-title"><span>拾忆鱼's Blog | </span><span class="footer-copyright">&copy;2024 By 拾忆鱼</span></div><div class="wordcount"></div><span>拾忆鱼 已经写了 260k 字，</span><span>好像写完一本 钱钟书 的 《围城》 了啊</span></div><div id="footer-right"><div class="footer_custom_text"><div id="runtime"></div></div><div class="footer-totop"><i class="fas fa-chevron-up" onclick="rmf.scrollToTop()"></i></div><div class="footer-info"><p>使用Hexo框架 | 基于butterfly修改 | 萌ICP备20240730号</p><!--a(title='湘公网安备 2023003198号' href='http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023003198')= '湘公网安备 2023003198号'--><!--a(title='湘ICP备2023003198号' href='https://beian.miit.gov.cn/')= '湘ICP备2023003198号'--></div><div class="footer-service"><a title="51LA" target="_blank" rel="noopener" href="https://www.51.la"><img alt="51LA" src="https://gitee.com/linhaipengg/md_-picture/raw/master/51la.png"/></a><a title="CC BY-NC-SA 4.0" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh"><img alt="CC BY-NC-SA 4.0" src="https://img.june-pj.cn/img/2024/01/16/cc.webp"/></a></div></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"><script>(()=>{
+  const init = () => {
+    twikoo.init(Object.assign({
+      el: '#twikoo-wrap',
+      envId: 'https://twikoo.haipeng-lin.cn',
+      region: '',
+      onCommentLoaded: function () {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      }
+    }, null))
+  }
+
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://twikoo.haipeng-lin.cn',
+      region: '',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(function (res) {
+      countELement.innerText = res[0].count
+    }).catch(function (err) {
+      console.error(err);
+    });
+  }
+
+  const runFn = () => {
+    init()
+    
+  }
+
+  const loadTwikoo = () => {
+    if (typeof twikoo === 'object') {
+      setTimeout(runFn,0)
+      return
+    } 
+    getScript('https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/twikoo/1.4.18/twikoo.all.min.js').then(runFn)
+  }
+
+  if ('Twikoo' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = () => {
+      loadTwikoo()
+    }
+  }
+})()</script></div><script data-pjax src="/gitcalendar/js/gitcalendar.js"></script><script data-pjax src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/js/swiper.min.js"></script><script src="/js/footer.js"></script><script type="text/javascript" src="/js/main.js"></script><script data-pjax type="text/javascript" src="/js/essay/essay.js"></script><script data-pjax type="text/javascript" src="/js/essay/waterfall.js"></script><link rel="stylesheet" href="/css/swiper.css"><script data-pjax src="/js/categoryBar/categoryBar.js"></script><link data-pjax defer="" rel="stylesheet" href="/css/categoryBar/heoMainColor.css"><link data-pjax defer="" rel="stylesheet" href="/css/categoryBar/categoryBar.css"><script type="text/javascript" src="/js/nav.js"></script><script src="/js/countup.js"></script><script data-pjax type="text/javascript" src="/js/memos/waterfall.min.js"></script><script data-pjax type="text/javascript" src="/js/memos/imgStatus.min.js"></script><script data-pjax type="text/javascript" src="/js/memos/lately.min.js"></script><script type="text/javascript" src="/js/memos/photo.js"></script><script type="text/javascript" src="/js/icat.js"></script><link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/aplayer/1.10.1/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/aplayer/1.10.1/APlayer.min.js"></script><script src="https://cdn1.tianli0.top/npm/js-heo@1.0.12/metingjs/Meting.min.js"></script><script src="https://lib.baomitu.com/pjax/0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  typeof disqusjs === 'object' && disqusjs.destroy()
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

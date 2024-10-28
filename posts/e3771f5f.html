@@ -1,0 +1,829 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>综合知识 | 拾忆鱼's Blog</title><meta name="author" content="拾忆鱼"><meta name="copyright" content="拾忆鱼"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="referrer" content="no-referrer" /><meta name="description" content="计算机网络  1.计算机网络基础  1.1七层模型 OSI 七层模型 是国际标准化组织提出一个网络分层模型，其大体结构以及每一层提供的功能如下图所示：  每一层都专注做一件事情，并且每一层都需要使用下一层提供的功能比如传输层需要使用网络层提供的路由和寻址功能，这样传输层才知道把数据传输到哪里去。  1.2TCP&#x2F;IP四层模型 TCP&#x2F;IP 四层模型 是目前被广泛采用的一种模型,我们可以将 TCP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="综合知识">
+<meta property="og:url" content="https://www.haipeng-lin.cn/posts/e3771f5f.html">
+<meta property="og:site_name" content="拾忆鱼&#39;s Blog">
+<meta property="og:description" content="计算机网络  1.计算机网络基础  1.1七层模型 OSI 七层模型 是国际标准化组织提出一个网络分层模型，其大体结构以及每一层提供的功能如下图所示：  每一层都专注做一件事情，并且每一层都需要使用下一层提供的功能比如传输层需要使用网络层提供的路由和寻址功能，这样传输层才知道把数据传输到哪里去。  1.2TCP&#x2F;IP四层模型 TCP&#x2F;IP 四层模型 是目前被广泛采用的一种模型,我们可以将 TCP">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202409162327046.png">
+<meta property="article:published_time" content="2024-09-16T15:27:49.000Z">
+<meta property="article:modified_time" content="2024-09-16T15:29:26.413Z">
+<meta property="article:author" content="拾忆鱼">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202409162327046.png"><link rel="shortcut icon" href="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101530409.png"><link rel="canonical" href="https://www.haipeng-lin.cn/posts/e3771f5f"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="msvalidate.01" content="7A691DA1ABC779E7F680EF66E1D934AA"/><meta name="google-site-verification"/><meta name="baidu-site-verification" content="XXXXX"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":250},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: 拾忆鱼","link":"链接: ","source":"来源: 拾忆鱼's Blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '综合知识',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-09-16 23:29:26'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/gitcalendar/css/gitcalendar.css"/><link rel="stylesheet" href="/css/tag_plugins.css"><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-swiper-anzhiyu@1.0.4/lib/swiper.min.css"><script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script><link rel="stylesheet" href="/css/tags.css"><link rel="stylesheet" href="/css/double_article.css"><link rel="stylesheet" href="/css/nav.css"><link rel="stylesheet" href="/css/essay_page.css"><script type="text/javascript" src="/js/echarts.min.js"></script><script type="text/javascript" src="/js/copy.js"></script><script src="https://cdn1.tianli0.top/npm/vue@2.6.14/dist/vue.min.js"></script><script src="https://cdn1.tianli0.top/npm/element-ui@2.15.6/lib/index.js"></script><link rel="stylesheet" href="https://cdn1.tianli0.top/npm/element-ui@2.15.6/packages/theme-chalk/lib/index.css"><link rel="stylesheet" href="/css/copyright.css"><link rel="stylesheet" href="/css/progress_bar.css"><link rel="stylesheet" href="/css/footer.css"><link rel="stylesheet" href="/css/page.css"><link rel="stylesheet" href="/css/layout.css"><link rel="stylesheet" href="/css/color.css"><link rel="stylesheet" href="/css/cursors/cursors.css"><link rel="stylesheet" href="/css/fonts/font.css"><link rel="stylesheet" href="/css/about/about.css"><link rel="stylesheet" href="/css/about/careers.css"><link rel="stylesheet" href="/css/about/genshinimpact.css"><link rel="stylesheet" href="/css/about/hello-about.css"><link rel="stylesheet" href="/css/about/site.css"><link rel="stylesheet" href="/css/about/skills.css"><link rel="stylesheet" href="/css/photo.css"><link rel="stylesheet" href="/css/icat.css"><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="拾忆鱼's Blog" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101530409.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">59</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives"><i class="fa-fw fas fa-archive"></i><span> 全部</span></a></li><li><a class="site-page child" href="/categories"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heart"></i><span> 空间</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/essay"><i class="fa-fw fas fa-comments"></i><span> 碎碎念</span></a></li><li><a class="site-page child" href="/collect"><i class="fa-fw fas fa-walking"></i><span> 足迹阁</span></a></li><li><a class="site-page child" href="/photo"><i class="fa-fw fas fa-images"></i><span> 照片墙</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about"><i class="fa-fw fas fa-address-card"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">拾忆鱼's Blog</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives"><i class="fa-fw fas fa-archive"></i><span> 全部</span></a></li><li><a class="site-page child" href="/categories"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heart"></i><span> 空间</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/essay"><i class="fa-fw fas fa-comments"></i><span> 碎碎念</span></a></li><li><a class="site-page child" href="/collect"><i class="fa-fw fas fa-walking"></i><span> 足迹阁</span></a></li><li><a class="site-page child" href="/photo"><i class="fa-fw fas fa-images"></i><span> 照片墙</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about"><i class="fa-fw fas fa-address-card"></i><span> 关于</span></a></div></div><center id="name-container"><a id="page-name" href="javascript:btf.scrollToDest(0, 500)">PAGE_NAME</a></center></div><div id="toggleButtons"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">综合知识</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-09-16T15:27:49.000Z" title="发表于 2024-09-16 23:27:49">2024-09-16</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-09-16T15:29:26.413Z" title="更新于 2024-09-16 23:29:26">2024-09-16</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E3%80%90%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E3%80%91/">【知识总结】</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="综合知识"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="post-content" id="article-container"><h1 id="计算机网络"><a class="markdownIt-Anchor" href="#计算机网络"></a> 计算机网络</h1>
+<h2 id="1计算机网络基础"><a class="markdownIt-Anchor" href="#1计算机网络基础"></a> 1.计算机网络基础</h2>
+<h3 id="11七层模型"><a class="markdownIt-Anchor" href="#11七层模型"></a> 1.1七层模型</h3>
+<p><strong><mark>OSI 七层模型</mark></strong> 是国际标准化组织提出一个网络分层模型，其大体结构以及每一层提供的功能如下图所示：</p>
+<img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202409162242806.png" alt="image-20240916085205640" style="zoom: 67%;" />
+<p>每一层都专注做一件事情，并且每一层都需要使用下一层提供的功能比如传输层需要使用网络层提供的路由和寻址功能，这样传输层才知道把数据传输到哪里去。</p>
+<h3 id="12tcpip四层模型"><a class="markdownIt-Anchor" href="#12tcpip四层模型"></a> 1.2TCP/IP四层模型</h3>
+<p><strong>TCP/IP 四层模型</strong> 是目前被广泛采用的一种模型,我们可以将 TCP / IP 模型看作是 OSI 七层模型的精简版本，由以下 4 层组成：</p>
+<ol>
+<li>应用层</li>
+<li>传输层</li>
+<li>网络层</li>
+<li>网络接口层</li>
+</ol>
+<p>需要注意的是，我们并不能将 TCP/IP 四层模型 和 OSI 七层模型完全精确地匹配起来，不过可以简单将两者对应起来，如下图所示：</p>
+<img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202409162242432.png" alt="image-20240916224055514" style="zoom: 50%;" />
+<blockquote>
+<p>为什么网络要分层？</p>
+</blockquote>
+<ul>
+<li>
+<p><strong>各层之间相互独立</strong>：各层之间相互独立，各层之间不需要关心其他层是如何实现的，只需要知道自己如何调用下层提供好的功能就可以了（可以简单理解为接口调用）<strong>。这个和我们对开发时系统进行分层是一个道理。</strong></p>
+</li>
+<li>
+<p><strong>提高了灵活性和可替换性</strong>：每一层都可以使用最适合的技术来实现，你只需要保证你提供的功能以及暴露的接口的规则没有改变就行了。并且，每一层都可以根据需要进行修改或替换，而不会影响到整个网络的结构。<strong>这个和我们平时开发系统的时候要求的高内聚、低耦合的原则也是可以对应上的。</strong></p>
+</li>
+<li>
+<p><strong>大问题化小</strong>：分层可以将复杂的网络问题分解为许多比较小的、界线比较清晰简单的小问题来处理和解决。这样使得复杂的计算机网络系统变得易于设计，实现和标准化。 <strong>这个和我们平时开发的时候，一般会将系统功能分解，然后将复杂的问题分解为容易理解的更小的问题是相对应的，这些较小的问题具有更好的边界（目标和接口）定义。</strong></p>
+</li>
+</ul>
+<h3 id="13应用层常见的协议"><a class="markdownIt-Anchor" href="#13应用层常见的协议"></a> 1.3应用层常见的协议</h3>
+<p><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202409162242285.png" alt="image-20240319183654966" /></p>
+<ul>
+<li><strong>HTTP（Hypertext Transfer Protocol，超文本传输协议）</strong>：基于 TCP 协议，是一种用于传输超文本和多媒体内容的协议，主要是为 Web 浏览器与 Web 服务器之间的通信而设计的。当我们使用浏览器浏览网页的时候，我们网页就是通过 HTTP 请求进行加载的。</li>
+<li><strong>SMTP（Simple Mail Transfer Protocol，简单邮件发送协议）</strong>：基于 TCP 协议，是一种用于发送电子邮件的协议。注意 ⚠️：SMTP 协议只负责邮件的发送，而不是接收。要从邮件服务器接收邮件，需要使用 POP3 或 IMAP 协议。</li>
+<li><strong>POP3/IMAP（邮件接收协议）</strong>：基于 TCP 协议，两者都是负责邮件接收的协议。IMAP 协议是比 POP3 更新的协议，它在功能和性能上都更加强大。IMAP 支持邮件搜索、标记、分类、归档等高级功能，而且可以在多个设备之间同步邮件状态。几乎所有现代电子邮件客户端和服务器都支持 IMAP。</li>
+<li><strong>FTP（File Transfer Protocol，文件传输协议）</strong> : 基于 TCP 协议，是一种用于在计算机之间传输文件的协议，可以屏蔽操作系统和文件存储方式。注意 ⚠️：FTP 是一种不安全的协议，因为它在传输过程中不会对数据进行加密。建议在传输敏感数据时使用更安全的协议，如 SFTP。</li>
+<li><strong>Telnet（远程登陆协议）</strong>：基于 TCP 协议，用于通过一个终端登陆到其他服务器。Telnet 协议的最大缺点之一是所有数据（包括用户名和密码）均以明文形式发送，这有潜在的安全风险。这就是为什么如今很少使用 Telnet，而是使用一种称为 SSH 的非常安全的网络传输协议的主要原因。</li>
+<li><strong>SSH（Secure Shell Protocol，安全的网络传输协议）</strong>：基于 TCP 协议，通过加密和认证机制实现安全的访问和文件传输等业务</li>
+<li><strong>RTP（Real-time Transport Protocol，实时传输协议）</strong>：通常基于 UDP 协议，但也支持 TCP 协议。它提供了端到端的实时传输数据的功能，但不包含资源预留存、不保证实时传输质量，这些功能由 WebRTC 实现。</li>
+<li><strong>DNS（Domain Name System，域名管理系统）</strong>: 基于 UDP 协议，用于解决域名和 IP 地址的映射问题。</li>
+</ul>
+<h3 id="14网络层常见的协议"><a class="markdownIt-Anchor" href="#14网络层常见的协议"></a> 1.4网络层常见的协议</h3>
+<ul>
+<li><strong>IP（Internet Protocol，网际协议）</strong>：TCP/IP 协议中最重要的协议之一，属于网络层的协议，主要作用是定义数据包的格式、对数据包进行路由和寻址，以便它们可以跨网络传播并到达正确的目的地。目前 IP 协议主要分为两种，一种是过去的 IPv4，另一种是较新的 IPv6，目前这两种协议都在使用，但后者已经被提议来取代前者。</li>
+<li><strong>ARP（Address Resolution Protocol，地址解析协议）</strong>：ARP 协议解决的是网络层地址和链路层地址之间的转换问题。因为一个 IP 数据报在物理上传输的过程中，总是需要知道下一跳（物理上的下一个目的地）该去往何处，但 IP 地址属于逻辑地址，而 MAC 地址才是物理地址，ARP 协议解决了 IP 地址转 MAC 地址的一些问题。</li>
+<li><strong>ICMP（Internet Control Message Protocol，互联网控制报文协议）</strong>：一种用于传输网络状态和错误消息的协议，常用于网络诊断和故障排除。例如，Ping 工具就使用了 ICMP 协议来测试网络连通性。</li>
+<li><strong>NAT（Network Address Translation，网络地址转换协议）</strong>：NAT 协议的应用场景如同它的名称——网络地址转换，应用于内部网到外部网的地址转换过程中。具体地说，在一个小的子网（局域网，LAN）内，各主机使用的是同一个 LAN 下的 IP 地址，但在该 LAN 以外，在广域网（WAN）中，需要一个统一的 IP 地址来标识该 LAN 在整个 Internet 上的位置。</li>
+<li><strong>OSPF（Open Shortest Path First，开放式最短路径优先）</strong> ）：一种内部网关协议（Interior Gateway Protocol，IGP），也是广泛使用的一种动态路由协议，基于链路状态算法，考虑了链路的带宽、延迟等因素来选择最佳路径。</li>
+<li><strong>RIP(Routing Information Protocol，路由信息协议）</strong>：一种内部网关协议（Interior Gateway Protocol，IGP），也是一种动态路由协议，基于距离向量算法，使用固定的跳数作为度量标准，选择跳数最少的路径作为最佳路径。</li>
+<li><strong>BGP（Border Gateway Protocol，边界网关协议）</strong>：一种用来在路由选择域之间交换网络层可达性信息（Network Layer Reachability Information，NLRI）的路由选择协议，具有高度的灵活性和可扩展性</li>
+</ul>
+<h2 id="2http"><a class="markdownIt-Anchor" href="#2http"></a> 2.HTTP</h2>
+<h3 id="21用户从浏览器输入url到页面的国过程"><a class="markdownIt-Anchor" href="#21用户从浏览器输入url到页面的国过程"></a> 2.1用户从浏览器输入URL到页面的国过程</h3>
+<p>总体来说分为以下几个步骤:</p>
+<ol>
+<li>在浏览器中输入指定网页的 URL。</li>
+<li>浏览器<mark>通过 DNS 协议，获取域名对应的 IP 地址</mark>。</li>
+<li>浏览器根据 IP 地址和端口号，向<mark>目标服务器发起一个 TCP 连接请</mark>求。</li>
+<li>浏览器在 TCP 连接上，向服务器<mark>发送一个 HTTP 请求报文</mark>，请求获取网页的内容。</li>
+<li>服务器收到 HTTP 请求报文后，处理请求，并<mark>返回 HTTP 响应报文</mark>给浏览器。</li>
+<li>浏览器收到 HTTP 响应报文后，<mark>解析响应体中的 HTML 代码</mark>，渲染网页的结构和样式，同时根据 HTML 中的其他资源的 URL（如图片、CSS、JS 等），再次发起 HTTP 请求，获取这些资源的内容，直到网页完全加载显示。</li>
+<li>浏览器在不需要和服务器通信时，<mark>可以主动关闭 TCP 连接</mark>，或者等待服务器的关闭请求</li>
+</ol>
+<h3 id="22http和https的区别"><a class="markdownIt-Anchor" href="#22http和https的区别"></a> 2.2HTTP和HTTPS的区别</h3>
+<p><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202409162245862.png" alt="HTTP 和 HTTPS 对比" /></p>
+<ul>
+<li><mark>端口号</mark>：HTTP 默认是 80，HTTPS 默认是 443。</li>
+<li><mark>URL 前缀</mark>：HTTP 的 URL 前缀是 <code>http://</code>，HTTPS 的 URL 前缀是 <code>https://</code>。</li>
+<li><mark>安全性和资源消耗</mark>：HTTP 协议运行在 TCP 之上，所有传输的内容都是明文，客户端和服务器端都无法验证对方的身份。HTTPS 是运行在 SSL/TLS 之上的 HTTP 协议，SSL/TLS 运行在 TCP 之上。所有传输的内容都经过加密，加密采用对称加密，但对称加密的密钥用服务器方的证书进行了非对称加密。所以说，HTTP 安全性没有 HTTPS 高，但是 HTTPS 比 HTTP 耗费更多服务器资源。</li>
+<li><mark>SEO（搜索引擎优化）</mark>：搜索引擎通常会更青睐使用 HTTPS 协议的网站，因为 HTTPS 能够提供更高的安全性和用户隐私保护。使用 HTTPS 协议的网站在搜索结果中可能会被优先显示，从而对 SEO 产生影响。</li>
+</ul>
+<h3 id="23uri和url的区别"><a class="markdownIt-Anchor" href="#23uri和url的区别"></a> 2.3URI和URL的区别</h3>
+<ul>
+<li>URI(Uniform Resource Identifier) 是<mark>统一资源标志符</mark>，可以<mark>唯一标识一个资源</mark>。</li>
+<li>URL(Uniform Resource Locator) 是<mark>统一资源定位符</mark>，可以<mark>提供该资源的路径</mark>。它是一种具体的 URI，即 URL 可以用来标识一个资源，而且还指明了如何 locate 这个资源。</li>
+</ul>
+<p><mark>URI 的作用像身份证号一样</mark>，<mark>URL 的作用更像家庭住址一样</mark>。URL 是一种具体的 URI，它不仅唯一标识资源，而且还提供了定位该资源的信息。</p>
+<h3 id="24get和post的区别"><a class="markdownIt-Anchor" href="#24get和post的区别"></a> 2.4GET和POST的区别</h3>
+<p>GET 和 POST 是 HTTP 协议中两种常用的请求方法，它们在不同的场景和目的下有不同的特点和用法。一般来说，可以从以下几个方面来区分二者（重点搞清两者在语义上的区别即可）：</p>
+<ol>
+<li><mark>语义（主要区别）</mark>
+<ul>
+<li>GET 通常用于获取或查询资源</li>
+<li>POST 通常用于创建或修改资源。</li>
+</ul>
+</li>
+<li><mark>请求参数格式</mark>
+<ul>
+<li>GET 请求的参数通常放在 URL 中，形成查询字符串（querystring），GET 请求的 URL 长度受到浏览器和服务器的限制</li>
+<li>POST 请求的参数通常放在请求体（body）中，<mark>可以有多种编码格式，如 application/x-www-form-urlencoded、multipart/form-data、application/json</mark> 等。而 POST 请求的 body 大小则没有明确的限制。</li>
+</ul>
+</li>
+<li><mark>缓存</mark>
+<ul>
+<li>由于 GET 请求是幂等的，它可以被浏览器或其他中间节点（如代理、网关）缓存起来，以提高性能和效率</li>
+<li>POST 请求则不适合被缓存，因为它可能有副作用，每次执行可能需要实时的响应。</li>
+</ul>
+</li>
+<li><mark>安全性</mark>
+<ul>
+<li>GET 请求和 POST 请求如果使用 HTTP 协议的话，那都不安全，因为 <mark>HTTP 协议本身是明文传输</mark>的，</li>
+<li><mark>两者必须使用 HTTPS 协议来加密传输数据</mark>。另外，GET 请求相比 POST 请求更容易泄露敏感数据，因为 GET 请求的参数通常放在 URL 中。</li>
+</ul>
+</li>
+</ol>
+<h2 id="3dns"><a class="markdownIt-Anchor" href="#3dns"></a> 3.DNS</h2>
+<h3 id="31dns的作用"><a class="markdownIt-Anchor" href="#31dns的作用"></a> 3.1DNS的作用</h3>
+<p>DNS（Domain Name System）域名管理系统，是当用户使用浏览器访问网址之后，使用的第一个重要协议。DNS 要解决的是**<mark>域名和 IP 地址的映射问题</mark>**。</p>
+<p><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202409162254907.png" alt="DNS:域名系统" /></p>
+<p>在一台电脑上，可能存在浏览器 DNS 缓存，操作系统 DNS 缓存，路由器 DNS 缓存。如果以上缓存都查询不到，那么 DNS 就闪亮登场了。</p>
+<p>目前 DNS 的设计采用的是分布式、层次数据库结构，<strong>DNS 是<mark>应用层协议</mark>，它可以在 UDP 或 TCP 协议之上运行，端口为 53</strong> 。</p>
+<h3 id="32dns服务器的类型"><a class="markdownIt-Anchor" href="#32dns服务器的类型"></a> 3.2DNS服务器的类型</h3>
+<p>DNS 服务器自底向上可以依次分为以下几个层级(所有 DNS 服务器都属于以下四个类别之一):</p>
+<ol>
+<li><mark><strong>根 DNS 服务器</strong></mark>。根 DNS 服务器提供 TLD 服务器的 IP 地址。目前世界上只有 13 组根服务器，我国境内目前仍没有根服务器。</li>
+<li><mark>顶级域 DNS 服务器（TLD 服务器）</mark>。顶级域是指域名的后缀，如<code>com</code>、<code>org</code>、<code>net</code>和<code>edu</code>等。国家也有自己的顶级域，如<code>uk</code>、<code>fr</code>和<code>ca</code>。TLD 服务器提供了权威 DNS 服务器的 IP 地址。</li>
+<li><mark>权威 DNS 服务器</mark>。在因特网上具有公共可访问主机的每个组织机构必须提供公共可访问的 DNS 记录，这些记录将这些主机的名字映射为 IP 地址。</li>
+<li><mark>本地 DNS 服务器</mark>。每个 ISP（互联网服务提供商）都有一个自己的本地 DNS 服务器。当主机发出 DNS 请求时，该请求被发往本地 DNS 服务器，它起着代理的作用，并将该请求转发到 DNS 层次结构中。严格说来，不属于 DNS 层级结构</li>
+</ol>
+<h2 id="4tcp与udp"><a class="markdownIt-Anchor" href="#4tcp与udp"></a> 4.TCP与UDP</h2>
+<h3 id="41tcp与udp的区别"><a class="markdownIt-Anchor" href="#41tcp与udp的区别"></a> 4.1TCP与UDP的区别</h3>
+<ol>
+<li>
+<p><mark>是否面向连接</mark>：</p>
+<ul>
+<li>UDP 在传送数据之前不需要先建立连接。</li>
+<li>TCP 提供面向连接的服务，在传送数据之前必须先建立连接，数据传送结束后要释放连接。</li>
+</ul>
+</li>
+<li>
+<p><mark>是否是可靠传输</mark>：远的主机在收到 UDP 报文后，不需要给出任何确认，并且不保证数据不丢失，不保证是否顺序到达。TCP 提供可靠的传输服务，TCP 在传递数据之前，会有三次握手来建立连接，而且在数据传递时，有确认、窗口、重传、拥塞控制机制。通过 TCP 连接传输的数据，无差错、不丢失、不重复、并且按序到达。</p>
+</li>
+<li>
+<p><mark>是否有状态</mark>：这个和上面的“是否可靠传输”相对应。TCP 传输是有状态的，这个有状态说的是 TCP 会去记录自己发送消息的状态比如消息是否发送了、是否被接收了等等。为此 ，TCP 需要维持复杂的连接状态表。而 UDP 是无状态服务，简单来说就是不管发出去之后的事情了（<strong>这很渣男！</strong>）。</p>
+</li>
+<li>
+<p><mark>传输效率</mark>：由于使用 TCP 进行传输的时候多了连接、确认、重传等机制，所以 TCP 的传输效率要比 UDP 低很多。</p>
+</li>
+<li>
+<p><mark>传输形式</mark>：TCP 是面向字节流的，UDP 是面向报文的。</p>
+</li>
+<li>
+<p><mark>首部开销</mark>：TCP 首部开销（20 ～ 60 字节）比 UDP 首部开销（8 字节）要大。</p>
+</li>
+<li>
+<p><mark>是否提供广播或多播服务</mark>：TCP 只支持点对点通信，UDP 支持一对一、一对多、多对一、多对多；</p>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center">TCP</th>
+<th style="text-align:center">UDP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">是否面向连接</td>
+<td style="text-align:center">是</td>
+<td style="text-align:center">否</td>
+</tr>
+<tr>
+<td style="text-align:center">是否可靠</td>
+<td style="text-align:center">是</td>
+<td style="text-align:center">否</td>
+</tr>
+<tr>
+<td style="text-align:center">是否有状态</td>
+<td style="text-align:center">是</td>
+<td style="text-align:center">否</td>
+</tr>
+<tr>
+<td style="text-align:center">传输效率</td>
+<td style="text-align:center">较慢</td>
+<td style="text-align:center">较快</td>
+</tr>
+<tr>
+<td style="text-align:center">传输形式</td>
+<td style="text-align:center">字节流</td>
+<td style="text-align:center">数据报文段</td>
+</tr>
+<tr>
+<td style="text-align:center">首部开销</td>
+<td style="text-align:center">20 ～ 60 bytes</td>
+<td style="text-align:center">8 bytes</td>
+</tr>
+<tr>
+<td style="text-align:center">是否提供广播或多播服务</td>
+<td style="text-align:center">否</td>
+<td style="text-align:center">是</td>
+</tr>
+</tbody>
+</table>
+<h3 id="42tcp三次握手"><a class="markdownIt-Anchor" href="#42tcp三次握手"></a> 4.2TCP三次握手</h3>
+<p>建立一个 TCP 连接需要“三次握手”，缺一不可：</p>
+<ol>
+<li><strong><mark>一次握手</mark></strong>:客户端发送带有 <mark>SYN（SEQ=x） 标志</mark>的数据包 -&gt; 服务端，然后客户端进入 <strong>SYN_SEND</strong> 状态，等待服务器的确认；（x为客户端的序列号）</li>
+<li><strong><mark>二次握手</mark></strong>:服务端发送带有 <mark>SYN+ACK(SEQ=y,ACK=x+1) 标志</mark>的数据包 –&gt; 客户端,然后服务端进入 <strong>SYN_RECV</strong> 状态（ACK即服务器确认收到客户端的序列号，后加一返回）</li>
+<li><strong><mark>三次握手</mark></strong>:客户端发送带有 <mark>ACK(ACK=y+1)</mark> 标志的数据包 –&gt; 服务端，然后客户端和服务器端都进入<strong>ESTABLISHED</strong> 状态，完成 TCP 三次握手。</li>
+</ol>
+<h3 id="43为什么要三次握手"><a class="markdownIt-Anchor" href="#43为什么要三次握手"></a> 4.3为什么要三次握手？</h3>
+<p>三次握手的目的是<mark>建立可靠的通信信道</mark>，说到通讯，简单来说就是数据的发送与接收，而三次握手最主要的目的就是<mark>双方确认<strong>自己与对方的发送与接收</strong>是正常的</mark>。</p>
+<ol>
+<li><strong><mark>第一次握手</mark></strong>：Client 什么都不能确认；<mark>Server 确认了对方发送正常</mark>，<mark>自己接收正常</mark></li>
+<li><strong><mark>第二次握手</mark></strong>：Client 确认了：自己发送、接收正常，对方发送、接收正常；Server 确认了：对方发送正常，自己接收正常（<mark><strong>还差确认自己发送、对方接送正常</strong></mark>）</li>
+<li><strong>第三次握手</strong>：Client 确认了：自己发送、接收正常，对方发送、接收正常；Server 确认了：<mark><strong>自己发送</strong></mark>、接收正常，对方发送、<mark><strong>接收正常</strong></mark></li>
+</ol>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Client角度</th>
+<th style="text-align:center">第一次握手</th>
+<th style="text-align:center">第二次握手</th>
+<th style="text-align:center">第三次握手</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Client 自己发送正常</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">√</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">Server 对方接收正常</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">√</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">Server对方发送正常</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">√</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">Client自己接收正常</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">√</td>
+<td style="text-align:center"></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Server角度</th>
+<th style="text-align:center">第一次握手</th>
+<th style="text-align:center">第二次握手</th>
+<th style="text-align:center">第三次握手</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Client 对方发送正常</td>
+<td style="text-align:center">√</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">Server 自己接收正常</td>
+<td style="text-align:center">√</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">Server对方发送正常</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><strong><mark>√</mark></strong></td>
+</tr>
+<tr>
+<td style="text-align:center">Client自己接收正常</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><strong><mark>√</mark></strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="44tcp四次挥手"><a class="markdownIt-Anchor" href="#44tcp四次挥手"></a> 4.4TCP四次挥手</h3>
+<p><img src="https://oss.javaguide.cn/github/javaguide/cs-basics/network/tcp-waves-four-times.png" alt="TCP 四次挥手图解" /></p>
+<p>断开一个 TCP 连接则需要“四次挥手”，缺一不可：</p>
+<ol>
+<li><strong>第一次挥手</strong>：客户端发送一个 FIN（SEQ=x） 标志的数据包-&gt;服务端，用来<mark>关闭客户端到服务器的数据传送</mark>。然后客户端进入 <strong>FIN-WAIT-1</strong> 状态。</li>
+<li><strong>第二次挥手</strong>：服务器收到这个 FIN（SEQ=X） 标志的数据包，它发送一个 ACK （ACK=x+1）标志的数据包-&gt;客户端 。然后<mark>服务端进入 <strong>CLOSE-WAIT</strong> 状态</mark>，客户端进入 <strong>FIN-WAIT-2</strong> 状态。</li>
+<li><strong>第三次挥手</strong>：服务端发送一个 FIN (SEQ=y)标志的数据包-&gt;客户端，<mark>请求关闭连接</mark>，然后服务端进入 <strong>LAST-ACK</strong> 状态。</li>
+<li><strong>第四次挥手</strong>：客户端发送 ACK (ACK=y+1)标志的数据包-&gt;服务端，然后客户端进入<strong>TIME-WAIT</strong>状态，服务端在收到 ACK (ACK=y+1)标志的数据包后进入 CLOSE 状态。此时如果客户端等待 <strong>2MSL</strong> 后依然没有收到回复，就证明服务端已正常关闭，随后客户端也可以关闭连接了。</li>
+</ol>
+<p><strong>只要四次挥手没有结束，客户端和服务端就可以继续传输数据！</strong></p>
+<h3 id="45为什么要四次挥手"><a class="markdownIt-Anchor" href="#45为什么要四次挥手"></a> 4.5为什么要四次挥手？</h3>
+<p>TCP 是全双工通信，可以双向传输数据。<mark>任何一方都可以在数据传送结束后发出连接释放的通知</mark>，待对方确认后进入==<strong>半关闭状态</strong>==。当另一方也没有数据再发送的时候，则发出连接释放通知，对方确认后就完全关闭了 TCP 连接。</p>
+<p>举个例子：A 和 B 打电话，通话即将结束后。</p>
+<ol>
+<li><strong>第一次挥手</strong>：A 说“我没啥要说的了”</li>
+<li><strong>第二次挥手</strong>：B 回答“我知道了”，但是 <mark>B 可能还会有要说的话</mark>，A 不能要求 B 跟着自己的节奏结束通话</li>
+<li><strong>第三次挥手</strong>：于是 B 可能又巴拉巴拉说了一通，最后 B 说“我说完了”</li>
+<li><strong>第四次挥手</strong>：A 回答“知道了”，这样通话才算结束。</li>
+</ol>
+<h3 id="46为什么不能把服务器发送的ack和fin合并起来变成三次挥手"><a class="markdownIt-Anchor" href="#46为什么不能把服务器发送的ack和fin合并起来变成三次挥手"></a> 4.6为什么不能把服务器发送的ACK和FIN合并起来，变成三次挥手？</h3>
+<p>因为服务器收到客户端断开连接的请求时，<mark><strong>可能还有一些数据没有发完</strong></mark>，这时<mark>先回复 ACK，表示接收到了断开连接的请求</mark>。等到数据发完之后再发 FIN，<mark>断开服务器到客户端的数据传送</mark>。</p>
+<h3 id="47若第二次挥手时服务器的ack没有送达客户端会怎么样"><a class="markdownIt-Anchor" href="#47若第二次挥手时服务器的ack没有送达客户端会怎么样"></a> 4.7若第二次挥手时服务器的ACK没有送达客户端，会怎么样？</h3>
+<p>客户端没有收到 ACK 确认，<mark>会重新发送 FIN 请求</mark>。</p>
+<h1 id="操作系统"><a class="markdownIt-Anchor" href="#操作系统"></a> 操作系统</h1>
+<h2 id="1进程线程协程"><a class="markdownIt-Anchor" href="#1进程线程协程"></a> 1.进程/线程/协程</h2>
+<h3 id="11进程和线程的异同"><a class="markdownIt-Anchor" href="#11进程和线程的异同"></a> 1.1进程和线程的异同</h3>
+<p>进程和线程之间的区别可以从本质区别、开销方面、稳定性方面、内存分配方面、包含关系共五个角度去分析：</p>
+<ol>
+<li><mark>本质区别</mark>：
+<ul>
+<li>进程是<mark>操作系统资源分配</mark>的基本单位，是程序的一次执行，比如我们在电脑上每开启的一次微信窗口</li>
+<li>线程是<mark>任务调度和执行</mark>的基本单位，是进程的一个实体，是CPU调度和分派的基本单位</li>
+</ul>
+</li>
+<li><mark>开销方面</mark>：
+<ul>
+<li>每个进程都有独立的代码和数据空间（程序上下文），<mark>程序之间的切换会有较大的开销</mark>；</li>
+<li>线程可以看做轻量级的进程，同一类线程共享代码和数据空间，每个线程都有自己独立的运行栈和程序计数器（PC），<mark>线程之间切换的开销小</mark></li>
+</ul>
+</li>
+<li><mark>内存分配方面</mark>：
+<ul>
+<li>系统在运行的时候<mark>会为每个进程分配不同的内存空间</mark></li>
+<li>而对线程而言，除了CPU外，<mark>系统不会为线程分配内存</mark>（线程所使用的资源来自其所属进程的资源），<mark>线程组之间只能共享资源</mark></li>
+</ul>
+</li>
+<li><strong><mark>包含关系</mark></strong>：
+<ul>
+<li>没有线程的进程可以看做是单线程的</li>
+<li>如果一个进程内有多个线程，则执行过程不是一条线的，而是多条线（线程）共同完成的；</li>
+<li><mark>线程是进程的一部分</mark>，所以线程也被称为轻权进程或者轻量级进程</li>
+</ul>
+</li>
+</ol>
+<h3 id="12进程线程优缺点"><a class="markdownIt-Anchor" href="#12进程线程优缺点"></a> 1.2进程/线程优缺点</h3>
+<ul>
+<li>
+<p>进程优点：</p>
+<ul>
+<li>顺序程序的特点：具有封闭性和可再现性；</li>
+<li>程序的并发执行和资源共享。多道程序设计出现后，实现了程序的并发执行和资源共享，提高了系统的资源利用率</li>
+</ul>
+</li>
+<li>
+<p>进程缺点：</p>
+<ul>
+<li>操作系统调度<mark>切换多个线程要比切换调度进程在速度上快的多</mark>。</li>
+<li>而且<mark>进程间内存无法共享，通讯也比较麻烦</mark>。</li>
+</ul>
+</li>
+<li>
+<p>线程优点：</p>
+<ul>
+<li>线程之间切换速度快</li>
+<li>线程间内存共享，资源共享</li>
+</ul>
+</li>
+<li>
+<p>线程缺点：</p>
+<ul>
+<li>调度时, 要保存线程状态，频繁调度, 需要占用大量的机时；</li>
+<li>程序设计上容易出错（线程同步问题）</li>
+</ul>
+</li>
+</ul>
+<h3 id="13进程之间通信的方法"><a class="markdownIt-Anchor" href="#13进程之间通信的方法"></a> 1.3进程之间通信的方法</h3>
+<ol>
+<li>由于每个<mark>进程的用户空间都是独立的</mark>，不能相互访问，这时就需要借助内核空间来实现进程间通信，原因很简单，每个进程都是共享一个内核空间。</li>
+<li>Linux 内核提供了不少进程间通信的方式，其中最简单的方式就是<mark>管道，管道分为「匿名管道」和「命名管道」</mark>。
+<ul>
+<li><strong><mark>匿名管道</mark></strong>：顾名思义，它没有名字标识，匿名管道是特殊文件只存在于内存，没有存在于文件系统中，shell 命令中的「|」竖线就是匿名管道，通信的数据是<strong>无格式的流并且大小受限</strong>，通信的方式是<strong>单向</strong>的，数据只能在一个方向上流动，如果要双向通信，需要创建两个管道，匿名管道是只能**<mark>用于存在父子关系</mark>的进程间通信**，匿名管道的生命周期随着进程创建而建立，随着进程终止而消失。</li>
+<li><mark><strong>命名管道</strong></mark>：突破了匿名管道只能在亲缘关系进程间的通信限制，因为使用命名管道的前提，需要在文件系统创建一个类型为 p 的设备文件，那么<strong>毫无关系的进程就可以通过这个设备文件进行通信</strong>。另外，不管是匿名管道还是命名管道，进程写入的数据都是<strong>缓存在内核</strong>中，另一个进程读取数据时候自然也是从内核中获取，同时通信数据都遵循<strong>先进先出</strong>原则，不支持 lseek 之类的文件定位操作。</li>
+<li><strong><mark>消息队列</mark></strong>：克服了管道通信的数据是<strong>无格式的字节流的问题</strong>，消息队列实际上是保存在内核的「消息链表」，消息队列的消息体是可以用户自定义的数据类型，发送数据时，会被分成一个一个独立的消息体，当然接收数据时，也要与发送方发送的消息体的数据类型保持一致，这样才能保证读取的数据是正确的。消息队列通信的速度不是最及时的，毕竟<strong>每次数据的写入和读取都需要经过用户态与内核态之间的拷贝过程</strong>。</li>
+<li><strong><mark>共享内存</mark></strong>：以解决消息队列通信中用户态与内核态之间数据拷贝过程带来的开销，它<strong>直接分配一个共享空间，每个进程都可以直接访问</strong>，就像访问进程自己的空间一样快捷方便，不需要陷入内核态或者系统调用，大大提高了通信的速度，享有最快的进程间通信方式之名。但是便捷高效的共享内存通信，<strong>带来新的问题，多进程竞争同个共享资源会造成数据的错乱</strong>。</li>
+<li>需要**<mark>信号量</mark><strong>来保护共享资源，以确保任何时刻只能有一个进程访问共享资源，这种方式就是互斥访问。</strong><mark>信号量不仅可以实现访问的互斥性，还可以实现进程间的同步</mark>**，信号量其实是一个计数器，表示的是资源个数，其值可以通过两个原子操作来控制，分别是 <strong>P 操作和 V 操作</strong>。</li>
+</ul>
+</li>
+</ol>
+<h3 id="14线程之间通信的方法"><a class="markdownIt-Anchor" href="#14线程之间通信的方法"></a> 1.4线程之间通信的方法</h3>
+<p>在Linux系统中，线程间通信的方式包括：</p>
+<ul>
+<li><strong><mark>互斥锁（Mutex）</mark></strong>：线程可以使用互斥锁来保护共享资源，确保同时只有一个线程可以访问该资源。</li>
+<li><strong><mark>条件变量</mark></strong>：线程可以使用条件变量来等待特定条件的发生，以实现线程间的协调和通知。</li>
+<li><strong><mark>信号量</mark></strong>：线程可以使用信号量来控制对共享资源的访问，实现线程间的同步和互斥。</li>
+<li><strong><mark>读写锁</mark></strong>：允许多个线程同时读取共享资源，但只允许一个线程写入共享资源。</li>
+</ul>
+<h3 id="15什么是线程上下文切换"><a class="markdownIt-Anchor" href="#15什么是线程上下文切换"></a> 1.5什么是线程上下文切换</h3>
+<p>线程在执行过程中会有<mark>自己的运行条件和状态（也称上下文）</mark>，比如<mark>程序计数器，虚拟机栈和本地方法栈</mark>等。</p>
+<p>当出现如下情况的时候，会发生线程切换。</p>
+<ul>
+<li>主动让出 CPU，比如调用了 <code>sleep()</code>, <code>wait()</code> 等。</li>
+<li>时间片用完，因为操作系统要防止一个线程或者进程长时间占用 CPU 导致其他线程或者进程饿死。</li>
+<li>调用了阻塞类型的系统中断，比如请求 IO，线程被阻塞。</li>
+</ul>
+<p>线程切换意味着需要保存当前<strong>线程的上下文（比如程序计数器，虚拟机栈和本地方法栈）</strong>，<mark>留待线程下次占用 CPU 的时候<strong>恢复现场</strong></mark>。并<strong>加载下一个</strong>将要占用 CPU 的<strong>线程上下文</strong>。这就是所谓的 <strong>上下文切换</strong>。频繁上下文切换就会造成整体效率低下。</p>
+<h3 id="16什么是线程死锁如何避免"><a class="markdownIt-Anchor" href="#16什么是线程死锁如何避免"></a> 1.6什么是线程死锁？如何避免？</h3>
+<ul>
+<li>
+<p>死锁（Deadlock）描述的是这样一种情况：多个进程/线程<strong>同时被阻塞</strong>，它们中的**<mark>一个或者全部</mark><strong>都在等待==某个</strong>资源被释放**==。由于进程/线程被无限期地阻塞，因此程序不可能正常终止。</p>
+</li>
+<li>
+<p>四个必要条件</p>
+<ul>
+<li><mark>互斥</mark>（x）：资源是独占的且排他使用，<mark>进程互斥使用资源</mark>，即任意时刻一个资源只能给一个进程使用，其他进程若申请一个资源，而该资源被另一进程占有时，则申请者等待直到资源被占有者释放。</li>
+<li><mark>请求并保持</mark>：进程每次申请它所需要的一部分资源，<mark>在申请新的资源的同时，继续占用已分配到的资源</mark>。</li>
+<li><mark>非抢占</mark>：进程所获得的资源在未使用完毕之前，不被其他进程强行剥夺，而只能由获得该资源的进程资源释放</li>
+<li><mark>循环等待</mark>（资源有序分配，即标序号）：在发生死锁时必然存在一个进程等待队列{P1,P2,…,Pn},其中P1等待P2占有的资源，P2等待P3占有的资源，…，Pn等待P1占有的资源，形成一个进程等待环路，环路中每一个进程所占有的资源同时被另一个申请，也就是前一个进程占有后一个进程所深情地资源。</li>
+</ul>
+</li>
+<li>
+<p>破坏死锁：那么避免死锁问题就只需要破环其中一个条件就可以，最常见的并且可行的就是**<mark>使用资源有序分配法</mark>，来破环环路等待条件**。</p>
+<ul>
+<li>例如：进程PA，使用资源的顺序是R1，R2；<br />
+进程PB，使用资源的顺序是R2，R1；<br />
+若<mark>采用动态分配有可能形成环路条件，造成死锁</mark>。<br />
+采用有序资源分配法：R1的编号为1，R2的编号为2；<br />
+PA：申请次序应是：R1，R2<br />
+PB：申请次序应是：R1，R2</li>
+</ul>
+</li>
+</ul>
+<h3 id="17杀死进程的方法"><a class="markdownIt-Anchor" href="#17杀死进程的方法"></a> 1.7杀死进程的方法</h3>
+<ul>
+<li>linux</li>
+</ul>
+<p>首先，使用ps命令查找进程的PID（进程ID），然后使用kill命令加上PID来终止进程。例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ps -ef | grep &lt;进程名&gt;   // 查找进程的PID</span><br><span class="line">kill &lt;PID&gt;              // 终止进程</span><br></pre></td></tr></table></figure>
+<ul>
+<li>windows</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">netstat -ano | findstr &quot;1098&quot; //查询端口号对应的进程id</span><br><span class="line">taskkill /T /F /PID //强制（/F参数）杀死 PID 为 xxx 的所有进程，包括子进程（/T参数）</span><br></pre></td></tr></table></figure>
+<h2 id="2协程少问"><a class="markdownIt-Anchor" href="#2协程少问"></a> 2.协程（少问）</h2>
+<h3 id="21协程的定义"><a class="markdownIt-Anchor" href="#21协程的定义"></a> 2.1协程的定义？</h3>
+<ol>
+<li>协程， 我们又称为微线程，协程它不像线程和进程那样，需要进行系统内核上的上下文切换，<mark>协程的上下文切换是由开发人员决定的</mark>。</li>
+<li>协程是一种用户级的轻量级线程。协程<mark>拥有自己的寄存器上下文和栈</mark>。协程调度切换时，将寄存器上下文和栈保存到其他地方，在切回来的时候，恢复先前保存的寄存器上下文和栈。因此：协程能保留上一次调用时的状态（即所有局部状态的一个特定组合），每次过程重入时，就相当于进入上一次调用的状态，换种说法：进入上一次离开时所处逻辑流的位置。</li>
+</ol>
+<h3 id="22使用协程的原因"><a class="markdownIt-Anchor" href="#22使用协程的原因"></a> 2.2使用协程的原因？</h3>
+<ol>
+<li>与线程相关的概念就是<mark>抢占式多任务</mark>（Preemptive multitasking），而与协程相关的是<mark>协作式多任务</mark></li>
+<li>不管是进程还是线程，每次阻塞、切换都需要陷入系统调用(system call)，先让CPU跑操作系统的调度程序，然后再由调度程序决定该跑哪一个进程(线程)。由于抢占式调度执行顺序无法确定的特点，<mark><strong>使用线程时需要非常小心地处理同步问题</strong></mark>，而协程完全不存在这个问题（事件驱动和异步程序也有同样的优点）。</li>
+<li>因为协程是<mark>用户自己来编写调度逻辑</mark>的，对于我们的CPU来说，协程其实是单线程，所以CPU不用去考虑怎么调度、切换上下文，这就省去了CPU的切换开销，所以协程在一定程度上又好于多线程。</li>
+</ol>
+<h3 id="23协程的优缺点"><a class="markdownIt-Anchor" href="#23协程的优缺点"></a> 2.3协程的优缺点</h3>
+<ul>
+<li>
+<p>优点：</p>
+<ul>
+<li>无需系统内核的上下文切换，减小开销；</li>
+<li>无需原子操作锁定及同步的开销，不用担心资源共享的问题；</li>
+<li>单线程即可实现高并发，单核 CPU 即便支持上万的协程都不是问题，所以很适合用于高并发处理，尤其是在应用在网络爬虫中。</li>
+</ul>
+</li>
+<li>
+<p>缺点：</p>
+<ul>
+<li>
+<p>无法使用 CPU 的多核</p>
+</li>
+<li>
+<p>处处都要使用非阻塞代码</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="3线程的生命周期"><a class="markdownIt-Anchor" href="#3线程的生命周期"></a> 3.线程的生命周期</h2>
+<h3 id="31线程的六种生命状态"><a class="markdownIt-Anchor" href="#31线程的六种生命状态"></a> 3.1线程的六种生命状态</h3>
+<ul>
+<li>如图，线程有六种生命状态：新建、可执行（就绪、运行）、阻塞、等待、计时等待、死亡</li>
+</ul>
+<p><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202409162309766.png" alt="image-20240326084258385" /></p>
+<h3 id="32sleep方法和wait的异同"><a class="markdownIt-Anchor" href="#32sleep方法和wait的异同"></a> 3.2sleep()方法和wait()的异同</h3>
+<ul>
+<li>相同点：两者都可以暂停线程的执行</li>
+<li>不同点：
+<ul>
+<li><mark><strong>是否有释放锁</strong></mark>：
+<ul>
+<li>sleep()方法没有释放锁（synchronized的锁），用于暂停执行任务</li>
+<li>wait() 方法释放了锁，用于线程之间的交互</li>
+</ul>
+</li>
+<li><mark><strong>是否自动苏醒</strong></mark>：
+<ul>
+<li>sleep()方法执行完成后，线程会<strong>自动苏醒</strong>，或者也可以使用 wait(long timeout) <strong>超时</strong>后线程会<strong>自动苏醒</strong>。</li>
+<li>wait() 方法被调用后，线程不会自动苏醒，需要别的线程调用<strong>同一个对象</strong>上的 <strong><code>notify()</code>或者 <code>notifyAll()</code></strong> 方法。</li>
+</ul>
+</li>
+<li><mark><strong>归属类不同：</strong></mark>
+<ul>
+<li>sleep()是 <mark><strong>Thread 类</strong><mark>的静态本地方法**（sleep()方法是让当前</mark>线程暂停执行</mark>，<mark>不涉及对象锁</mark>）**</li>
+<li>wait() 则是 ==<strong>Object类的</strong>==本地方法，<mark>wait()是让获得对象锁的线程实现等待</mark>，会自动释放当前线程占有的对象锁）。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="33notify和notifyall的区别"><a class="markdownIt-Anchor" href="#33notify和notifyall的区别"></a> 3.3notify()和notifyAll的区别</h3>
+<p>同样是唤醒等待的线程，同样最多只有一个线程能获得锁，同样不能控制哪个线程获得锁。</p>
+<p>区别在于：</p>
+<ul>
+<li>notify：
+<ul>
+<li><mark>唤醒一个线程</mark>，其他线程依然处于wait的等待唤醒状态</li>
+<li><mark>如果被唤醒的线程结束时没调用notify，其他线程就永远没人去唤醒</mark>，只能等待超时，或者被中断</li>
+</ul>
+</li>
+<li>notifyAll：
+<ul>
+<li>唤醒全部线程，<mark>所有线程退出wait的状态，开始竞争锁</mark></li>
+<li>但<mark>只有一个线程能抢到</mark>，这个线程执行完后，其他线程又会有一个幸运儿脱颖而出得到锁</li>
+</ul>
+</li>
+</ul>
+<h3 id="34为什么wait要包在同步块中"><a class="markdownIt-Anchor" href="#34为什么wait要包在同步块中"></a> 3.4为什么wait()要包在同步块中？</h3>
+<ul>
+<li><strong><mark>线程安全</mark></strong>：在同步块中调用<code>wait()</code>方法可以确保线程在调用<code>wait()</code>前已经获取了对象的锁，避免多线程之间的竞争和数据不一致性问题。</li>
+<li><strong><mark>对象监视器</mark></strong>：<code>wait()</code>方法会释放对象的监视器（monitor），其他线程可以获取该对象的监视器并执行同步操作，确保线程之间的协作和同步。</li>
+<li><strong><mark>唤醒机制</mark></strong>：当调用<code>wait()</code>方法后，线程会进入等待状态，只有在其他线程调用<code>notify()</code>或<code>notifyAll()</code>方法唤醒该线程时，线程才会继续执行。在同步块中调用<code>wait()</code>可以保证线程被正确唤醒。</li>
+</ul>
+<h3 id="35如何停止一个线程的运行"><a class="markdownIt-Anchor" href="#35如何停止一个线程的运行"></a> 3.5如何停止一个线程的运行?</h3>
+<p>主要有这些方法：</p>
+<ul>
+<li><strong><mark>异常法停止</mark></strong>：线程调用interrupt()方法后，在线程的run方法中判断当前对象的interrupted()状态，如果是中断状态则抛出异常，达到中断线程的效果。</li>
+<li><strong><mark>在沉睡中停止</mark></strong>：先将线程sleep，然后调用interrupt标记中断状态，interrupt会将阻塞状态的线程中断。会抛出中断异常，达到停止线程的效果</li>
+<li><strong><mark>stop()暴力停止</mark></strong>：线程调用stop()方法会被暴力停止，方法已弃用，该方法会有不好的后果：强制让线程停止有可能使一些请理性的工作得不到完成。</li>
+<li><strong><mark>使用return停止线程</mark></strong>：调用interrupt标记为中断状态后，在run方法中判断当前线程状态，如果为中断状态则return，能达到停止线程的效果。</li>
+</ul>
+<h2 id="4软连接和硬连接有什么区别"><a class="markdownIt-Anchor" href="#4软连接和硬连接有什么区别"></a> 4.软连接和硬连接有什么区别？</h2>
+<ul>
+<li>
+<p><strong>软连接</strong>：实际上是一个<mark>指向目标文件的路径的符号链接</mark>，类似于Windows系统中的快捷方式，创建软连接不会占用目标文件的inode节点，只是<mark>简单地指向目标文件的路径</mark>。删除原始文件后，软连接仍然存在，但指向的目标文件失效，称为&quot;悬空链接&quot;。软链接可以跨文件系统创建软连接。</p>
+</li>
+<li>
+<p><strong>硬连接</strong>：是指<mark>多个文件实际上指向同一个inode节点，即多个文件共享同一块数据块</mark>。创建硬连接会增加目标文件的链接计数，删除任何一个硬连接并不会影响其他硬连接指向的文件数据。只能在同一文件系统内创建硬连接。</p>
+</li>
+</ul>
+<h2 id="5内核态和用户态"><a class="markdownIt-Anchor" href="#5内核态和用户态"></a> 5.内核态和用户态</h2>
+<p>内核态和用户态是操作系统中的两种运行模式。它们的主要区别<mark>在于权限和可执行的操作</mark>：</p>
+<ol>
+<li><mark><strong>内核态</strong></mark>（Kernel Mode）：在内核态下，<mark>CPU可以执行所有的指令和访问所有的硬件资源</mark>。这种模式下的操作具有更高的权限，主要用于操作系统内核的运行。</li>
+<li><mark><strong>用户态</strong></mark>（User Mode）：在用户态下，<mark>CPU只能执行部分指令集，无法直接访问硬件资源</mark>。这种模式下的操作权限较低，主要用于运行用户程序。</li>
+</ol>
+<p>内核态的底层操作主要包括：内存管理、进程管理、设备驱动程序控制、系统调用等。这些操作涉及到操作系统的核心功能，需要较高的权限来执行。</p>
+<p>分为内核态和用户态的原因主要有以下几点：</p>
+<ol>
+<li><mark><strong>安全性</strong></mark>：通过对权限的划分，用户程序无法直接访问硬件资源，从而避免了恶意程序对系统资源的破坏。</li>
+<li><mark><strong>稳定性</strong></mark>：用户态程序出现问题时，不会影响到整个系统，避免了程序故障导致系统崩溃的风险。</li>
+<li><mark><strong>隔离性</strong></mark>：内核态和用户态的划分使得操作系统内核与用户程序之间有了明确的边界，有利于系统的模块化和维护。</li>
+</ol>
+<p>内核态和用户态的划分有助于保证操作系统的安全性、稳定性和易维护性。</p>
+<h2 id="6有哪些进程调度算法"><a class="markdownIt-Anchor" href="#6有哪些进程调度算法"></a> 6.有哪些进程调度算法</h2>
+<h3 id="61先来先服务调度算法"><a class="markdownIt-Anchor" href="#61先来先服务调度算法"></a> 6.1先来先服务调度算法</h3>
+<p>顾名思义，先来后到，<strong>每次从就绪队列选择最先进入队列的进程，然后一直运行，直到进程退出或被阻塞，才会继续从队列中选择第一个进程接着运行。</strong></p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/be03d024cb580776e7b311f15695a8f6.png" alt="图片" /></p>
+<h3 id="62最短作业优先调度算法"><a class="markdownIt-Anchor" href="#62最短作业优先调度算法"></a> 6.2最短作业优先调度算法</h3>
+<p>顾名思义，它会**<mark>优先选择运行时间最短的进</mark>程来运行**，这有助于提高系统的吞吐量。</p>
+<h3 id="63高响应比优先调度算法"><a class="markdownIt-Anchor" href="#63高响应比优先调度算法"></a> 6.3高响应比优先调度算法</h3>
+<p><strong>每次进行进程调度时，先计算「响应比优先级」，然后把「响应比优先级」最高的进程投入运行</strong></p>
+<p>响应比优先级」的计算公式：</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/1dbf64926e5650d2544d3d34e3b369fc.png" alt="图片" /></p>
+<h3 id="64时间片轮转调度算法"><a class="markdownIt-Anchor" href="#64时间片轮转调度算法"></a> 6.4时间片轮转调度算法</h3>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/247cd863568e4914c95cf5121b2d1d12.png" alt="图片" /></p>
+<p><strong>每个进程被分配一个时间段，称为时间片（*Quantum*），即允许该进程在该时间段中运行。</strong></p>
+<ul>
+<li>如果时间片用完，进程还在运行，那么将会把此进程从 CPU 释放出来，并把 CPU 分配给另外一个进程；</li>
+<li>如果该进程在时间片结束前阻塞或结束，则 CPU 立即进行切换；</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__title"><span class="post-copyright-info"><h>综合知识</h></span></div><div class="post-copyright__type"><span class="post-copyright-info"><a href="https://www.haipeng-lin.cn/posts/e3771f5f.html">https://www.haipeng-lin.cn/posts/e3771f5f.html</a></span></div><div class="post-copyright-m"><div class="post-copyright-m-info"><div class="post-copyright-a" style="display: inline-block;width: 120px"><h>作者</h><div class="post-copyright-cc-info"><h>拾忆鱼</h></div></div><div class="post-copyright-c" style="display: inline-block;width: 120px"><h>发布于</h><div class="post-copyright-cc-info"><h>2024-09-16</h></div></div><div class="post-copyright-u" style="display: inline-block;width: 120px"><h>更新于</h><div class="post-copyright-cc-info"><h>2024-09-16</h></div></div><div class="post-copyright-c" style="display: inline-block;width: 120px"><h>许可协议</h><div class="post-copyright-cc-info"><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a rel="noopener" target="_blank" title="CC BY 4.0" href="https://creativecommons.org/licenses/by/4.0/deed.zh">CC BY 4.0</a></div></div></div></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202409162327046.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://lib.baomitu.com/social-share.js/1.0.16/css/share.min.css" media="print" onload="this.media='all'"><script src="https://lib.baomitu.com/social-share.js/1.0.16/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/dc5c111d.html"><img class="prev-cover" src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202409191053209.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">电脑组件</div></div></a></div><div class="next-post pull-right"><a href="/posts/a062b9f3.html"><img class="next-cover" src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202409201839163.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">随笔 | 大学四年历程</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101530409.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">拾忆鱼</div><div class="author-info__description">一条菜鱼的小破站</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">59</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">小菜鱼正在从CSDN博客搬家，尽请期待　　      地址：<a target="_blank" rel="noopener" href="https://haipeng-lin.blog.csdn.net/">haipeng-lin.blog.csdn.net</a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C"><span class="toc-text"> 计算机网络</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80"><span class="toc-text"> 1.计算机网络基础</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#11%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B"><span class="toc-text"> 1.1七层模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12tcpip%E5%9B%9B%E5%B1%82%E6%A8%A1%E5%9E%8B"><span class="toc-text"> 1.2TCP&#x2F;IP四层模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13%E5%BA%94%E7%94%A8%E5%B1%82%E5%B8%B8%E8%A7%81%E7%9A%84%E5%8D%8F%E8%AE%AE"><span class="toc-text"> 1.3应用层常见的协议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14%E7%BD%91%E7%BB%9C%E5%B1%82%E5%B8%B8%E8%A7%81%E7%9A%84%E5%8D%8F%E8%AE%AE"><span class="toc-text"> 1.4网络层常见的协议</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2http"><span class="toc-text"> 2.HTTP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#21%E7%94%A8%E6%88%B7%E4%BB%8E%E6%B5%8F%E8%A7%88%E5%99%A8%E8%BE%93%E5%85%A5url%E5%88%B0%E9%A1%B5%E9%9D%A2%E7%9A%84%E5%9B%BD%E8%BF%87%E7%A8%8B"><span class="toc-text"> 2.1用户从浏览器输入URL到页面的国过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#22http%E5%92%8Chttps%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text"> 2.2HTTP和HTTPS的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#23uri%E5%92%8Curl%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text"> 2.3URI和URL的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#24get%E5%92%8Cpost%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text"> 2.4GET和POST的区别</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3dns"><span class="toc-text"> 3.DNS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#31dns%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-text"> 3.1DNS的作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#32dns%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="toc-text"> 3.2DNS服务器的类型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4tcp%E4%B8%8Eudp"><span class="toc-text"> 4.TCP与UDP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#41tcp%E4%B8%8Eudp%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text"> 4.1TCP与UDP的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#42tcp%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B"><span class="toc-text"> 4.2TCP三次握手</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#43%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B"><span class="toc-text"> 4.3为什么要三次握手？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#44tcp%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B"><span class="toc-text"> 4.4TCP四次挥手</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#45%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B"><span class="toc-text"> 4.5为什么要四次挥手？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#46%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E6%8A%8A%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8F%91%E9%80%81%E7%9A%84ack%E5%92%8Cfin%E5%90%88%E5%B9%B6%E8%B5%B7%E6%9D%A5%E5%8F%98%E6%88%90%E4%B8%89%E6%AC%A1%E6%8C%A5%E6%89%8B"><span class="toc-text"> 4.6为什么不能把服务器发送的ACK和FIN合并起来，变成三次挥手？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#47%E8%8B%A5%E7%AC%AC%E4%BA%8C%E6%AC%A1%E6%8C%A5%E6%89%8B%E6%97%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84ack%E6%B2%A1%E6%9C%89%E9%80%81%E8%BE%BE%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BC%9A%E6%80%8E%E4%B9%88%E6%A0%B7"><span class="toc-text"> 4.7若第二次挥手时服务器的ACK没有送达客户端，会怎么样？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="toc-text"> 操作系统</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B%E5%8D%8F%E7%A8%8B"><span class="toc-text"> 1.进程&#x2F;线程&#x2F;协程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#11%E8%BF%9B%E7%A8%8B%E5%92%8C%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%BC%82%E5%90%8C"><span class="toc-text"> 1.1进程和线程的异同</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-text"> 1.2进程&#x2F;线程优缺点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13%E8%BF%9B%E7%A8%8B%E4%B9%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-text"> 1.3进程之间通信的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14%E7%BA%BF%E7%A8%8B%E4%B9%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-text"> 1.4线程之间通信的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#15%E4%BB%80%E4%B9%88%E6%98%AF%E7%BA%BF%E7%A8%8B%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2"><span class="toc-text"> 1.5什么是线程上下文切换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#16%E4%BB%80%E4%B9%88%E6%98%AF%E7%BA%BF%E7%A8%8B%E6%AD%BB%E9%94%81%E5%A6%82%E4%BD%95%E9%81%BF%E5%85%8D"><span class="toc-text"> 1.6什么是线程死锁？如何避免？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#17%E6%9D%80%E6%AD%BB%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-text"> 1.7杀死进程的方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E5%8D%8F%E7%A8%8B%E5%B0%91%E9%97%AE"><span class="toc-text"> 2.协程（少问）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#21%E5%8D%8F%E7%A8%8B%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-text"> 2.1协程的定义？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#22%E4%BD%BF%E7%94%A8%E5%8D%8F%E7%A8%8B%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="toc-text"> 2.2使用协程的原因？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#23%E5%8D%8F%E7%A8%8B%E7%9A%84%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-text"> 2.3协程的优缺点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E7%BA%BF%E7%A8%8B%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-text"> 3.线程的生命周期</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#31%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%85%AD%E7%A7%8D%E7%94%9F%E5%91%BD%E7%8A%B6%E6%80%81"><span class="toc-text"> 3.1线程的六种生命状态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#32sleep%E6%96%B9%E6%B3%95%E5%92%8Cwait%E7%9A%84%E5%BC%82%E5%90%8C"><span class="toc-text"> 3.2sleep()方法和wait()的异同</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#33notify%E5%92%8Cnotifyall%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text"> 3.3notify()和notifyAll的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#34%E4%B8%BA%E4%BB%80%E4%B9%88wait%E8%A6%81%E5%8C%85%E5%9C%A8%E5%90%8C%E6%AD%A5%E5%9D%97%E4%B8%AD"><span class="toc-text"> 3.4为什么wait()要包在同步块中？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#35%E5%A6%82%E4%BD%95%E5%81%9C%E6%AD%A2%E4%B8%80%E4%B8%AA%E7%BA%BF%E7%A8%8B%E7%9A%84%E8%BF%90%E8%A1%8C"><span class="toc-text"> 3.5如何停止一个线程的运行?</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4%E8%BD%AF%E8%BF%9E%E6%8E%A5%E5%92%8C%E7%A1%AC%E8%BF%9E%E6%8E%A5%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB"><span class="toc-text"> 4.软连接和硬连接有什么区别？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5%E5%86%85%E6%A0%B8%E6%80%81%E5%92%8C%E7%94%A8%E6%88%B7%E6%80%81"><span class="toc-text"> 5.内核态和用户态</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6%E6%9C%89%E5%93%AA%E4%BA%9B%E8%BF%9B%E7%A8%8B%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95"><span class="toc-text"> 6.有哪些进程调度算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#61%E5%85%88%E6%9D%A5%E5%85%88%E6%9C%8D%E5%8A%A1%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95"><span class="toc-text"> 6.1先来先服务调度算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#62%E6%9C%80%E7%9F%AD%E4%BD%9C%E4%B8%9A%E4%BC%98%E5%85%88%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95"><span class="toc-text"> 6.2最短作业优先调度算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#63%E9%AB%98%E5%93%8D%E5%BA%94%E6%AF%94%E4%BC%98%E5%85%88%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95"><span class="toc-text"> 6.3高响应比优先调度算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#64%E6%97%B6%E9%97%B4%E7%89%87%E8%BD%AE%E8%BD%AC%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95"><span class="toc-text"> 6.4时间片轮转调度算法</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/8239deef.html" title="基于微信公众号+验证码实现微信登录"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410282106730.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="基于微信公众号+验证码实现微信登录"/></a><div class="content"><a class="title" href="/posts/8239deef.html" title="基于微信公众号+验证码实现微信登录">基于微信公众号+验证码实现微信登录</a><time datetime="2024-10-28T13:05:25.000Z" title="发表于 2024-10-28 21:05:25">2024-10-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/172c1a2d.html" title="ElasticSearch学习笔记"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410161138400.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ElasticSearch学习笔记"/></a><div class="content"><a class="title" href="/posts/172c1a2d.html" title="ElasticSearch学习笔记">ElasticSearch学习笔记</a><time datetime="2024-10-16T03:36:17.000Z" title="发表于 2024-10-16 11:36:17">2024-10-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/6982816f.html" title="RocketMQ学习笔记"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410131719724.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="RocketMQ学习笔记"/></a><div class="content"><a class="title" href="/posts/6982816f.html" title="RocketMQ学习笔记">RocketMQ学习笔记</a><time datetime="2024-10-13T09:17:30.000Z" title="发表于 2024-10-13 17:17:30">2024-10-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/d1f540b5.html" title="收集 | 有情怀的网站"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410111137749.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="收集 | 有情怀的网站"/></a><div class="content"><a class="title" href="/posts/d1f540b5.html" title="收集 | 有情怀的网站">收集 | 有情怀的网站</a><time datetime="2024-10-10T12:21:25.000Z" title="发表于 2024-10-10 20:21:25">2024-10-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/d0dd6ec8.html" title="为什么HashMap线程不安全"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101225904.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="为什么HashMap线程不安全"/></a><div class="content"><a class="title" href="/posts/d0dd6ec8.html" title="为什么HashMap线程不安全">为什么HashMap线程不安全</a><time datetime="2024-10-10T04:24:58.000Z" title="发表于 2024-10-10 12:24:58">2024-10-10</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div id="footer-left"><div class="footer-title"><span>拾忆鱼's Blog | </span><span class="footer-copyright">&copy;2024 By 拾忆鱼</span></div><div class="wordcount"></div><span>拾忆鱼 已经写了 260k 字，</span><span>好像写完一本 钱钟书 的 《围城》 了啊</span></div><div id="footer-right"><div class="footer_custom_text"><div id="runtime"></div></div><div class="footer-totop"><i class="fas fa-chevron-up" onclick="rmf.scrollToTop()"></i></div><div class="footer-info"><p>使用Hexo框架 | 基于butterfly修改 | 萌ICP备20240730号</p><!--a(title='湘公网安备 2023003198号' href='http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023003198')= '湘公网安备 2023003198号'--><!--a(title='湘ICP备2023003198号' href='https://beian.miit.gov.cn/')= '湘ICP备2023003198号'--></div><div class="footer-service"><a title="51LA" target="_blank" rel="noopener" href="https://www.51.la"><img alt="51LA" src="https://gitee.com/linhaipengg/md_-picture/raw/master/51la.png"/></a><a title="CC BY-NC-SA 4.0" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh"><img alt="CC BY-NC-SA 4.0" src="https://img.june-pj.cn/img/2024/01/16/cc.webp"/></a></div></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"><script>(()=>{
+  const init = () => {
+    twikoo.init(Object.assign({
+      el: '#twikoo-wrap',
+      envId: 'https://twikoo.haipeng-lin.cn',
+      region: '',
+      onCommentLoaded: function () {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      }
+    }, null))
+  }
+
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://twikoo.haipeng-lin.cn',
+      region: '',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(function (res) {
+      countELement.innerText = res[0].count
+    }).catch(function (err) {
+      console.error(err);
+    });
+  }
+
+  const runFn = () => {
+    init()
+    
+  }
+
+  const loadTwikoo = () => {
+    if (typeof twikoo === 'object') {
+      setTimeout(runFn,0)
+      return
+    } 
+    getScript('https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/twikoo/1.4.18/twikoo.all.min.js').then(runFn)
+  }
+
+  if ('Twikoo' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = () => {
+      loadTwikoo()
+    }
+  }
+})()</script></div><script data-pjax src="/gitcalendar/js/gitcalendar.js"></script><script data-pjax src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/js/swiper.min.js"></script><script src="/js/footer.js"></script><script type="text/javascript" src="/js/main.js"></script><script data-pjax type="text/javascript" src="/js/essay/essay.js"></script><script data-pjax type="text/javascript" src="/js/essay/waterfall.js"></script><link rel="stylesheet" href="/css/swiper.css"><script data-pjax src="/js/categoryBar/categoryBar.js"></script><link data-pjax defer="" rel="stylesheet" href="/css/categoryBar/heoMainColor.css"><link data-pjax defer="" rel="stylesheet" href="/css/categoryBar/categoryBar.css"><script type="text/javascript" src="/js/nav.js"></script><script src="/js/countup.js"></script><script data-pjax type="text/javascript" src="/js/memos/waterfall.min.js"></script><script data-pjax type="text/javascript" src="/js/memos/imgStatus.min.js"></script><script data-pjax type="text/javascript" src="/js/memos/lately.min.js"></script><script type="text/javascript" src="/js/memos/photo.js"></script><script type="text/javascript" src="/js/icat.js"></script><link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/aplayer/1.10.1/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/aplayer/1.10.1/APlayer.min.js"></script><script src="https://cdn1.tianli0.top/npm/js-heo@1.0.12/metingjs/Meting.min.js"></script><script src="https://lib.baomitu.com/pjax/0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  typeof disqusjs === 'object' && disqusjs.destroy()
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

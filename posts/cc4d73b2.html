@@ -1,0 +1,511 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Redis分布式锁 | 拾忆鱼's Blog</title><meta name="author" content="拾忆鱼"><meta name="copyright" content="拾忆鱼"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="referrer" content="no-referrer" /><meta name="description" content="6.1分布式锁介绍  6.1.1为什么要使用分布式锁 6.1.2具备的条件 6.1.3应用场景 6.1.4三种实现方式   6.2基于SETNX实现分布式锁  6.2.1SETNX命令  （1）作用 （2）核心思路   6.2.2实现过程  （1）出现的问题 （2）最终形态   6.2.3核心代码   6.3基于Redisson实现分布式锁  6.3.1Redisson介绍 6.3.2实现步骤">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis分布式锁">
+<meta property="og:url" content="https://www.haipeng-lin.cn/posts/cc4d73b2.html">
+<meta property="og:site_name" content="拾忆鱼&#39;s Blog">
+<meta property="og:description" content="6.1分布式锁介绍  6.1.1为什么要使用分布式锁 6.1.2具备的条件 6.1.3应用场景 6.1.4三种实现方式   6.2基于SETNX实现分布式锁  6.2.1SETNX命令  （1）作用 （2）核心思路   6.2.2实现过程  （1）出现的问题 （2）最终形态   6.2.3核心代码   6.3基于Redisson实现分布式锁  6.3.1Redisson介绍 6.3.2实现步骤">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i-blog.csdnimg.cn/blog_migrate/82f0e9cf62d4d9b22a56d31e2dae4314.jpeg#pic_center">
+<meta property="article:published_time" content="2024-08-30T09:22:09.000Z">
+<meta property="article:modified_time" content="2024-09-01T01:42:33.265Z">
+<meta property="article:author" content="拾忆鱼">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i-blog.csdnimg.cn/blog_migrate/82f0e9cf62d4d9b22a56d31e2dae4314.jpeg#pic_center"><link rel="shortcut icon" href="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101530409.png"><link rel="canonical" href="https://www.haipeng-lin.cn/posts/cc4d73b2"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="msvalidate.01" content="7A691DA1ABC779E7F680EF66E1D934AA"/><meta name="google-site-verification"/><meta name="baidu-site-verification" content="XXXXX"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":250},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: 拾忆鱼","link":"链接: ","source":"来源: 拾忆鱼's Blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Redis分布式锁',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-09-01 09:42:33'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/gitcalendar/css/gitcalendar.css"/><link rel="stylesheet" href="/css/tag_plugins.css"><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-swiper-anzhiyu@1.0.4/lib/swiper.min.css"><script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script><link rel="stylesheet" href="/css/tags.css"><link rel="stylesheet" href="/css/double_article.css"><link rel="stylesheet" href="/css/nav.css"><link rel="stylesheet" href="/css/essay_page.css"><script type="text/javascript" src="/js/echarts.min.js"></script><script type="text/javascript" src="/js/copy.js"></script><script src="https://cdn1.tianli0.top/npm/vue@2.6.14/dist/vue.min.js"></script><script src="https://cdn1.tianli0.top/npm/element-ui@2.15.6/lib/index.js"></script><link rel="stylesheet" href="https://cdn1.tianli0.top/npm/element-ui@2.15.6/packages/theme-chalk/lib/index.css"><link rel="stylesheet" href="/css/copyright.css"><link rel="stylesheet" href="/css/progress_bar.css"><link rel="stylesheet" href="/css/footer.css"><link rel="stylesheet" href="/css/page.css"><link rel="stylesheet" href="/css/layout.css"><link rel="stylesheet" href="/css/color.css"><link rel="stylesheet" href="/css/cursors/cursors.css"><link rel="stylesheet" href="/css/fonts/font.css"><link rel="stylesheet" href="/css/about/about.css"><link rel="stylesheet" href="/css/about/careers.css"><link rel="stylesheet" href="/css/about/genshinimpact.css"><link rel="stylesheet" href="/css/about/hello-about.css"><link rel="stylesheet" href="/css/about/site.css"><link rel="stylesheet" href="/css/about/skills.css"><link rel="stylesheet" href="/css/photo.css"><link rel="stylesheet" href="/css/icat.css"><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="拾忆鱼's Blog" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101530409.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">59</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives"><i class="fa-fw fas fa-archive"></i><span> 全部</span></a></li><li><a class="site-page child" href="/categories"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heart"></i><span> 空间</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/essay"><i class="fa-fw fas fa-comments"></i><span> 碎碎念</span></a></li><li><a class="site-page child" href="/collect"><i class="fa-fw fas fa-walking"></i><span> 足迹阁</span></a></li><li><a class="site-page child" href="/photo"><i class="fa-fw fas fa-images"></i><span> 照片墙</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about"><i class="fa-fw fas fa-address-card"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">拾忆鱼's Blog</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives"><i class="fa-fw fas fa-archive"></i><span> 全部</span></a></li><li><a class="site-page child" href="/categories"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heart"></i><span> 空间</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/essay"><i class="fa-fw fas fa-comments"></i><span> 碎碎念</span></a></li><li><a class="site-page child" href="/collect"><i class="fa-fw fas fa-walking"></i><span> 足迹阁</span></a></li><li><a class="site-page child" href="/photo"><i class="fa-fw fas fa-images"></i><span> 照片墙</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about"><i class="fa-fw fas fa-address-card"></i><span> 关于</span></a></div></div><center id="name-container"><a id="page-name" href="javascript:btf.scrollToDest(0, 500)">PAGE_NAME</a></center></div><div id="toggleButtons"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">Redis分布式锁</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-08-30T09:22:09.000Z" title="发表于 2024-08-30 17:22:09">2024-08-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-09-01T01:42:33.265Z" title="更新于 2024-09-01 09:42:33">2024-09-01</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E3%80%90Redis%E3%80%91/">【Redis】</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Redis分布式锁"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="post-content" id="article-container"><p><ul class="markdownIt-TOC">
+<li><a href="#61%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E4%BB%8B%E7%BB%8D">6.1分布式锁介绍</a>
+<ul>
+<li><a href="#611%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%BD%BF%E7%94%A8%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81">6.1.1为什么要使用分布式锁</a></li>
+<li><a href="#612%E5%85%B7%E5%A4%87%E7%9A%84%E6%9D%A1%E4%BB%B6">6.1.2具备的条件</a></li>
+<li><a href="#613%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF">6.1.3应用场景</a></li>
+<li><a href="#614%E4%B8%89%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F">6.1.4三种实现方式</a></li>
+</ul>
+</li>
+<li><a href="#62%E5%9F%BA%E4%BA%8Esetnx%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81">6.2基于SETNX实现分布式锁</a>
+<ul>
+<li><a href="#621setnx%E5%91%BD%E4%BB%A4">6.2.1SETNX命令</a>
+<ul>
+<li><a href="#1%E4%BD%9C%E7%94%A8">（1）作用</a></li>
+<li><a href="#2%E6%A0%B8%E5%BF%83%E6%80%9D%E8%B7%AF">（2）核心思路</a></li>
+</ul>
+</li>
+<li><a href="#622%E5%AE%9E%E7%8E%B0%E8%BF%87%E7%A8%8B">6.2.2实现过程</a>
+<ul>
+<li><a href="#1%E5%87%BA%E7%8E%B0%E7%9A%84%E9%97%AE%E9%A2%98">（1）出现的问题</a></li>
+<li><a href="#2%E6%9C%80%E7%BB%88%E5%BD%A2%E6%80%81">（2）最终形态</a></li>
+</ul>
+</li>
+<li><a href="#623%E6%A0%B8%E5%BF%83%E4%BB%A3%E7%A0%81">6.2.3核心代码</a></li>
+</ul>
+</li>
+<li><a href="#63%E5%9F%BA%E4%BA%8Eredisson%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81">6.3基于Redisson实现分布式锁</a>
+<ul>
+<li><a href="#631redisson%E4%BB%8B%E7%BB%8D">6.3.1Redisson介绍</a></li>
+<li><a href="#632%E5%AE%9E%E7%8E%B0%E6%AD%A5%E9%AA%A4">6.3.2实现步骤</a>
+<ul>
+<li><a href="#1%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96">（1）添加依赖</a></li>
+<li><a href="#2%E9%85%8D%E7%BD%AEredissonclient">（2）配置RedissonClient</a>
+<ul>
+<li><a href="#1%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F%E9%85%8D%E7%BD%AEredissonclient">①集群模式—配置RedissonClient</a></li>
+<li><a href="#2%E5%8D%95%E8%8A%82%E7%82%B9%E6%A8%A1%E5%BC%8F%E9%85%8D%E7%BD%AEredissonclient">②单节点模式—配置RedissonClient</a></li>
+</ul>
+</li>
+<li><a href="#3%E4%BD%BF%E7%94%A8redisson%E8%8E%B7%E5%8F%96%E9%94%81">（3）使用Redisson获取锁</a></li>
+</ul>
+</li>
+<li><a href="#633redisson%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90">6.3.3Redisson源码分析</a>
+<ul>
+<li><a href="#1%E5%8A%A0%E9%94%81%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90">（1）加锁源码分析</a></li>
+<li><a href="#2redisson%E5%AE%9E%E7%8E%B0%E7%9A%84%E9%94%81%E6%98%AF%E5%8F%AF%E9%87%8D%E5%85%A5%E9%94%81">（2）Redisson实现的锁是可重入锁</a></li>
+<li><a href="#3%E9%94%81%E7%9A%84%E8%87%AA%E5%8A%A8%E7%BB%AD%E6%9C%9F">（3）锁的自动续期</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#64%E6%80%BB%E7%BB%93">6.4总结</a></li>
+</ul>
+</p>
+<h1 id="6基于setnx-redisson实现分布式锁深入理解redisson"><a class="markdownIt-Anchor" href="#6基于setnx-redisson实现分布式锁深入理解redisson"></a> 6.基于Setnx | Redisson实现分布式锁（深入理解Redisson）</h1>
+<h2 id="61分布式锁介绍"><a class="markdownIt-Anchor" href="#61分布式锁介绍"></a> 6.1分布式锁介绍</h2>
+<h3 id="611为什么要使用分布式锁"><a class="markdownIt-Anchor" href="#611为什么要使用分布式锁"></a> 6.1.1为什么要使用分布式锁</h3>
+<ol>
+<li><mark><strong>数据一致性</strong></mark>：在分布式系统中，<mark>多个节点同时访问共享资源可能导致数据不一致的问题</mark>，使用分布式锁可以确保对共享资源的访问是串行化的，避免数据竞争和脏数据的产生。</li>
+<li><mark><strong>避免并发问题</strong></mark>：在多线程或多进程环境下，<mark>并发访问共享资源可能导致诸如竞态条件、死锁等并发</mark>问题，分布式锁可以有效地避免这些问题的发生，确保系统能够正常运行。</li>
+</ol>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/05216f6031c5465c5103fac9015a2520.png" alt="img" /></p>
+<h3 id="612具备的条件"><a class="markdownIt-Anchor" href="#612具备的条件"></a> 6.1.2具备的条件</h3>
+<p>在分析分布式锁的三种实现方式之前，先了解一下分布式锁应该具备哪些条件：</p>
+<p>1、<mark>在分布式系统环境下</mark>，一个方法在同一时间只能被一个机器的一个线程执行；<br />
+2、高可用的获取锁与释放锁；<br />
+3、高性能的获取锁与释放锁；<br />
+4、具备可重入特性；<br />
+5、<mark>具备锁失效机制，防止死锁</mark>；<br />
+6、具备非阻塞锁特性，即没有获取到锁将直接返回获取锁失败。</p>
+<h3 id="613应用场景"><a class="markdownIt-Anchor" href="#613应用场景"></a> 6.1.3应用场景</h3>
+<ol>
+<li><mark><strong>互联网秒杀</strong></mark>：在秒杀活动中，大量用户同时抢购同一商品可能导致高并发访问，使用分布式锁可以确保每个用户只能抢购一次，避免超卖或重复购买的问题，同时保证商品库存的正确性。</li>
+<li><mark>抢优惠券</mark>：类似于秒杀活动，抢优惠券也可能受到大量用户同时请求的影响，使用分布式锁可以有效地控制用户对优惠券的领取操作，避免超发或重复领取。</li>
+<li><mark><strong>接口幂等性校验</strong></mark>：在接口调用中，由于网络原因或其他异常情况可能导致接口请求重复发送，为了避免重复操作带来的风险，可以使用分布式锁来实现接口的幂等性校验，确保同一请求只会被处理一次。</li>
+</ol>
+<h3 id="614三种实现方式"><a class="markdownIt-Anchor" href="#614三种实现方式"></a> 6.1.4三种实现方式</h3>
+<p>目前几乎很多大型网站及应用都是分布式部署的，分布式场景中的数据一致性问题一直是一个比较重要的话题。分布式的CAP理论告诉我们“任何一个分布式系统都无法同时满足<mark>一致性（Consistency）、可用性（Availability）和分区容错性（Partition tolerance）</mark>，最多只能同时满足两项。”所以，很多系统在设计之初就要对这三者做出取舍。</p>
+<p>在互联网领域的绝大多数的场景中，都需要<mark>牺牲强一致性</mark>来换取系统的高可用性，系统往往只需要保证“最终一致性”，只要这个最终时间是在用户可以接受的范围内即可。</p>
+<ul>
+<li>分布式锁的三种实现方式：
+<ul>
+<li>基于数据库实现分布式锁；</li>
+<li>基于缓存（Redis等）实现分布式锁；</li>
+<li>基于Zookeeper实现分布式锁；</li>
+</ul>
+</li>
+</ul>
+<p>下面就一起探讨基于Redsi缓存实现分布式锁的方式，而基于Redis缓存实现分布式锁又分为了两种方法：SETNX命令、以及封装好的Redisson</p>
+<h2 id="62基于setnx实现分布式锁"><a class="markdownIt-Anchor" href="#62基于setnx实现分布式锁"></a> 6.2基于SETNX实现分布式锁</h2>
+<h3 id="621setnx命令"><a class="markdownIt-Anchor" href="#621setnx命令"></a> 6.2.1SETNX命令</h3>
+<h4 id="1作用"><a class="markdownIt-Anchor" href="#1作用"></a> （1）作用</h4>
+<blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SETNX key value</span><br></pre></td></tr></table></figure>
+<p>作用：<mark>只有当指定的键名 <code>key</code> 不存在时，才成功将键值对存储到Redis数据库中</mark>。如果键名 <code>key</code> 已经存在，则不执行任何操作。</p>
+</blockquote>
+<h4 id="2核心思路"><a class="markdownIt-Anchor" href="#2核心思路"></a> （2）核心思路</h4>
+<p>让当前线程尝试先<mark>通过SETNE创建一个键值对</mark>（<mark><strong>唯一数据</strong></mark>），再执行业务逻辑代码，如果<mark>A不存在，就进行创建</mark>，并执行相关业务逻辑，业务逻辑执行完毕后释放A；</p>
+<p>如果<mark>A存在，那么说明此时有其他的线程在执行业务逻辑代码</mark>，则拒绝当前线程执行业务逻辑（挂起线程）</p>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/05216f6031c5465c5103fac9015a2520.png" alt="img" /></p>
+<h3 id="622实现过程"><a class="markdownIt-Anchor" href="#622实现过程"></a> 6.2.2实现过程</h3>
+<h4 id="1出现的问题"><a class="markdownIt-Anchor" href="#1出现的问题"></a> （1）出现的问题</h4>
+<p>使用SETNX实现分布式锁过程中可能会出现以下问题</p>
+<blockquote>
+<p>1.死锁问题</p>
+</blockquote>
+<ul>
+<li>问题：设置好了锁，玩意服务出现宕机，没有执行删除锁逻辑，这就造成了死锁</li>
+<li>解决：设置过期时间</li>
+</ul>
+<blockquote>
+<p>2.删锁问题</p>
+</blockquote>
+<ul>
+<li>问题：业务还没执行完锁就过期了，别人拿到锁，自己执行完去删了别人的锁</li>
+<li>解决：<mark>删锁的时候明确是自己的锁，如uuid</mark>。或者逻辑业务还没执行完，<mark>锁续期（redisson有看门狗）</mark></li>
+</ul>
+<blockquote>
+<p>3.判断和删两个过程问题</p>
+</blockquote>
+<ul>
+<li>问题：判断uuid对了，但是将要删除的时候锁过期了，别人设置了新值，那<mark>删除了别人的锁</mark></li>
+<li>解决：删除锁必须保证原子性（保证判断和删锁是原子的）。使用redis+Lua脚本完成，脚本是原子的</li>
+</ul>
+<h4 id="2最终形态"><a class="markdownIt-Anchor" href="#2最终形态"></a> （2）最终形态</h4>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/03a856133ceb77aac107c8f22bff2a23.png" alt="image-20240228191302778" /></p>
+<h3 id="623核心代码"><a class="markdownIt-Anchor" href="#623核心代码"></a> 6.2.3核心代码</h3>
+<ul>
+<li>其中<mark>加锁和删除锁的操作一定保证原子性</mark>
+<ul>
+<li>加锁：<strong><mark>setIfAbsent</mark></strong> 命令实现的，封装的是setnx的lua脚本，<strong>lua脚本具有原子性的操作</strong></li>
+<li>删除锁：保证判断和删除两个动作具有原子性，<mark>生成lua脚本命令</mark></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>下面贴出在我练手小项目中，基于SETNX命令实现了分布式锁的作用，解决了缓存失效的问题</p>
+</blockquote>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/d7fdcef2267ae56e8178a1fdacd4f2e5.png" alt="image-20231207173404242" /></p>
+<h2 id="63基于redisson实现分布式锁"><a class="markdownIt-Anchor" href="#63基于redisson实现分布式锁"></a> 6.3基于Redisson实现分布式锁</h2>
+<h3 id="631redisson介绍"><a class="markdownIt-Anchor" href="#631redisson介绍"></a> 6.3.1Redisson介绍</h3>
+<p>ReRedisson是一个在Redis的基础上实现的<mark>Java驻内存数据网格</mark>(In-Memory Data Grid)。它不仅提供了一系列的 <mark><strong>分布式的Java常用对象</strong></mark>，还提供了许多分布式服务。其中包括(BitSet , Set,Multimap ,SortedSet ,Map , List , Queue, BlockingQueue , Deque , BlockingDeque,Semaphore, Lock ,AtomicLong ,CountDownLatch , Publish / Subscribe,Bloom filter , Remote service , Spring cache , Executor service , Live Object service ,Scheduler service ) Redisson<mark>提供了使用Redis的最简单和最便捷的方法</mark>。Redisson的宗旨是促进使用者对Redis的关注分离(Separation of Concern),从而让使用者能够将精力<mark>更集中地放在处理业务逻辑上</mark>。</p>
+<h3 id="632实现步骤"><a class="markdownIt-Anchor" href="#632实现步骤"></a> 6.3.2实现步骤</h3>
+<h4 id="1添加依赖"><a class="markdownIt-Anchor" href="#1添加依赖"></a> （1）添加依赖</h4>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- Spring Data Redis --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-redis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">&lt;!-- Redisson --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.redisson<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>redisson-spring-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.16.3<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="2配置redissonclient"><a class="markdownIt-Anchor" href="#2配置redissonclient"></a> （2）配置RedissonClient</h4>
+<h5 id="1集群模式配置redissonclient"><a class="markdownIt-Anchor" href="#1集群模式配置redissonclient"></a> ①集群模式—配置RedissonClient</h5>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyRedissonConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 所有对Redisson的使用都是通过RedissonClient</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> IOException</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Bean(destroyMethod=&quot;shutdown&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> RedissonClient <span class="title function_">redisson</span><span class="params">()</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="comment">//1、创建配置</span></span><br><span class="line">        <span class="type">Config</span> <span class="variable">config</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Config</span>();</span><br><span class="line">        config.useClusterServers()</span><br><span class="line">                .addNodeAddress(<span class="string">&quot;127.0.8.1:7884&quot;</span>,<span class="string">&quot;127.0.0.1:7e01&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> Redisson.create(config);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="2单节点模式配置redissonclient"><a class="markdownIt-Anchor" href="#2单节点模式配置redissonclient"></a> ②单节点模式—配置RedissonClient</h5>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyRedissonConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 所有对Redisson的使用都是通过RedissonClient</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> IOException</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Bean(destroyMethod=&quot;shutdown&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> RedissonClient <span class="title function_">redisson</span><span class="params">()</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="comment">//1、创建配置</span></span><br><span class="line">        <span class="type">Config</span> <span class="variable">config</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Config</span>();</span><br><span class="line">        config.useSingleServer().setAddress(<span class="string">&quot;redis://192.168.234.128:6124&quot;</span>).setPassword(<span class="string">&quot;123456&quot;</span>);</span><br><span class="line">        <span class="type">RedissonClient</span> <span class="variable">redissonClient</span> <span class="operator">=</span> Redisson.create(config);</span><br><span class="line">        <span class="keyword">return</span> redissonClient;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="3使用redisson获取锁"><a class="markdownIt-Anchor" href="#3使用redisson获取锁"></a> （3）使用Redisson获取锁</h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="keyword">private</span> RedissonClient redissonClient;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">doSomething</span><span class="params">()</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//获取键名为lockName的锁</span></span><br><span class="line">	<span class="type">RLock</span> <span class="variable">lock</span> <span class="operator">=</span> redissonClient.getLock(<span class="string">&quot;lockName&quot;</span>);</span><br><span class="line">	<span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">//加锁，若加锁不了，则阻塞等待</span></span><br><span class="line">    	lock.lock();</span><br><span class="line">        </span><br><span class="line">	    <span class="comment">// 执行需要加锁的操作</span></span><br><span class="line">        </span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="comment">//解锁</span></span><br><span class="line">    	lock.unlock();</span><br><span class="line">  	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="633redisson源码分析"><a class="markdownIt-Anchor" href="#633redisson源码分析"></a> 6.3.3Redisson源码分析</h3>
+<h4 id="1加锁源码分析"><a class="markdownIt-Anchor" href="#1加锁源码分析"></a> （1）加锁源码分析</h4>
+<p>我们点击 <mark><strong>lock() 方法</strong></mark></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">lock</span><span class="params">()</span> &#123;</span><br><span class="line">       <span class="keyword">try</span> &#123;</span><br><span class="line">           <span class="built_in">this</span>.lock(-<span class="number">1L</span>, (TimeUnit)<span class="literal">null</span>, <span class="literal">false</span>);</span><br><span class="line">       &#125; <span class="keyword">catch</span> (InterruptedException var2) &#123;</span><br><span class="line">           <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalStateException</span>();</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>再进入lock方法：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">   *	leaseTime：锁的持有时间（可指定，没指定则为-1）</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">lock</span><span class="params">(<span class="type">long</span> leaseTime, TimeUnit unit, <span class="type">boolean</span> interruptibly)</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">       <span class="type">long</span> <span class="variable">threadId</span> <span class="operator">=</span> Thread.currentThread().getId();</span><br><span class="line">       <span class="type">Long</span> <span class="variable">ttl</span> <span class="operator">=</span> <span class="built_in">this</span>.tryAcquire(leaseTime, unit, threadId);</span><br><span class="line">       <span class="keyword">if</span> (ttl != <span class="literal">null</span>) &#123;</span><br><span class="line">           RFuture&lt;RedissonLockEntry&gt; future = <span class="built_in">this</span>.subscribe(threadId);</span><br><span class="line">           <span class="keyword">if</span> (interruptibly) &#123;</span><br><span class="line">               <span class="built_in">this</span>.commandExecutor.syncSubscriptionInterrupted(future);</span><br><span class="line">           &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">               <span class="built_in">this</span>.commandExecutor.syncSubscription(future);</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line">           <span class="keyword">try</span> &#123;</span><br><span class="line">               <span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">                   ttl = <span class="built_in">this</span>.tryAcquire(leaseTime, unit, threadId);</span><br><span class="line">                   <span class="keyword">if</span> (ttl == <span class="literal">null</span>) &#123;</span><br><span class="line">                       <span class="keyword">return</span>;</span><br><span class="line">                   &#125;</span><br><span class="line"></span><br><span class="line">                   <span class="keyword">if</span> (ttl &gt;= <span class="number">0L</span>) &#123;</span><br><span class="line">                       <span class="keyword">try</span> &#123;</span><br><span class="line">                           ((RedissonLockEntry)future.getNow()).getLatch().tryAcquire(ttl, TimeUnit.MILLISECONDS);</span><br><span class="line">                       &#125; <span class="keyword">catch</span> (InterruptedException var13) &#123;</span><br><span class="line">                           <span class="keyword">if</span> (interruptibly) &#123;</span><br><span class="line">                               <span class="keyword">throw</span> var13;</span><br><span class="line">                           &#125;</span><br><span class="line"></span><br><span class="line">                           ((RedissonLockEntry)future.getNow()).getLatch().tryAcquire(ttl, TimeUnit.MILLISECONDS);</span><br><span class="line">                       &#125;</span><br><span class="line">                   &#125; <span class="keyword">else</span> <span class="keyword">if</span> (interruptibly) &#123;</span><br><span class="line">                       ((RedissonLockEntry)future.getNow()).getLatch().acquire();</span><br><span class="line">                   &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                       ((RedissonLockEntry)future.getNow()).getLatch().acquireUninterruptibly();</span><br><span class="line">                   &#125;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">               <span class="built_in">this</span>.unsubscribe(future, threadId);</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>而上面关于这段代码呢，我们先忽略其他逻辑，重点看这一行：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Long</span> <span class="variable">ttl</span> <span class="operator">=</span> <span class="built_in">this</span>.tryAcquire(leaseTime, unit, threadId);</span><br></pre></td></tr></table></figure>
+<p>这一行第一次尝试加锁，接着往下看：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Long <span class="title function_">tryAcquire</span><span class="params">(<span class="type">long</span> leaseTime, TimeUnit unit, <span class="type">long</span> threadId)</span> &#123;</span><br><span class="line">       <span class="keyword">return</span> (Long)<span class="built_in">this</span>.get(<span class="built_in">this</span>.tryAcquireAsync(leaseTime, unit, threadId));</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 上面进入到下面这里</span></span><br><span class="line"><span class="keyword">private</span> &lt;T&gt; RFuture&lt;Long&gt; <span class="title function_">tryAcquireAsync</span><span class="params">(<span class="type">long</span> leaseTime, TimeUnit unit, <span class="type">long</span> threadId)</span> &#123;</span><br><span class="line">       <span class="keyword">if</span> (leaseTime != -<span class="number">1L</span>) &#123;</span><br><span class="line">           <span class="comment">// 如果自己设置了锁释放时间，则获取锁后直接返回，且不会设置定时刷新的逻辑（上层方法没有设置定时任务），则获取到锁后超过设定的时间后自动释放</span></span><br><span class="line">           <span class="keyword">return</span> <span class="built_in">this</span>.tryLockInnerAsync(leaseTime, unit, threadId, RedisCommands.EVAL_LONG);</span><br><span class="line">       &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">           RFuture&lt;Long&gt; ttlRemainingFuture = <span class="built_in">this</span>.tryLockInnerAsync(<span class="built_in">this</span>.commandExecutor.getConnectionManager().getCfg().getLockWatchdogTimeout(), TimeUnit.MILLISECONDS, threadId, RedisCommands.EVAL_LONG);</span><br><span class="line">           ttlRemainingFuture.onComplete((ttlRemaining, e) -&gt; &#123;</span><br><span class="line">               <span class="keyword">if</span> (e == <span class="literal">null</span>) &#123;</span><br><span class="line">                   <span class="keyword">if</span> (ttlRemaining == <span class="literal">null</span>) &#123;</span><br><span class="line">                       <span class="built_in">this</span>.scheduleExpirationRenewal(threadId);</span><br><span class="line">                   &#125;</span><br><span class="line"></span><br><span class="line">               &#125;</span><br><span class="line">           &#125;);</span><br><span class="line">           <span class="keyword">return</span> ttlRemainingFuture;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//再进入</span></span><br><span class="line">&lt;T&gt; RFuture&lt;T&gt; <span class="title function_">tryLockInnerAsync</span><span class="params">(<span class="type">long</span> leaseTime, TimeUnit unit, <span class="type">long</span> threadId, RedisStrictCommand&lt;T&gt; command)</span> &#123;</span><br><span class="line">       <span class="built_in">this</span>.internalLockLeaseTime = unit.toMillis(leaseTime);</span><br><span class="line">       <span class="keyword">return</span> <span class="built_in">this</span>.commandExecutor.evalWriteAsync(<span class="built_in">this</span>.getName(), LongCodec.INSTANCE, command, <span class="string">&quot;if (redis.call(&#x27;exists&#x27;, KEYS[1]) == 0) then redis.call(&#x27;hset&#x27;, KEYS[1], ARGV[2], 1); redis.call(&#x27;pexpire&#x27;, KEYS[1], ARGV[1]); return nil; end; if (redis.call(&#x27;hexists&#x27;, KEYS[1], ARGV[2]) == 1) then redis.call(&#x27;hincrby&#x27;, KEYS[1], ARGV[2], 1); redis.call(&#x27;pexpire&#x27;, KEYS[1], ARGV[1]); return nil; end; return redis.call(&#x27;pttl&#x27;, KEYS[1]);&quot;</span>, Collections.singletonList(<span class="built_in">this</span>.getName()), <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="built_in">this</span>.internalLockLeaseTime, <span class="built_in">this</span>.getLockName(threadId)&#125;);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>在 <code>tryAcquireAsync</code> 方法中，根据传入的 <code>leaseTime</code> 值来决定是<mark>使用指定的持有时间还是使用默认的锁监视超时时间</mark>。</p>
+<p>如果 <code>leaseTime</code> 不等于 -1，表示使用指定的持有时间来加锁；</p>
+<p>如果 <code>leaseTime</code> 等于 -1，则会<mark>使用配置的锁监视超时时间作为持有时间</mark>，并<mark>在获取锁成功后启动定时任务进行锁的自动续约</mark>。</p>
+<p>真正的加锁是通过 tryLockInnerAsync(long leaseTime, TimeUnit unit, long threadId, RedisStrictCommand<T> command) 这个方法来做的，</p>
+<p>加锁最终执行的就是这段 lua 脚本语言：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (redis.call(<span class="string">&#x27;exists&#x27;</span>, KEYS[<span class="number">1</span>]) == <span class="number">0</span>) then </span><br><span class="line">    redis.call(<span class="string">&#x27;hset&#x27;</span>, KEYS[<span class="number">1</span>], ARGV[<span class="number">2</span>], <span class="number">1</span>); </span><br><span class="line">    redis.call(<span class="string">&#x27;pexpire&#x27;</span>, KEYS[<span class="number">1</span>], ARGV[<span class="number">1</span>]); </span><br><span class="line">    <span class="keyword">return</span> nil; </span><br><span class="line">end;</span><br></pre></td></tr></table></figure>
+<p>脚本的主要逻辑为：</p>
+<ul>
+<li><mark>exists 判断 key 是否存在</mark></li>
+<li>当判断不存在则设置 key</li>
+<li>然后给设置的key追加过期时间</li>
+</ul>
+<p>这样来看其实和我们前面案例中的实现方法好像没什么区别，但实际上并不是。</p>
+<p><mark>这段lua脚本命令在Redis中执行时，会被当成一条命令来执行，能够保证原子性</mark>，故要不都成功，要不都失败。</p>
+<p>我们在源码中看到Redssion的许多方法实现中很多都用到了lua脚本，这样能够极大的保证命令执行的原子性。</p>
+<p>回到上面，是否指定leaseTime的问题：</p>
+<p>可以看出来对于 leaseTime != -1 的判断会走两种方式：</p>
+<p>真正的加锁是通过 <mark><strong>tryLockInnerAsync</strong></mark>(long leaseTime, TimeUnit unit, long threadId, RedisStrictCommand<T> command) 这个方法来做的，</p>
+<ol>
+<li>
+<p>当 leaseTime != -1 时（<mark>指定锁的持有时间，即过期时间</mark>），直接返回加锁结果了</p>
+</li>
+<li>
+<p>当 leaseTime = -1 时（未指定锁的持有时间），在返回加锁结果之前，会监听加锁的结果：</p>
+<p>如果加锁成功了还会<mark>开启一个自动延期锁的定时任务</mark>。而这个 leaseTime 指的就是加锁成功后锁的默认持有时间。当我们不指定 leaseTime 时，<mark>默认的锁持有时间是 30 秒</mark>（这个时间叫作看门狗 - lockWatchdogTimeout)，并且每 10 秒(30/3)去确认一下锁的状态：如果工作任务还没完成，<mark>则重新设置锁的过期时间为 30 秒</mark>（当然，持有锁的服务宕机后在 30 秒后锁会自动释放，这个我们后面再说）</p>
+</li>
+<li>
+<p>而当我们<mark>指定 leaseTime 时，我们可以看出来前面的代码不会走到定时续期锁的逻辑</mark>，这时表示：成功获取到锁后，在 leaseTime 后，如果锁仍没有被服务主动释放，锁将自动过期，而不会管持有锁的线程有没有完成对应的操作，相当于 <mark><strong>在持有所得服务执行了比较耗时的任务且未完成时，这时锁已经被释放，这时候自然也是不安全的</strong></mark>。</p>
+</li>
+</ol>
+<h4 id="2redisson实现的锁是可重入锁"><a class="markdownIt-Anchor" href="#2redisson实现的锁是可重入锁"></a> （2）Redisson实现的锁是可重入锁</h4>
+<p><mark><strong>可重入锁</strong></mark>：某个线程已经获取了锁之后，可以再获取该锁</p>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/41585411b5e3141f94609f92bf65d68e.png" alt="image-20240228203743749" /></p>
+<blockquote>
+<p>从上面这张图我们可以看出来 Redisson 的分布式锁在 Redis 中的 <mark>hash 数据结构：<strong>{锁名}:{uuid:threadId}:{count}</strong></mark></p>
+<p>另外对于已经存在的健值对初始化过期时间为 30 秒。</p>
+<p>结合前面的加锁流程图，我们就可以看出来 Redisson 分布式锁是如何实现加锁的原子性，以下操作是一个原子操作：</p>
+</blockquote>
+<ul>
+<li>
+<p>某一个节点下的线程加锁首先判断该线程对于的 hash 键是否存在</p>
+<ul>
+<li>若不存在（<mark>锁未被持有</mark>），则将锁的键设置为线程 id 对应的唯一标识，值为 1 (第一次加锁),返回空表示加锁成功</li>
+<li>锁存在且对应的是本线程，说明之前加锁的线程为同一个，则将值加1 (加锁次数，可重入)，另外将该锁对应的存活时间重新设置，返回空表示加锁成功</li>
+<li>锁存在但<mark>键对应的不是当前线程</mark>，说明持有锁的是其他线程，返回锁剩余的过期时间表示加锁失败</li>
+</ul>
+</li>
+<li>
+<p>与Java的ReentrantLock可重入锁比较：</p>
+</li>
+</ul>
+<p>到这里，Redisson 的分布式锁加锁的流程以及锁在 Redis 中的数据结构已经清楚了，这时候我们可以对比一下 Java 自身实现的可重入锁 ReentrantLock。对于 ReentrantLock，甚至更多的线程安全组件如 Semaphore、CountDownLatch 等，==其底层的实现都依赖于 AQS(AbstractQueuedSynchronizer),==而 AQS 本身是一个队列，队列中的节点 Node 同样也是封装了线程的对象，只是 AQS 是本地单节点的</p>
+<p><mark><strong>Redis 却是分布式的可以被任何 JVM 共享</strong></mark>。</p>
+<p>另外 AQS 中还封装了一个 int 类型的状态变量 state：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * The synchronization state.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">volatile</span> <span class="type">int</span> state;</span><br></pre></td></tr></table></figure>
+<p>当涉及到具体的实现时，state 有不同的含义，</p>
+<ul>
+<li>对 ReentrantLock 来说 state 就是可重入锁的加锁次数，</li>
+<li>对 Semaphore 来说 state 就是信号量，</li>
+<li>对 CountDownLatch 来说就是计数量。</li>
+</ul>
+<p>可以看出来 <mark>, Java 的 AQS 一些抽象和 Redisson 实现的分布式锁是可以类比</mark> 的，比如 thread 标识对应的封装，加锁次数等。</p>
+<p>只是 AQS 的实现原子操作一般是基于原子类的 CAS，而 Redisson 实现原子操作是基于 Redis 的 lua 脚本。</p>
+<p>另外 AQS 实现队列节点状态同步是基于队列本身可以遍历的特性以及节点中的几种状态(这里不再赘述)，而 Redisson 不同线程之间阻塞同步是基于发布订阅(后面会提到)。</p>
+<p>可以得出：本地锁和分布式锁很多概念和思想是相似的，甚至其数据结构以及目标都是可类比的，只是分布式锁对本地锁的对象、范围、通信方式基于服务之间通信进行了实现。</p>
+<h4 id="3锁的自动续期"><a class="markdownIt-Anchor" href="#3锁的自动续期"></a> （3）锁的自动续期</h4>
+<p>前面我们从 Redisson 加锁为入口，分析了加锁的整体流程并详细看了加锁时的细节以及数据结构，现在我们看一下 Redisson 分布式锁是如何自动续期的。前面我们已经提到了当第一次加锁成功时会开启自动续期的定时任务，对于的代码入口即为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (ttlRemaining == <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="built_in">this</span>.scheduleExpirationRenewal(threadId)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//进入：</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">scheduleExpirationRenewal</span><span class="params">(<span class="type">long</span> threadId)</span> &#123;</span><br><span class="line">    <span class="type">ExpirationEntry</span> <span class="variable">entry</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ExpirationEntry</span>();</span><br><span class="line">    <span class="type">ExpirationEntry</span> <span class="variable">oldEntry</span> <span class="operator">=</span> EXPIRATION_RENEWAL_MAP.putIfAbsent(getEntryName(), entry);</span><br><span class="line">    <span class="keyword">if</span> (oldEntry != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="comment">// 表示不是第一次加锁 则加锁次数加 1 不会再开启续期锁 因为第一次加锁时调用 scheduleExpirationRenewal(long threadId) 会进入</span></span><br><span class="line">        <span class="comment">// else 会开启 renewExpiration()</span></span><br><span class="line">        oldEntry.addThreadId(threadId);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 在加锁时第一次调用 开启自动续期(定时重设锁的过期时间)</span></span><br><span class="line">        entry.addThreadId(threadId);</span><br><span class="line">        renewExpiration();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>ExpirationEntry 封装了定时任务对应的线程对象，结合注释这一段也不必展开，我们继续往下看真正开启续期的方法 renewExpiration()：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">renewExpiration</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">ExpirationEntry</span> <span class="variable">ee</span> <span class="operator">=</span> EXPIRATION_RENEWAL_MAP.get(getEntryName());</span><br><span class="line">    <span class="comment">// 锁已经不存在了直接返回</span></span><br><span class="line">    <span class="keyword">if</span> (ee == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="type">Timeout</span> <span class="variable">task</span> <span class="operator">=</span> commandExecutor.getConnectionManager().newTimeout(<span class="keyword">new</span> <span class="title class_">TimerTask</span>() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">(Timeout timeout)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">            <span class="type">ExpirationEntry</span> <span class="variable">ent</span> <span class="operator">=</span> EXPIRATION_RENEWAL_MAP.get(getEntryName());</span><br><span class="line">            <span class="keyword">if</span> (ent == <span class="literal">null</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="type">Long</span> <span class="variable">threadId</span> <span class="operator">=</span> ent.getFirstThreadId();</span><br><span class="line">            <span class="keyword">if</span> (threadId == <span class="literal">null</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            RFuture&lt;Boolean&gt; future = renewExpirationAsync(threadId);</span><br><span class="line">            <span class="comment">// 这里监听续期 成功后递归调用(十秒后再次重复)</span></span><br><span class="line">            future.onComplete((res, e) -&gt; &#123;</span><br><span class="line">                <span class="keyword">if</span> (e != <span class="literal">null</span>) &#123;</span><br><span class="line">                    log.error(<span class="string">&quot;Can&#x27;t update lock &quot;</span> + getName() + <span class="string">&quot; expiration&quot;</span>, e);</span><br><span class="line">                    EXPIRATION_RENEWAL_MAP.remove(getEntryName());</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                </span><br><span class="line">                <span class="keyword">if</span> (res) &#123;</span><br><span class="line">                    <span class="comment">// reschedule itself</span></span><br><span class="line">                    renewExpiration();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 10 秒续期一次(如果还持有锁)  30000/3</span></span><br><span class="line">    &#125;, internalLockLeaseTime / <span class="number">3</span>, TimeUnit.MILLISECONDS);</span><br><span class="line">    </span><br><span class="line">    ee.setTimeout(task);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看出来锁自动续期的流程为：</p>
+<ol>
+<li>若锁已经不存在了(比如手动释放了锁)，直接返回</li>
+<li>若锁仍存在，调用 Redis  <mark>异步设置锁的过期时间 renewExpirationAsync(threadId),</mark> 同时监听续期结果</li>
+<li>若续期成功，则递归调用 renewExpiration()，否则异常返回</li>
+<li>以上过程每 10 秒重复一次 (internalLockLeaseTime / 3)</li>
+</ol>
+<p>然后我们看一下调用 Redis <mark>对锁进行续期的过程</mark>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> RFuture&lt;Boolean&gt; <span class="title function_">renewExpirationAsync</span><span class="params">(<span class="type">long</span> threadId)</span> &#123;</span><br><span class="line">    <span class="comment">// 当前线程持有的锁还存在 重新设置锁的过期时间(默认 30 秒)</span></span><br><span class="line">    <span class="comment">// 否则失败</span></span><br><span class="line">    <span class="keyword">return</span> evalWriteAsync(getName(), LongCodec.INSTANCE, RedisCommands.EVAL_BOOLEAN,</span><br><span class="line">            <span class="string">&quot;if (redis.call(&#x27;hexists&#x27;, KEYS[1], ARGV[2]) == 1) then &quot;</span> +</span><br><span class="line">                    <span class="string">&quot;redis.call(&#x27;pexpire&#x27;, KEYS[1], ARGV[1]); &quot;</span> +</span><br><span class="line">                    <span class="string">&quot;return 1; &quot;</span> +</span><br><span class="line">                    <span class="string">&quot;end; &quot;</span> +</span><br><span class="line">                    <span class="string">&quot;return 0;&quot;</span>,</span><br><span class="line">            Collections.singletonList(getName()),</span><br><span class="line">            internalLockLeaseTime, getLockName(threadId));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里同样使用 lua 脚本来执行了一段原子操作:</p>
+<ul>
+<li>判断当前线程对应的锁是否存在，若存在则重新设置锁的过期时间(默认为 30 秒)，返回 true</li>
+<li>否则返回 false</li>
+</ul>
+<h2 id="64总结"><a class="markdownIt-Anchor" href="#64总结"></a> 6.4总结</h2>
+<p>Redis系列第六篇主要介绍了分布式锁、基于SETNX和Redisson实现分布式锁，其中SETNX命令中，要求确保加锁和删锁过程中，具备原子性，不然会出现（死锁、误删）等问题，最后再通过源码解读，深入理解Redisson的加锁流程、可重入锁分析、自动续期（看门狗机制）</p>
+</article><div class="post-copyright"><div class="post-copyright__title"><span class="post-copyright-info"><h>Redis分布式锁</h></span></div><div class="post-copyright__type"><span class="post-copyright-info"><a href="https://www.haipeng-lin.cn/posts/cc4d73b2.html">https://www.haipeng-lin.cn/posts/cc4d73b2.html</a></span></div><div class="post-copyright-m"><div class="post-copyright-m-info"><div class="post-copyright-a" style="display: inline-block;width: 120px"><h>作者</h><div class="post-copyright-cc-info"><h>拾忆鱼</h></div></div><div class="post-copyright-c" style="display: inline-block;width: 120px"><h>发布于</h><div class="post-copyright-cc-info"><h>2024-08-30</h></div></div><div class="post-copyright-u" style="display: inline-block;width: 120px"><h>更新于</h><div class="post-copyright-cc-info"><h>2024-09-01</h></div></div><div class="post-copyright-c" style="display: inline-block;width: 120px"><h>许可协议</h><div class="post-copyright-cc-info"><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a rel="noopener" target="_blank" title="CC BY 4.0" href="https://creativecommons.org/licenses/by/4.0/deed.zh">CC BY 4.0</a></div></div></div></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://i-blog.csdnimg.cn/blog_migrate/82f0e9cf62d4d9b22a56d31e2dae4314.jpeg#pic_center" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://lib.baomitu.com/social-share.js/1.0.16/css/share.min.css" media="print" onload="this.media='all'"><script src="https://lib.baomitu.com/social-share.js/1.0.16/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/fe0ad18a.html"><img class="prev-cover" src="https://i-blog.csdnimg.cn/blog_migrate/a239af2f0f65c50288cc999013cb6b4d.jpeg#pic_center" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Redis之过期策略、内存淘汰策略</div></div></a></div><div class="next-post pull-right"><a href="/posts/4ebad2d4.html"><img class="next-cover" src="https://i-blog.csdnimg.cn/blog_migrate/fc6ebdd5464d6c592f3363bc942cf14f.jpeg#pic_center" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">SpringBoot整合Redis</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101530409.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">拾忆鱼</div><div class="author-info__description">一条菜鱼的小破站</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">59</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">小菜鱼正在从CSDN博客搬家，尽请期待　　      地址：<a target="_blank" rel="noopener" href="https://haipeng-lin.blog.csdn.net/">haipeng-lin.blog.csdn.net</a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#6%E5%9F%BA%E4%BA%8Esetnx-redisson%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3redisson"><span class="toc-text"> 6.基于Setnx | Redisson实现分布式锁（深入理解Redisson）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#61%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E4%BB%8B%E7%BB%8D"><span class="toc-text"> 6.1分布式锁介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#611%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%BD%BF%E7%94%A8%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="toc-text"> 6.1.1为什么要使用分布式锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#612%E5%85%B7%E5%A4%87%E7%9A%84%E6%9D%A1%E4%BB%B6"><span class="toc-text"> 6.1.2具备的条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#613%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-text"> 6.1.3应用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#614%E4%B8%89%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F"><span class="toc-text"> 6.1.4三种实现方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#62%E5%9F%BA%E4%BA%8Esetnx%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="toc-text"> 6.2基于SETNX实现分布式锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#621setnx%E5%91%BD%E4%BB%A4"><span class="toc-text"> 6.2.1SETNX命令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E4%BD%9C%E7%94%A8"><span class="toc-text"> （1）作用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E6%A0%B8%E5%BF%83%E6%80%9D%E8%B7%AF"><span class="toc-text"> （2）核心思路</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#622%E5%AE%9E%E7%8E%B0%E8%BF%87%E7%A8%8B"><span class="toc-text"> 6.2.2实现过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E5%87%BA%E7%8E%B0%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-text"> （1）出现的问题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E6%9C%80%E7%BB%88%E5%BD%A2%E6%80%81"><span class="toc-text"> （2）最终形态</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#623%E6%A0%B8%E5%BF%83%E4%BB%A3%E7%A0%81"><span class="toc-text"> 6.2.3核心代码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#63%E5%9F%BA%E4%BA%8Eredisson%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="toc-text"> 6.3基于Redisson实现分布式锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#631redisson%E4%BB%8B%E7%BB%8D"><span class="toc-text"> 6.3.1Redisson介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#632%E5%AE%9E%E7%8E%B0%E6%AD%A5%E9%AA%A4"><span class="toc-text"> 6.3.2实现步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96"><span class="toc-text"> （1）添加依赖</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E9%85%8D%E7%BD%AEredissonclient"><span class="toc-text"> （2）配置RedissonClient</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F%E9%85%8D%E7%BD%AEredissonclient"><span class="toc-text"> ①集群模式—配置RedissonClient</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2%E5%8D%95%E8%8A%82%E7%82%B9%E6%A8%A1%E5%BC%8F%E9%85%8D%E7%BD%AEredissonclient"><span class="toc-text"> ②单节点模式—配置RedissonClient</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E4%BD%BF%E7%94%A8redisson%E8%8E%B7%E5%8F%96%E9%94%81"><span class="toc-text"> （3）使用Redisson获取锁</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#633redisson%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-text"> 6.3.3Redisson源码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E5%8A%A0%E9%94%81%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-text"> （1）加锁源码分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2redisson%E5%AE%9E%E7%8E%B0%E7%9A%84%E9%94%81%E6%98%AF%E5%8F%AF%E9%87%8D%E5%85%A5%E9%94%81"><span class="toc-text"> （2）Redisson实现的锁是可重入锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E9%94%81%E7%9A%84%E8%87%AA%E5%8A%A8%E7%BB%AD%E6%9C%9F"><span class="toc-text"> （3）锁的自动续期</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#64%E6%80%BB%E7%BB%93"><span class="toc-text"> 6.4总结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/8239deef.html" title="基于微信公众号+验证码实现微信登录"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410282106730.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="基于微信公众号+验证码实现微信登录"/></a><div class="content"><a class="title" href="/posts/8239deef.html" title="基于微信公众号+验证码实现微信登录">基于微信公众号+验证码实现微信登录</a><time datetime="2024-10-28T13:05:25.000Z" title="发表于 2024-10-28 21:05:25">2024-10-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/172c1a2d.html" title="ElasticSearch学习笔记"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410161138400.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ElasticSearch学习笔记"/></a><div class="content"><a class="title" href="/posts/172c1a2d.html" title="ElasticSearch学习笔记">ElasticSearch学习笔记</a><time datetime="2024-10-16T03:36:17.000Z" title="发表于 2024-10-16 11:36:17">2024-10-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/6982816f.html" title="RocketMQ学习笔记"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410131719724.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="RocketMQ学习笔记"/></a><div class="content"><a class="title" href="/posts/6982816f.html" title="RocketMQ学习笔记">RocketMQ学习笔记</a><time datetime="2024-10-13T09:17:30.000Z" title="发表于 2024-10-13 17:17:30">2024-10-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/d1f540b5.html" title="收集 | 有情怀的网站"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410111137749.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="收集 | 有情怀的网站"/></a><div class="content"><a class="title" href="/posts/d1f540b5.html" title="收集 | 有情怀的网站">收集 | 有情怀的网站</a><time datetime="2024-10-10T12:21:25.000Z" title="发表于 2024-10-10 20:21:25">2024-10-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/d0dd6ec8.html" title="为什么HashMap线程不安全"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101225904.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="为什么HashMap线程不安全"/></a><div class="content"><a class="title" href="/posts/d0dd6ec8.html" title="为什么HashMap线程不安全">为什么HashMap线程不安全</a><time datetime="2024-10-10T04:24:58.000Z" title="发表于 2024-10-10 12:24:58">2024-10-10</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div id="footer-left"><div class="footer-title"><span>拾忆鱼's Blog | </span><span class="footer-copyright">&copy;2024 By 拾忆鱼</span></div><div class="wordcount"></div><span>拾忆鱼 已经写了 260k 字，</span><span>好像写完一本 钱钟书 的 《围城》 了啊</span></div><div id="footer-right"><div class="footer_custom_text"><div id="runtime"></div></div><div class="footer-totop"><i class="fas fa-chevron-up" onclick="rmf.scrollToTop()"></i></div><div class="footer-info"><p>使用Hexo框架 | 基于butterfly修改 | 萌ICP备20240730号</p><!--a(title='湘公网安备 2023003198号' href='http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023003198')= '湘公网安备 2023003198号'--><!--a(title='湘ICP备2023003198号' href='https://beian.miit.gov.cn/')= '湘ICP备2023003198号'--></div><div class="footer-service"><a title="51LA" target="_blank" rel="noopener" href="https://www.51.la"><img alt="51LA" src="https://gitee.com/linhaipengg/md_-picture/raw/master/51la.png"/></a><a title="CC BY-NC-SA 4.0" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh"><img alt="CC BY-NC-SA 4.0" src="https://img.june-pj.cn/img/2024/01/16/cc.webp"/></a></div></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"><script>(()=>{
+  const init = () => {
+    twikoo.init(Object.assign({
+      el: '#twikoo-wrap',
+      envId: 'https://twikoo.haipeng-lin.cn',
+      region: '',
+      onCommentLoaded: function () {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      }
+    }, null))
+  }
+
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://twikoo.haipeng-lin.cn',
+      region: '',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(function (res) {
+      countELement.innerText = res[0].count
+    }).catch(function (err) {
+      console.error(err);
+    });
+  }
+
+  const runFn = () => {
+    init()
+    
+  }
+
+  const loadTwikoo = () => {
+    if (typeof twikoo === 'object') {
+      setTimeout(runFn,0)
+      return
+    } 
+    getScript('https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/twikoo/1.4.18/twikoo.all.min.js').then(runFn)
+  }
+
+  if ('Twikoo' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = () => {
+      loadTwikoo()
+    }
+  }
+})()</script></div><script data-pjax src="/gitcalendar/js/gitcalendar.js"></script><script data-pjax src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/js/swiper.min.js"></script><script src="/js/footer.js"></script><script type="text/javascript" src="/js/main.js"></script><script data-pjax type="text/javascript" src="/js/essay/essay.js"></script><script data-pjax type="text/javascript" src="/js/essay/waterfall.js"></script><link rel="stylesheet" href="/css/swiper.css"><script data-pjax src="/js/categoryBar/categoryBar.js"></script><link data-pjax defer="" rel="stylesheet" href="/css/categoryBar/heoMainColor.css"><link data-pjax defer="" rel="stylesheet" href="/css/categoryBar/categoryBar.css"><script type="text/javascript" src="/js/nav.js"></script><script src="/js/countup.js"></script><script data-pjax type="text/javascript" src="/js/memos/waterfall.min.js"></script><script data-pjax type="text/javascript" src="/js/memos/imgStatus.min.js"></script><script data-pjax type="text/javascript" src="/js/memos/lately.min.js"></script><script type="text/javascript" src="/js/memos/photo.js"></script><script type="text/javascript" src="/js/icat.js"></script><link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/aplayer/1.10.1/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/aplayer/1.10.1/APlayer.min.js"></script><script src="https://cdn1.tianli0.top/npm/js-heo@1.0.12/metingjs/Meting.min.js"></script><script src="https://lib.baomitu.com/pjax/0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  typeof disqusjs === 'object' && disqusjs.destroy()
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

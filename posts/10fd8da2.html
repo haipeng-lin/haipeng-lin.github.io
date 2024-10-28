@@ -1,0 +1,893 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>MyBatis-Plus框架学习 | 拾忆鱼's Blog</title><meta name="author" content="拾忆鱼"><meta name="copyright" content="拾忆鱼"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="referrer" content="no-referrer" /><meta name="description" content="1.Mybatis Plus介绍  1.1Mybatis和Mybatis Plus的区别是什么  1.1.1什么是Mybatis?  MyBatis 是一款优秀的持久层框架，说白话就是一款操作数据库的框架。 它支持自定义 SQL、存储过程以及高级映射 MyBatis 免除了几乎所有的 JDBC 代码以及设置参数和获取结果集的工作。 MyBatis 可以通过简单的 XML 或注解来配置和映射原始类">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MyBatis-Plus框架学习">
+<meta property="og:url" content="https://www.haipeng-lin.cn/posts/10fd8da2.html">
+<meta property="og:site_name" content="拾忆鱼&#39;s Blog">
+<meta property="og:description" content="1.Mybatis Plus介绍  1.1Mybatis和Mybatis Plus的区别是什么  1.1.1什么是Mybatis?  MyBatis 是一款优秀的持久层框架，说白话就是一款操作数据库的框架。 它支持自定义 SQL、存储过程以及高级映射 MyBatis 免除了几乎所有的 JDBC 代码以及设置参数和获取结果集的工作。 MyBatis 可以通过简单的 XML 或注解来配置和映射原始类">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i-blog.csdnimg.cn/blog_migrate/078243f70aa2d275b1a0ced2768c8d57.jpeg#pic_center">
+<meta property="article:published_time" content="2024-08-28T04:35:33.000Z">
+<meta property="article:modified_time" content="2024-09-01T01:39:53.763Z">
+<meta property="article:author" content="拾忆鱼">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i-blog.csdnimg.cn/blog_migrate/078243f70aa2d275b1a0ced2768c8d57.jpeg#pic_center"><link rel="shortcut icon" href="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101530409.png"><link rel="canonical" href="https://www.haipeng-lin.cn/posts/10fd8da2"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="msvalidate.01" content="7A691DA1ABC779E7F680EF66E1D934AA"/><meta name="google-site-verification"/><meta name="baidu-site-verification" content="XXXXX"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":250},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: 拾忆鱼","link":"链接: ","source":"来源: 拾忆鱼's Blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'MyBatis-Plus框架学习',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-09-01 09:39:53'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/gitcalendar/css/gitcalendar.css"/><link rel="stylesheet" href="/css/tag_plugins.css"><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-swiper-anzhiyu@1.0.4/lib/swiper.min.css"><script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script><link rel="stylesheet" href="/css/tags.css"><link rel="stylesheet" href="/css/double_article.css"><link rel="stylesheet" href="/css/nav.css"><link rel="stylesheet" href="/css/essay_page.css"><script type="text/javascript" src="/js/echarts.min.js"></script><script type="text/javascript" src="/js/copy.js"></script><script src="https://cdn1.tianli0.top/npm/vue@2.6.14/dist/vue.min.js"></script><script src="https://cdn1.tianli0.top/npm/element-ui@2.15.6/lib/index.js"></script><link rel="stylesheet" href="https://cdn1.tianli0.top/npm/element-ui@2.15.6/packages/theme-chalk/lib/index.css"><link rel="stylesheet" href="/css/copyright.css"><link rel="stylesheet" href="/css/progress_bar.css"><link rel="stylesheet" href="/css/footer.css"><link rel="stylesheet" href="/css/page.css"><link rel="stylesheet" href="/css/layout.css"><link rel="stylesheet" href="/css/color.css"><link rel="stylesheet" href="/css/cursors/cursors.css"><link rel="stylesheet" href="/css/fonts/font.css"><link rel="stylesheet" href="/css/about/about.css"><link rel="stylesheet" href="/css/about/careers.css"><link rel="stylesheet" href="/css/about/genshinimpact.css"><link rel="stylesheet" href="/css/about/hello-about.css"><link rel="stylesheet" href="/css/about/site.css"><link rel="stylesheet" href="/css/about/skills.css"><link rel="stylesheet" href="/css/photo.css"><link rel="stylesheet" href="/css/icat.css"><meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="拾忆鱼's Blog" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101530409.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">59</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives"><i class="fa-fw fas fa-archive"></i><span> 全部</span></a></li><li><a class="site-page child" href="/categories"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heart"></i><span> 空间</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/essay"><i class="fa-fw fas fa-comments"></i><span> 碎碎念</span></a></li><li><a class="site-page child" href="/collect"><i class="fa-fw fas fa-walking"></i><span> 足迹阁</span></a></li><li><a class="site-page child" href="/photo"><i class="fa-fw fas fa-images"></i><span> 照片墙</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about"><i class="fa-fw fas fa-address-card"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">拾忆鱼's Blog</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives"><i class="fa-fw fas fa-archive"></i><span> 全部</span></a></li><li><a class="site-page child" href="/categories"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heart"></i><span> 空间</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/essay"><i class="fa-fw fas fa-comments"></i><span> 碎碎念</span></a></li><li><a class="site-page child" href="/collect"><i class="fa-fw fas fa-walking"></i><span> 足迹阁</span></a></li><li><a class="site-page child" href="/photo"><i class="fa-fw fas fa-images"></i><span> 照片墙</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about"><i class="fa-fw fas fa-address-card"></i><span> 关于</span></a></div></div><center id="name-container"><a id="page-name" href="javascript:btf.scrollToDest(0, 500)">PAGE_NAME</a></center></div><div id="toggleButtons"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">MyBatis-Plus框架学习</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-08-28T04:35:33.000Z" title="发表于 2024-08-28 12:35:33">2024-08-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-09-01T01:39:53.763Z" title="更新于 2024-09-01 09:39:53">2024-09-01</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E3%80%90%E6%A1%86%E6%9E%B6%E3%80%91/">【框架】</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="MyBatis-Plus框架学习"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="post-content" id="article-container"><h1 id="1mybatis-plus介绍"><a class="markdownIt-Anchor" href="#1mybatis-plus介绍"></a> 1.Mybatis Plus介绍</h1>
+<h2 id="11mybatis和mybatis-plus的区别是什么"><a class="markdownIt-Anchor" href="#11mybatis和mybatis-plus的区别是什么"></a> 1.1Mybatis和Mybatis Plus的区别是什么</h2>
+<h3 id="111什么是mybatis"><a class="markdownIt-Anchor" href="#111什么是mybatis"></a> 1.1.1什么是Mybatis?</h3>
+<ol>
+<li><strong>MyBatis 是一款优秀的<mark>持久层框架</mark></strong>，说白话就是一款操作数据库的框架。</li>
+<li>它支持自定义 SQL、存储过程以及<mark>高级映射</mark></li>
+<li>MyBatis 免除了几乎所有的 JDBC 代码以及设置参数和获取结果集的工作。</li>
+<li>MyBatis 可以通过简单的 XML 或注解来配置和映射原始类型、接口和 Java POJO（Plain Old Java Objects，普通老式 Java 对象）为数据库中的记录。</li>
+</ol>
+<h3 id="112区分mybatis-plus和mybatis"><a class="markdownIt-Anchor" href="#112区分mybatis-plus和mybatis"></a> 1.1.2区分Mybatis Plus和Mybatis</h3>
+<p>MyBatis-Plus（简称 MP）是<strong>一个 MyBatis 的<mark>增强工具</mark></strong>，在 MyBatis 的基础上<strong>只<mark>做增强不做改变</mark>，为简化开发、提高效率而生。</strong></p>
+<h2 id="12mybatis-plus特点"><a class="markdownIt-Anchor" href="#12mybatis-plus特点"></a> 1.2Mybatis Plus特点</h2>
+<ul>
+<li><strong><mark>无侵入</mark></strong>：只做增强不做改变，引入它不会对现有工程产生影响，如丝般顺滑</li>
+<li><strong><mark>损耗小</mark></strong>：启动即会自动注入基本 CURD，性能基本无损耗，直接面向对象操作</li>
+<li><strong><mark>强大的 CRUD 操作</mark></strong>：内置通用 Mapper、通用 Service，仅仅通过少量配置即可实现单表大部分 CRUD 操作，更有强大的条件构造器，满足各类使用需求</li>
+<li><strong>支持 Lambda 形式调用</strong>：通过 Lambda 表达式，方便的编写各类查询条件，无需再担心字段写错</li>
+<li><strong>支持主键自动生成</strong>：支持多达 4 种主键策略（内含分布式唯一 ID 生成器 - Sequence），可自由配置，完美解决主键问题</li>
+<li><strong>支持 ActiveRecord 模式</strong>：支持 ActiveRecord 形式调用，实体类只需继承 Model 类即可进行强大的 CRUD 操作</li>
+<li><strong>支持自定义全局通用操作</strong>：支持全局通用方法注入（ Write once, use anywhere ）</li>
+<li><strong>内置代码生成器</strong>：采用代码或者 Maven 插件可快速生成 Mapper 、 Model 、 Service 、 Controller 层代码，支持模板引擎，更有超多自定义配置等您来使用</li>
+<li><strong>内置分页插件</strong>：基于 MyBatis 物理分页，开发者无需关心具体操作，配置好插件之后，写分页等同于普通 List 查询</li>
+<li><strong>分页插件支持多种数据库</strong>：支持 MySQL、MariaDB、Oracle、DB2、H2、HSQL、SQLite、Postgre、SQLServer 等多种数据库</li>
+<li><strong>内置性能分析插件</strong>：可输出 SQL 语句以及其执行时间，建议开发测试时启用该功能，能快速揪出慢查询</li>
+<li><strong>内置全局拦截插件</strong>：提供全表 delete 、 update 操作智能分析阻断，也可自定义拦截规则，预防误操作</li>
+</ul>
+<h2 id="13支持的数据库"><a class="markdownIt-Anchor" href="#13支持的数据库"></a> 1.3支持的数据库</h2>
+<ul>
+<li>MySQL，Oracle，DB2，H2，HSQL，SQLite，PostgreSQL，SQLServer，Phoenix，Gauss ，ClickHouse，Sybase，OceanBase，Firebird，Cubrid，Goldilocks，csiidb，informix，TDengine，redshift</li>
+<li>达梦数据库，虚谷数据库，人大金仓数据库，南大通用(华库)数据库，南大通用数据库，神通数据库，瀚高数据库，优炫数据库</li>
+</ul>
+<h1 id="2环境搭建"><a class="markdownIt-Anchor" href="#2环境搭建"></a> 2.环境搭建</h1>
+<p>新建基于Maven的Springboot项目</p>
+<h2 id="21前置条件新建数据库表"><a class="markdownIt-Anchor" href="#21前置条件新建数据库表"></a> 2.1前置条件——新建数据库表</h2>
+<p>如图，新建fenge_wms数据库的wms_ware表</p>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/4c7834081a0a135d0d8c58c819138ec5.png" alt="image-20240305192702507" /></p>
+<h2 id="22springboot整合mybatis-plus"><a class="markdownIt-Anchor" href="#22springboot整合mybatis-plus"></a> 2.2Springboot整合Mybatis Plus</h2>
+<h3 id="221引入依赖"><a class="markdownIt-Anchor" href="#221引入依赖"></a> 2.2.1引入依赖</h3>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- mybatis-plus 依赖 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.baomidou<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mybatis-plus-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.5.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- 单元测试依赖 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- lombok 依赖 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.projectlombok<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>lombok<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.16.10<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- mysql 依赖 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>mysql<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mysql-connector-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>警告： 引入 <code>MyBatis-Plus</code> 之后请不要再次引入 <code>MyBatis</code> 以及 <code>MyBatis-Spring</code>，以避免因版本差异导致的问题。</strong></p>
+</blockquote>
+<h3 id="222添加配置"><a class="markdownIt-Anchor" href="#222添加配置"></a> 2.2.2添加配置</h3>
+<ul>
+<li>application.yml：配置主机、用户、密码</li>
+</ul>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">    <span class="attr">datasource:</span></span><br><span class="line">        <span class="attr">driver-class-name:</span> <span class="string">com.mysql.cj.jdbc.Driver</span></span><br><span class="line">        <span class="attr">url:</span> <span class="string">jdbc:mysql://127.0.0.1:3306/fenge_wms?userUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;serverTimezone=Asia/Shanghai</span></span><br><span class="line">        <span class="attr">username:</span> <span class="string">root</span></span><br><span class="line">        <span class="attr">password:</span> <span class="string">密码</span></span><br></pre></td></tr></table></figure>
+<h3 id="223配置类"><a class="markdownIt-Anchor" href="#223配置类"></a> 2.2.3配置类</h3>
+<ul>
+<li>新建MybatisPlusConfig配置类</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@MapperScan(&quot;com.peng.mybatis.mapper&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MybatisPlusConfig</span> &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>@MapperScan</code> 注解用于告诉 Mybatis Plus 框架需要扫描的 <code>mapper</code> 类的包路径，<code>mapper</code> 类主要用于操作数据库</p>
+<h2 id="23添加实体类"><a class="markdownIt-Anchor" href="#23添加实体类"></a> 2.3添加实体类</h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> peng</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@email</span> 3063272404@qq.com</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2024-01-17 16:05:14</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@TableName(&quot;wms_ware&quot;)</span>	<span class="comment">//指定表名</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WareEntity</span> <span class="keyword">implements</span> <span class="title class_">Serializable</span> &#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">long</span> <span class="variable">serialVersionUID</span> <span class="operator">=</span> <span class="number">1L</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 仓库id</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="meta">@TableId(value=&quot;ware_id&quot;,type = IdType.AUTO)</span>	<span class="comment">//指定字段wareId为主键，并递增</span></span><br><span class="line">	<span class="keyword">private</span> Integer wareId;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 用户id</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">private</span> Integer userId;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 仓库名称</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">private</span> String name;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 仓库地点</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">private</span> String address;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 仓库面积【单位为平方米】</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">private</span> Integer area;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 纬度</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">private</span> BigDecimal latitude;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 经度</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">private</span> BigDecimal longitude;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 添加时间</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="meta">@TableField(fill = FieldFill.INSERT)</span></span><br><span class="line">	<span class="meta">@JsonFormat(pattern = &quot;yyyy-MM-dd HH:mm:ss&quot;, timezone = &quot;Asia/Shanghai&quot;)</span></span><br><span class="line">	<span class="keyword">private</span> LocalDateTime addTime;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 修改时间</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="meta">@TableField(fill = FieldFill.UPDATE)</span></span><br><span class="line">	<span class="meta">@JsonFormat(pattern = &quot;yyyy-MM-dd HH:mm:ss&quot;, timezone = &quot;Asia/Shanghai&quot;)</span></span><br><span class="line">	<span class="keyword">private</span> LocalDateTime updateTime;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="24添加mapperdao类"><a class="markdownIt-Anchor" href="#24添加mapperdao类"></a> 2.4添加Mapper/Dao类</h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> peng</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@email</span> 3063272404@qq.com</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2024-01-17 16:05:14</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Mapper</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">WareDao</span> <span class="keyword">extends</span> <span class="title class_">BaseMapper</span>&lt;WareEntity&gt; &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="241解析basemapper类"><a class="markdownIt-Anchor" href="#241解析basemapper类"></a> 2.4.1解析BaseMapper类</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">BaseMapper</span>&lt;T&gt; <span class="keyword">extends</span> <span class="title class_">Mapper</span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="comment">// 新增数据</span></span><br><span class="line">    <span class="type">int</span> <span class="title function_">insert</span><span class="params">(T entity)</span>;</span><br><span class="line">	<span class="comment">// 根据 ID 删除</span></span><br><span class="line">    <span class="type">int</span> <span class="title function_">deleteById</span><span class="params">(Serializable id)</span>;</span><br><span class="line">	<span class="comment">// 删除数据</span></span><br><span class="line">    <span class="type">int</span> <span class="title function_">deleteByMap</span><span class="params">(<span class="meta">@Param(&quot;cm&quot;)</span> Map&lt;String, Object&gt; columnMap)</span>;</span><br><span class="line">	<span class="comment">// 删除数据</span></span><br><span class="line">    <span class="type">int</span> <span class="title function_">delete</span><span class="params">(<span class="meta">@Param(&quot;ew&quot;)</span> Wrapper&lt;T&gt; queryWrapper)</span>;</span><br><span class="line">	<span class="comment">// 根据 ID 批量删除数据</span></span><br><span class="line">    <span class="type">int</span> <span class="title function_">deleteBatchIds</span><span class="params">(<span class="meta">@Param(&quot;coll&quot;)</span> Collection&lt;? extends Serializable&gt; idList)</span>;</span><br><span class="line">	<span class="comment">// 根据 ID 更新</span></span><br><span class="line">    <span class="type">int</span> <span class="title function_">updateById</span><span class="params">(<span class="meta">@Param(&quot;et&quot;)</span> T entity)</span>;</span><br><span class="line">	<span class="comment">// 更新数据</span></span><br><span class="line">    <span class="type">int</span> <span class="title function_">update</span><span class="params">(<span class="meta">@Param(&quot;et&quot;)</span> T entity, <span class="meta">@Param(&quot;ew&quot;)</span> Wrapper&lt;T&gt; updateWrapper)</span>;</span><br><span class="line">	<span class="comment">// 根据 ID 查询</span></span><br><span class="line">    T <span class="title function_">selectById</span><span class="params">(Serializable id)</span>;</span><br><span class="line">	<span class="comment">// 根据 ID 批量查询</span></span><br><span class="line">    List&lt;T&gt; <span class="title function_">selectBatchIds</span><span class="params">(<span class="meta">@Param(&quot;coll&quot;)</span> Collection&lt;? extends Serializable&gt; idList)</span>;</span><br><span class="line">	<span class="comment">// 查询数据</span></span><br><span class="line">    List&lt;T&gt; <span class="title function_">selectByMap</span><span class="params">(<span class="meta">@Param(&quot;cm&quot;)</span> Map&lt;String, Object&gt; columnMap)</span>;</span><br><span class="line">	<span class="comment">// 查询一条数据</span></span><br><span class="line">    T <span class="title function_">selectOne</span><span class="params">(<span class="meta">@Param(&quot;ew&quot;)</span> Wrapper&lt;T&gt; queryWrapper)</span>;</span><br><span class="line">	<span class="comment">// 查询记录总数</span></span><br><span class="line">    Integer <span class="title function_">selectCount</span><span class="params">(<span class="meta">@Param(&quot;ew&quot;)</span> Wrapper&lt;T&gt; queryWrapper)</span>;</span><br><span class="line">	<span class="comment">// 查询多条数据</span></span><br><span class="line">    List&lt;T&gt; <span class="title function_">selectList</span><span class="params">(<span class="meta">@Param(&quot;ew&quot;)</span> Wrapper&lt;T&gt; queryWrapper)</span>;</span><br><span class="line">	<span class="comment">// 查询多条数据</span></span><br><span class="line">    List&lt;Map&lt;String, Object&gt;&gt; <span class="title function_">selectMaps</span><span class="params">(<span class="meta">@Param(&quot;ew&quot;)</span> Wrapper&lt;T&gt; queryWrapper)</span>;</span><br><span class="line">	<span class="comment">// 查询多条数据</span></span><br><span class="line">    List&lt;Object&gt; <span class="title function_">selectObjs</span><span class="params">(<span class="meta">@Param(&quot;ew&quot;)</span> Wrapper&lt;T&gt; queryWrapper)</span>;</span><br><span class="line">	<span class="comment">// 分页查询</span></span><br><span class="line">    &lt;E <span class="keyword">extends</span> <span class="title class_">IPage</span>&lt;T&gt;&gt; E <span class="title function_">selectPage</span><span class="params">(E page, <span class="meta">@Param(&quot;ew&quot;)</span> Wrapper&lt;T&gt; queryWrapper)</span>;</span><br><span class="line">	<span class="comment">// 分页查询</span></span><br><span class="line">    &lt;E <span class="keyword">extends</span> <span class="title class_">IPage</span>&lt;Map&lt;String, Object&gt;&gt;&gt; E <span class="title function_">selectMapsPage</span><span class="params">(E page, <span class="meta">@Param(&quot;ew&quot;)</span> Wrapper&lt;T&gt; queryWrapper)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="3增删查改数据"><a class="markdownIt-Anchor" href="#3增删查改数据"></a> 3.增删查改数据</h1>
+<h2 id="31新增数据"><a class="markdownIt-Anchor" href="#31新增数据"></a> 3.1新增数据</h2>
+<h3 id="311新增service"><a class="markdownIt-Anchor" href="#311新增service"></a> 3.1.1新增Service</h3>
+<p>Mybatis Plus 同样也封装了通用的 Service 层 CRUD 操作，并且提供了更丰富的方法。</p>
+<ul>
+<li>定义WareService接口——<mark>继承IService</mark></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> peng</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@email</span> 3063272404@qq.com</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2024-01-17 16:05:14</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">WareService</span> <span class="keyword">extends</span> <span class="title class_">IService</span>&lt;WareEntity&gt; &#123;</span><br><span class="line"></span><br><span class="line">    PageUtils <span class="title function_">queryPage</span><span class="params">(Map&lt;String, Object&gt; params)</span>;</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>实现类——继承ServiceImpl&lt;UserMapper，User&gt;，并实现WareService</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@Service(&quot;wareService&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WareServiceImpl</span> <span class="keyword">extends</span> <span class="title class_">ServiceImpl</span>&lt;WareDao, WareEntity&gt; <span class="keyword">implements</span> <span class="title class_">WareService</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> PageUtils <span class="title function_">queryPage</span><span class="params">(Map&lt;String, Object&gt; params)</span> &#123;</span><br><span class="line">        IPage&lt;WareEntity&gt; page = <span class="built_in">this</span>.page(</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">Query</span>&lt;WareEntity&gt;().getPage(params),</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">QueryWrapper</span>&lt;WareEntity&gt;()</span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">PageUtils</span>(page);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="312注入wareservice"><a class="markdownIt-Anchor" href="#312注入wareservice"></a> 3.1.2注入WareService</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="keyword">private</span> WareService wareService;</span><br></pre></td></tr></table></figure>
+<p>与 Mapper 层不同的是，Service 层的新增方法均以 <code>save</code> 开头，并且功能更丰富，来看看都提供了哪些方法：</p>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/fb895ad8ef6e9e8f171a73d4c89ee79d.png" alt="image-20240305194332152" /></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 新增数据</span></span><br><span class="line">sava(T) : <span class="type">boolean</span></span><br><span class="line">    </span><br><span class="line"><span class="comment">// 伪批量插入：实际上是通过 for 循环一条一条的插入</span></span><br><span class="line">savaBatch(Collection&lt;T&gt;) : <span class="type">boolean</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 伪批量插入，int 表示批量提交数，默认为 1000，实质还是for循环一条一条的插入</span></span><br><span class="line">savaBatch(Collection&lt;T&gt;, <span class="type">int</span>) : <span class="type">boolean</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 新增或更新(单条数据)：数据库中不存在该数据时，就执行插入操作：数据库中已存在时，就执行更新操作</span></span><br><span class="line">saveOrUpdate(T) : <span class="type">boolean</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 批量新增或更新</span></span><br><span class="line">saveOrUpdateBatch(Collection&lt;T&gt;) : <span class="type">boolean</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 批量新增或更新(可指定批量提交数)</span></span><br><span class="line">saveOrUpdateBatch(Collection&lt;T&gt;, <span class="type">int</span>) : <span class="type">boolean</span></span><br></pre></td></tr></table></figure>
+<h2 id="32删除数据"><a class="markdownIt-Anchor" href="#32删除数据"></a> 3.2删除数据</h2>
+<h3 id="321basemapper"><a class="markdownIt-Anchor" href="#321basemapper"></a> 3.2.1BaseMapper</h3>
+<p>查看BaseMapper封装的删除方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 根据主键 ID 删除 (直接传入 ID)</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">deleteById</span><span class="params">(Serializable id)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 根据主键 ID 删除 (传入实体类)</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">deleteById</span><span class="params">(T entity)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 根据主键 ID 批量删除</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">deleteBatchIds</span><span class="params">(Collection&lt;?&gt; idList)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 通过 Wrapper 条件构造器删除</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">delete</span><span class="params">(Wrapper&lt;T&gt; queryWrapper)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 通过 Map 设置条件来删除</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">deleteByMap</span><span class="params">(Map&lt;String, Object&gt; columnMap)</span>;</span><br></pre></td></tr></table></figure>
+<h3 id="322serviceimpl"><a class="markdownIt-Anchor" href="#322serviceimpl"></a> 3.2.2ServiceImpl</h3>
+<p>查看ServiceImpl封装的删除方法：</p>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/8d9283b718eeba73455436ca7ebe65b5.png" alt="image-20240305195648455" /></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 根据 entity 条件，删除记录</span></span><br><span class="line"><span class="type">boolean</span> <span class="title function_">remove</span><span class="params">(Wrapper&lt;T&gt; queryWrapper)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 根据 ID 删除</span></span><br><span class="line"><span class="type">boolean</span> <span class="title function_">removeById</span><span class="params">(Serializable id)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 根据 columnMap 条件，删除记录</span></span><br><span class="line"><span class="type">boolean</span> <span class="title function_">removeByMap</span><span class="params">(Map&lt;String, Object&gt; columnMap)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 删除（根据ID 批量删除）</span></span><br><span class="line"><span class="type">boolean</span> <span class="title function_">removeByIds</span><span class="params">(Collection&lt;? extends Serializable&gt; idList)</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="33查找数据"><a class="markdownIt-Anchor" href="#33查找数据"></a> 3.3查找数据</h2>
+<h3 id="331basemapper"><a class="markdownIt-Anchor" href="#331basemapper"></a> 3.3.1BaseMapper</h3>
+<ul>
+<li>查看BaseMapper封装的查找方法：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 根据 ID 查询</span></span><br><span class="line">T <span class="title function_">selectById</span><span class="params">(Serializable id)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 通过 Wrapper 组装查询条件，查询一条记录</span></span><br><span class="line">T <span class="title function_">selectOne</span><span class="params">(Wrapper&lt;T&gt; queryWrapper)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查询（根据ID 批量查询）</span></span><br><span class="line">List&lt;T&gt; <span class="title function_">selectBatchIds</span><span class="params">(Collection&lt;? extends Serializable&gt; idList)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 通过 Wrapper 组装查询条件，查询全部记录</span></span><br><span class="line">List&lt;T&gt; <span class="title function_">selectList</span><span class="params">(Wrapper&lt;T&gt; queryWrapper)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查询（根据 columnMap 来设置条件）</span></span><br><span class="line">List&lt;T&gt; <span class="title function_">selectByMap</span><span class="params">(Map&lt;String, Object&gt; columnMap)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 根据 Wrapper 组装查询条件，查询全部记录，并以 map 的形式返回</span></span><br><span class="line">List&lt;Map&lt;String, Object&gt;&gt; <span class="title function_">selectMaps</span><span class="params">(Wrapper&lt;T&gt; queryWrapper)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 根据 Wrapper 条件，查询全部记录。注意： 只返回第一个字段的值</span></span><br><span class="line">List&lt;Object&gt; <span class="title function_">selectObjs</span><span class="params">(Wrapper&lt;T&gt; queryWrapper)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// =========================== 分页相关 ===========================</span></span><br><span class="line"><span class="comment">// 根据 entity 条件，查询全部记录（并翻页）</span></span><br><span class="line">IPage&lt;T&gt; <span class="title function_">selectPage</span><span class="params">(IPage&lt;T&gt; page, Wrapper&lt;T&gt; queryWrapper)</span>;</span><br><span class="line"><span class="comment">// 根据 Wrapper 条件，查询全部记录（并翻页）</span></span><br><span class="line">IPage&lt;Map&lt;String, Object&gt;&gt; <span class="title function_">selectMapsPage</span><span class="params">(IPage&lt;T&gt; page, Wrapper&lt;T&gt; queryWrapper)</span>;</span><br><span class="line"><span class="comment">// 根据 Wrapper 条件，查询总记录数</span></span><br><span class="line">Integer <span class="title function_">selectCount</span><span class="params">(Wrapper&lt;T&gt; queryWrapper)</span>;</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">类型</th>
+<th style="text-align:center">参数名</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>Serializable</code></td>
+<td style="text-align:center"><code>id</code></td>
+<td style="text-align:center">主键 ID</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>Wrapper&lt;T&gt;</code></td>
+<td style="text-align:center"><code>queryWrapper</code></td>
+<td style="text-align:center">实体对象封装操作类（可以为 null）</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>Collection&lt;? extends Serializable&gt;</code></td>
+<td style="text-align:center"><code>idList</code></td>
+<td style="text-align:center">主键 ID 列表(不能为 null 以及 empty)</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>Map&lt;String, Object&gt;</code></td>
+<td style="text-align:center"><code>columnMap</code></td>
+<td style="text-align:center">表字段 map 对象</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>IPage&lt;T&gt;</code></td>
+<td style="text-align:center"><code>page</code></td>
+<td style="text-align:center">分页查询条件（可以为 RowBounds.DEFAULT）</td>
+</tr>
+</tbody>
+</table>
+<h4 id="1通过-wrapper-组装查询条件"><a class="markdownIt-Anchor" href="#1通过-wrapper-组装查询条件"></a> （1）通过 Wrapper 组装查询条件</h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// eq()方法相当于 where user_id=1，可以加多个</span></span><br><span class="line"><span class="comment">// set()方法相当于 set xxx=xxx</span></span><br><span class="line"><span class="keyword">new</span> <span class="title class_">QueryWrapper</span>().select(<span class="string">&quot;user_id&quot;</span>,<span class="string">&quot;name&quot;</span>).eq(<span class="string">&quot;user_id&quot;</span>,<span class="number">1</span>)		</span><br></pre></td></tr></table></figure>
+<h3 id="332serviceimpl"><a class="markdownIt-Anchor" href="#332serviceimpl"></a> 3.3.2ServiceImpl</h3>
+<p>Service 层封装的查询方法注意分为 4 块：</p>
+<ul>
+<li><code>getXXX</code> : <mark>get 开头的方法</mark>；</li>
+<li><code>listXXX</code> : <mark>list 开头的方法</mark>，用于查询多条数据；</li>
+<li><code>pageXXX</code> : <mark>page 开头的方法</mark>，用于分页查询；</li>
+<li><code>count</code> : 用于<mark>查询总记录数</mark>；</li>
+</ul>
+<h4 id="1get相关方法"><a class="markdownIt-Anchor" href="#1get相关方法"></a> （1）get相关方法</h4>
+<p><code>get</code> 开头的相关方法用于 <mark><strong>查询一条记录</strong></mark>，方法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 根据 ID 查询</span></span><br><span class="line">T <span class="title function_">getById</span><span class="params">(Serializable id)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 根据 Wrapper，查询一条记录。如果结果集是多个会抛出异常</span></span><br><span class="line">T <span class="title function_">getOne</span><span class="params">(Wrapper&lt;T&gt; queryWrapper)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 根据 Wrapper，查询一条记录</span></span><br><span class="line">T <span class="title function_">getOne</span><span class="params">(Wrapper&lt;T&gt; queryWrapper, <span class="type">boolean</span> throwEx)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 根据 Wrapper，查询一条记录，以 map 的形式返回数据</span></span><br><span class="line">Map&lt;String, Object&gt; <span class="title function_">getMap</span><span class="params">(Wrapper&lt;T&gt; queryWrapper)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 根据 Wrapper，查询一条记录</span></span><br><span class="line">&lt;V&gt; V <span class="title function_">getObj</span><span class="params">(Wrapper&lt;T&gt; queryWrapper, Function&lt;? <span class="built_in">super</span> Object, V&gt; mapper)</span>;</span><br></pre></td></tr></table></figure>
+<p>参数说明：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">类型</th>
+<th style="text-align:center">参数名</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>Serializable</code></td>
+<td style="text-align:center"><code>id</code></td>
+<td style="text-align:center">主键 <code>ID</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>Wrapper&lt;T&gt;</code></td>
+<td style="text-align:center"><code>queryWrapper</code></td>
+<td style="text-align:center">实体对象封装操作类 <code>QueryWrapper</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>boolean</code></td>
+<td style="text-align:center"><code>throwEx</code></td>
+<td style="text-align:center">有多个 result 是否抛出异常</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>T</code></td>
+<td style="text-align:center"><code>entity</code></td>
+<td style="text-align:center">实体对象</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>Function&lt;? super Object, V&gt;</code></td>
+<td style="text-align:center"><code>mapper</code></td>
+<td style="text-align:center">转换函数</td>
+</tr>
+</tbody>
+</table>
+<h4 id="2list相关方法"><a class="markdownIt-Anchor" href="#2list相关方法"></a> （2）list相关方法</h4>
+<p><code>list</code> 开头的相关方法用于查询多条记录，方法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 查询所有</span></span><br><span class="line">List&lt;T&gt; <span class="title function_">list</span><span class="params">()</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查询列表</span></span><br><span class="line">List&lt;T&gt; <span class="title function_">list</span><span class="params">(Wrapper&lt;T&gt; queryWrapper)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查询（根据ID 批量查询）</span></span><br><span class="line">Collection&lt;T&gt; <span class="title function_">listByIds</span><span class="params">(Collection&lt;? extends Serializable&gt; idList)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查询（根据 columnMap 条件）</span></span><br><span class="line">Collection&lt;T&gt; <span class="title function_">listByMap</span><span class="params">(Map&lt;String, Object&gt; columnMap)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查询所有列表, 以 map 的形式返回</span></span><br><span class="line">List&lt;Map&lt;String, Object&gt;&gt; <span class="title function_">listMaps</span><span class="params">()</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查询列表</span></span><br><span class="line">List&lt;Map&lt;String, Object&gt;&gt; <span class="title function_">listMaps</span><span class="params">(Wrapper&lt;T&gt; queryWrapper)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查询全部记录</span></span><br><span class="line">List&lt;Object&gt; <span class="title function_">listObjs</span><span class="params">()</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查询全部记录</span></span><br><span class="line">&lt;V&gt; List&lt;V&gt; <span class="title function_">listObjs</span><span class="params">(Function&lt;? <span class="built_in">super</span> Object, V&gt; mapper)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 根据 Wrapper 条件，查询全部记录</span></span><br><span class="line">List&lt;Object&gt; <span class="title function_">listObjs</span><span class="params">(Wrapper&lt;T&gt; queryWrapper)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 根据 Wrapper 条件，查询全部记录</span></span><br><span class="line">&lt;V&gt; List&lt;V&gt; <span class="title function_">listObjs</span><span class="params">(Wrapper&lt;T&gt; queryWrapper, Function&lt;? <span class="built_in">super</span> Object, V&gt; mapper)</span>;</span><br></pre></td></tr></table></figure>
+<p>参数说明：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">类型</th>
+<th style="text-align:center">参数名</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>Wrapper&lt;T&gt;</code></td>
+<td style="text-align:center"><code>queryWrapper</code></td>
+<td style="text-align:center">实体对象封装操作类 <code>QueryWrapper</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>Collection&lt;? extends Serializable&gt;</code></td>
+<td style="text-align:center"><code>idList</code></td>
+<td style="text-align:center">主键 <code>ID</code> 列表</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>Map&lt;String, Object&gt;</code></td>
+<td style="text-align:center"><code>columnMap</code></td>
+<td style="text-align:center">表字段 <code>map</code> 对象</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>Function&lt;? super Object, V&gt;</code></td>
+<td style="text-align:center"><code>mapper</code></td>
+<td style="text-align:center">转换函数</td>
+</tr>
+</tbody>
+</table>
+<h4 id="3page分页相关方法"><a class="markdownIt-Anchor" href="#3page分页相关方法"></a> （3）page分页相关方法</h4>
+<p>后面单独讲</p>
+<h4 id="4count查询记录总数"><a class="markdownIt-Anchor" href="#4count查询记录总数"></a> （4）count查询记录总数</h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 查询总记录数（不带查询条件）</span></span><br><span class="line">count();</span><br><span class="line"><span class="comment">// 查询总记录数（可以带查询条件）</span></span><br><span class="line">count(Wrapper&lt;T&gt;)</span><br></pre></td></tr></table></figure>
+<h2 id="34修改数据"><a class="markdownIt-Anchor" href="#34修改数据"></a> 3.4修改数据</h2>
+<h3 id="341basemapper"><a class="markdownIt-Anchor" href="#341basemapper"></a> 3.4.1BaseMapper</h3>
+<ul>
+<li>查看BaseMapper封装的查找方法：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//根据主键 ID 来更新</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">updateById</span><span class="params">(T entity)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//entity 用于设置更新的数据，wrapper 用于组装更新条件</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">update</span><span class="params">(T entity, Wrapper&lt;T&gt; updateWrapper)</span>;</span><br></pre></td></tr></table></figure>
+<h3 id="342serviceimpl"><a class="markdownIt-Anchor" href="#342serviceimpl"></a> 3.4.2ServiceImpl</h3>
+<p>Service 层封装的查询方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 根据 ID 来更新，entity 用于设置 ID 以及其他更新条件</span></span><br><span class="line"><span class="type">boolean</span> <span class="title function_">updateById</span><span class="params">(T entity)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// wrapper 用于设置更新数据以及条件</span></span><br><span class="line"><span class="type">boolean</span> <span class="title function_">update</span><span class="params">(Wrapper&lt;T&gt; updateWrapper)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// entity 用于设置更新的数据，wrapper 用于组装更新条件</span></span><br><span class="line"><span class="type">boolean</span> <span class="title function_">update</span><span class="params">(T entity, Wrapper&lt;T&gt; updateWrapper)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 批量更新</span></span><br><span class="line"><span class="type">boolean</span> <span class="title function_">updateBatchById</span><span class="params">(Collection&lt;T&gt; entityList)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 批量更新，可手动设置批量提交阀值</span></span><br><span class="line"><span class="type">boolean</span> <span class="title function_">updateBatchById</span><span class="params">(Collection&lt;T&gt; entityList, <span class="type">int</span> batchSize)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 保存或者更新</span></span><br><span class="line"><span class="type">boolean</span> <span class="title function_">saveOrUpdate</span><span class="params">(T entity)</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="35分页查询"><a class="markdownIt-Anchor" href="#35分页查询"></a> 3.5分页查询</h2>
+<h3 id="351添加分页插件"><a class="markdownIt-Anchor" href="#351添加分页插件"></a> 3.5.1添加分页插件</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MybatisPlusConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 分页插件</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> MybatisPlusInterceptor <span class="title function_">mybatisPlusInterceptor</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="type">MybatisPlusInterceptor</span> <span class="variable">interceptor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MybatisPlusInterceptor</span>();</span><br><span class="line">        interceptor.addInnerInterceptor(<span class="keyword">new</span> <span class="title class_">PaginationInnerInterceptor</span>());</span><br><span class="line">        <span class="keyword">return</span> interceptor;</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="352basemapper"><a class="markdownIt-Anchor" href="#352basemapper"></a> 3.5.2BaseMapper</h3>
+<ul>
+<li>BaseMapper提供的分页查询方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 分页查询，page 用于设置需要查询的页数，以及每页展示数据量，wrapper 用于组装查询条件</span></span><br><span class="line">IPage&lt;T&gt; <span class="title function_">selectPage</span><span class="params">(IPage&lt;T&gt; page, Wrapper&lt;T&gt; queryWrapper)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 同上，区别是用 map 来接受查询的数据</span></span><br><span class="line">IPage&lt;Map&lt;String, Object&gt;&gt; <span class="title function_">selectMapsPage</span><span class="params">(IPage&lt;T&gt; page, Wrapper&lt;T&gt; queryWrapper)</span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>参数说明：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">类型</th>
+<th style="text-align:center">参数名</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>Wrapper&lt;T&gt;</code></td>
+<td style="text-align:center"><code>queryWrapper</code></td>
+<td style="text-align:center">实体对象封装操作类（可以为 <code>null</code>）</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>IPage&lt;T&gt;</code></td>
+<td style="text-align:center"><code>page</code></td>
+<td style="text-align:center">分页查询条件（可以为 <code>RowBounds.DEFAULT</code>）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="353举例"><a class="markdownIt-Anchor" href="#353举例"></a> 3.5.3举例</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 组装查询条件</span></span><br><span class="line">QueryWrapper&lt;User&gt; queryWrapper = <span class="keyword">new</span> <span class="title class_">QueryWrapper</span>&lt;&gt;();</span><br><span class="line"><span class="comment">// where age = 30</span></span><br><span class="line">queryWrapper.eq(<span class="string">&quot;age&quot;</span>, <span class="number">30</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查询第 2 页数据，每页 10 条</span></span><br><span class="line">Page&lt;User&gt; page = <span class="keyword">new</span> <span class="title class_">Page</span>&lt;&gt;(<span class="number">2</span>, <span class="number">10</span>);</span><br><span class="line"></span><br><span class="line">page = userMapper.selectPage(page, queryWrapper);</span><br><span class="line">System.out.println(<span class="string">&quot;总记录数：&quot;</span> + page.getTotal());</span><br><span class="line">System.out.println(<span class="string">&quot;总共多少页：&quot;</span> + page.getPages());</span><br><span class="line">System.out.println(<span class="string">&quot;当前页码：&quot;</span> + page.getCurrent());</span><br><span class="line"><span class="comment">// 当前页数据</span></span><br><span class="line">List&lt;User&gt; users = page.getRecords();</span><br></pre></td></tr></table></figure>
+<p>执行上面的代码，实际上执行了两条 SQL ： 先执行 <code>COUNT(*)</code> 查询出记录总数，然后才是分页语句 <code>LIMIT</code>:</p>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/2fcf7f0ab1b11a912e846da78ea37470.png" alt="image-20240305225802822" /></p>
+<h3 id="354page类说明"><a class="markdownIt-Anchor" href="#354page类说明"></a> 3.5.4Page类说明</h3>
+<p>该类继承了 <code>IPage</code> 类，实现了 <em><mark>简单分页模型</mark></em> ，如果你要实现自己的分页模型可以继承 <code>Page</code> 类或者实现 <code>IPage</code> 类</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">属性名</th>
+<th style="text-align:center">类型</th>
+<th style="text-align:center">默认值</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>records</code></td>
+<td style="text-align:center"><code>List</code></td>
+<td style="text-align:center"><code>emptyList</code></td>
+<td style="text-align:center">查询数据列表</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>total</code></td>
+<td style="text-align:center"><code>Long</code></td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">查询列表总记录数</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>size</code></td>
+<td style="text-align:center"><code>Long</code></td>
+<td style="text-align:center">10</td>
+<td style="text-align:center">每页显示条数，默认 <code>10</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>current</code></td>
+<td style="text-align:center"><code>Long</code></td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">当前页</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>orders</code></td>
+<td style="text-align:center"><code>List</code></td>
+<td style="text-align:center"><code>emptyList</code></td>
+<td style="text-align:center">排序字段信息，允许前端传入的时候，注意 SQL 注入问题，可以使用 <code>SqlInjectionUtils.check(...)</code> 检查文本</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>optimizeCountSql</code></td>
+<td style="text-align:center"><code>boolean</code></td>
+<td style="text-align:center"><code>true</code></td>
+<td style="text-align:center">自动优化 COUNT SQL 如果遇到 <code>jSqlParser</code> 无法解析情况，设置该参数为 <code>false</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>optimizeJoinOfCountSql</code></td>
+<td style="text-align:center"><code>boolean</code></td>
+<td style="text-align:center"><code>true</code></td>
+<td style="text-align:center">自动优化 <code>COUNT SQL</code> 是否把 <code>join</code> 查询部分移除</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>searchCount</code></td>
+<td style="text-align:center"><code>boolean</code></td>
+<td style="text-align:center"><code>true</code></td>
+<td style="text-align:center">是否进行 count 查询，如果指向查询到列表不要查询总记录数，设置该参数为 <code>false</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>maxLimit</code></td>
+<td style="text-align:center"><code>Long</code></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">单页分页条数限制</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>countId</code></td>
+<td style="text-align:center"><code>String</code></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><code>xml</code> 自定义 <code>count</code> 查询的 <code>statementId</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="355serviceimpl"><a class="markdownIt-Anchor" href="#355serviceimpl"></a> 3.5.5ServiceImpl</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 无条件分页查询</span></span><br><span class="line">IPage&lt;T&gt; <span class="title function_">page</span><span class="params">(IPage&lt;T&gt; page)</span>;</span><br><span class="line"><span class="comment">// 条件分页查询</span></span><br><span class="line">IPage&lt;T&gt; <span class="title function_">page</span><span class="params">(IPage&lt;T&gt; page, Wrapper&lt;T&gt; queryWrapper)</span>;</span><br><span class="line"><span class="comment">// 无条件分页查询</span></span><br><span class="line">IPage&lt;Map&lt;String, Object&gt;&gt; <span class="title function_">pageMaps</span><span class="params">(IPage&lt;T&gt; page)</span>;</span><br><span class="line"><span class="comment">// 条件分页查询</span></span><br><span class="line">IPage&lt;Map&lt;String, Object&gt;&gt; <span class="title function_">pageMaps</span><span class="params">(IPage&lt;T&gt; page, Wrapper&lt;T&gt; queryWrapper)</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="36批量新增"><a class="markdownIt-Anchor" href="#36批量新增"></a> 3.6批量新增</h2>
+<h3 id="361-mybatis-plus的伪批量插入"><a class="markdownIt-Anchor" href="#361-mybatis-plus的伪批量插入"></a> 3.6.1 Mybatis Plus的伪批量插入</h3>
+<p>Mybatis Plus 内部封装的批量插入 <code>savaBatch()</code> 是个<strong>假的批量插入</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">List&lt;User&gt; users = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">    <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">    user.setName(<span class="string">&quot;犬小哈&quot;</span> + i);</span><br><span class="line">    user.setAge(i);</span><br><span class="line">    user.setGender(<span class="number">1</span>);</span><br><span class="line">    users.add(user);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 批量插入</span></span><br><span class="line"><span class="type">boolean</span> <span class="variable">isSuccess</span> <span class="operator">=</span> userService.saveBatch(users);</span><br><span class="line">System.out.println(<span class="string">&quot;isSuccess:&quot;</span> + isSuccess);</span><br></pre></td></tr></table></figure>
+<p>通过打印实际执行 SQL , 我们发现还是一条一条的执行 <code>INSERT</code>：</p>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/4cb6e0412ac9860187743125f1f158dc.png" alt="image-20240306091459515" /></p>
+<h3 id="362利用sql注入器实现真批量插入"><a class="markdownIt-Anchor" href="#362利用sql注入器实现真批量插入"></a> 3.6.2利用SQL注入器实现真批量插入</h3>
+<h4 id="1创建sql注入器-insertbatchsqlinjector"><a class="markdownIt-Anchor" href="#1创建sql注入器-insertbatchsqlinjector"></a> （1）创建SQL注入器 <code>InsertBatchSqlInjector</code></h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">InsertBatchSqlInjector</span> <span class="keyword">extends</span> <span class="title class_">DefaultSqlInjector</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> List&lt;AbstractMethod&gt; <span class="title function_">getMethodList</span><span class="params">(Class&lt;?&gt; mapperClass, TableInfo tableInfo)</span> &#123;</span><br><span class="line">    	<span class="comment">// super.getMethodList() 保留 Mybatis Plus 自带的方法</span></span><br><span class="line">        List&lt;AbstractMethod&gt; methodList = <span class="built_in">super</span>.getMethodList(mapperClass, tableInfo);</span><br><span class="line">        <span class="comment">// 添加自定义方法：批量插入，方法名为 insertBatchSomeColumn</span></span><br><span class="line">        methodList.add(<span class="keyword">new</span> <span class="title class_">InsertBatchSomeColumn</span>());</span><br><span class="line">        <span class="keyword">return</span> methodList;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="2insertbatchsomecolumn说明"><a class="markdownIt-Anchor" href="#2insertbatchsomecolumn说明"></a> （2）InsertBatchSomeColumn说明</h4>
+<p><code>InsertBatchSomeColumn</code> 是 Mybatis Plus 内部提供的默认批量插入，只不过这个方法作者只在 MySQL 数据测试过，所以没有将它作为通用方法供外部调用，注意看注释：</p>
+<h4 id="3配置-sql注入器"><a class="markdownIt-Anchor" href="#3配置-sql注入器"></a> （3）配置 SQL注入器</h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MybatisPlusConfig</span> &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 自定义批量插入 SQL 注入器</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> InsertBatchSqlInjector <span class="title function_">insertBatchSqlInjector</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">InsertBatchSqlInjector</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="4新建mybasemapper"><a class="markdownIt-Anchor" href="#4新建mybasemapper"></a> （4）新建MyBaseMapper</h4>
+<p>创建 <code>MyBaseMapper</code> 接口，让其<mark>继承自 Mybatis Plus 提供的 <code>BaseMapper</code>, 并定义批量插入方法</mark></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">MyBaseMapper</span>&lt;T&gt; <span class="keyword">extends</span> <span class="title class_">BaseMapper</span>&lt;T&gt; &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 批量插入</span></span><br><span class="line">    <span class="type">int</span> <span class="title function_">insertBatchSomeColumn</span><span class="params">(<span class="meta">@Param(&quot;list&quot;)</span> List&lt;T&gt; batchList)</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：方法名必须为 <code>insertBatchSomeColumn</code>, 和 <code>InsertBatchSomeColumn</code> 内部定义好的方法名保持一致。</p>
+</blockquote>
+<h3 id="363举例"><a class="markdownIt-Anchor" href="#363举例"></a> 3.6.3举例</h3>
+<ul>
+<li>UseMapper</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">UserMapper</span> <span class="keyword">extends</span> <span class="title class_">MyBaseMapper</span>&lt;User&gt; &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>测试：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="keyword">private</span> UserMapper userMapper;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">testInsertBatch</span><span class="params">()</span> &#123;</span><br><span class="line">    List&lt;User&gt; users = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">3</span>; i++) &#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">        user.setName(<span class="string">&quot;犬小哈&quot;</span> + i);</span><br><span class="line">        user.setAge(i);</span><br><span class="line">        user.setGender(<span class="number">1</span>);</span><br><span class="line">        users.add(user);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    userMapper.insertBatchSomeColumn(users);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/7f31dc9bfe9730cb4d1a993373ea2480.png" alt="image-20240306092105537" /></p>
+<h1 id="4核心功能"><a class="markdownIt-Anchor" href="#4核心功能"></a> 4.核心功能</h1>
+<h2 id="41常用注解"><a class="markdownIt-Anchor" href="#41常用注解"></a> 4.1常用注解</h2>
+<p>Mybatis Plus中常用注解有：</p>
+<ol>
+<li>@TableName：<mark>表名注解，标识实体类对应的表</mark></li>
+<li>@TableId：<mark>主键注解</mark></li>
+<li>@IdType：指定主键ID类型</li>
+<li>@TableField：<mark>指定数据库字段注解</mark>（非主键）。</li>
+<li>@TableLogic：<mark>逻辑删除注释</mark></li>
+<li>@Version：乐观锁</li>
+</ol>
+<h3 id="411tablename"><a class="markdownIt-Anchor" href="#411tablename"></a> 4.1.1@TableName</h3>
+<ol>
+<li>作用：表名注解，标识实体类对应的表</li>
+<li>不用添加该注解的两种方式：
+<ul>
+<li>当表名和实体类的命名一致时，如表名 <code>user</code> , 实体类为 <code>User</code> 时，可不用添加 <code>@TableName</code> 注解</li>
+<li>通过全局配置声明表明前缀（以下例子演示数据库表均为wms_开头）</li>
+</ul>
+</li>
+</ol>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">mybatis-plus:</span>     </span><br><span class="line">	<span class="attr">global-config:</span></span><br><span class="line">    	<span class="attr">db-config:</span></span><br><span class="line">        	<span class="attr">table-prefix:</span> <span class="string">wms_</span></span><br></pre></td></tr></table></figure>
+<h3 id="412tableid"><a class="markdownIt-Anchor" href="#412tableid"></a> 4.1.2@TableId</h3>
+<ol>
+<li>
+<p>作用：主键注解</p>
+</li>
+<li>
+<p>举例</p>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/34f5b1841839126de62489df05e197d2.png" alt="image-20240305231304361" /></p>
+</li>
+</ol>
+<h3 id="413idtype"><a class="markdownIt-Anchor" href="#413idtype"></a> 4.1.3@IdType</h3>
+<ol>
+<li>
+<p>作用：指定主键ID类型</p>
+</li>
+<li>
+<p>各种值情况：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">值</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>AUTO</code></td>
+<td style="text-align:center">数据库 <code>ID</code> 自增</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>NONE</code></td>
+<td style="text-align:center">未设置主键类型（默认）</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>INPUT</code></td>
+<td style="text-align:center">插入数据前，需自行设置主键的值</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>ASSIGN_ID</code></td>
+<td style="text-align:center">分配 <code>ID</code>(主键类型为 <code>Number</code>(<code>Long</code> 和 <code>Integer</code>)或 <code>String</code>)(since 3.3.0),使用接口<code>IdentifierGenerator</code>的方法<code>nextId</code>(默认实现类为<code>DefaultIdentifierGenerator</code>雪花算法)</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>ASSIGN_UUID</code></td>
+<td style="text-align:center">分配 <code>UUID</code>,主键类型为 <code>String</code>(since 3.3.0),使用接口<code>IdentifierGenerator</code>的方法<code>nextUUID</code> (默认 <code>default</code> 方法)</td>
+</tr>
+<tr>
+<td style="text-align:center"><s><code>ID_WORKER</code></s></td>
+<td style="text-align:center">分布式全局唯一 ID 长整型类型 (推荐使用 <code>ASSIGN_ID</code>)</td>
+</tr>
+<tr>
+<td style="text-align:center"><s><code>UUID</code></s></td>
+<td style="text-align:center">32 位 UUID 字符串 (推荐使用 <code>ASSIGN_UUID</code>)</td>
+</tr>
+<tr>
+<td style="text-align:center"><s><code>ID_WORKER_STR</code></s></td>
+<td style="text-align:center">分布式全局唯一 ID 字符串类型 (推荐使用 <code>ASSIGN_ID</code>)</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ol>
+<h3 id="414tablefield"><a class="markdownIt-Anchor" href="#414tablefield"></a> 4.1.4@TableField</h3>
+<ol>
+<li>
+<p>作用：指定数据库字段注解（非主键）</p>
+</li>
+<li>
+<p>举例</p>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/00141e75986737b2d279595bf1c2cfeb.png" alt="image-20240305231634643" /></p>
+</li>
+</ol>
+<h3 id="415tablelogic"><a class="markdownIt-Anchor" href="#415tablelogic"></a> 4.1.5@TableLogic</h3>
+<ol>
+<li>
+<p>作用：逻辑删除</p>
+</li>
+<li>
+<p>举例</p>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/e35fa73035aee675d11c075d9359c022.png" alt="image-20240305231717026" /></p>
+</li>
+</ol>
+<h2 id="42wrapper条件构造器"><a class="markdownIt-Anchor" href="#42wrapper条件构造器"></a> 4.2Wrapper条件构造器</h2>
+<h3 id="421介绍"><a class="markdownIt-Anchor" href="#421介绍"></a> 4.2.1介绍</h3>
+<ol>
+<li>在 Mybatis Plus 中，<strong>利用条件构造器 <code>Wrapper</code> 可以帮助我们组装各种 <code>where</code> 条件</strong>，具体实现类如 <code>QueryWrapper</code>、 <code>UpdateWrapper</code> 等，<strong>在查询、更新、删除操作中会被频繁用到。</strong></li>
+</ol>
+<h3 id="422wrapper继承关系"><a class="markdownIt-Anchor" href="#422wrapper继承关系"></a> 4.2.2Wrapper继承关系</h3>
+<p>Wrapper 是个抽象类，先看下它的继承关系图：</p>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/7312e87276e38a695fdb506e0db5424f.png" alt="image-20240305232146554" /></p>
+<p>解释各个子类作用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Wrapper  条件构造抽象类</span><br><span class="line">    -- AbstractWrapper 查询条件封装，用于生成 sql 中的 where 语句。</span><br><span class="line">        -- QueryWrapper Entity 条件封装操作类，用于查询。</span><br><span class="line">        -- UpdateWrapper Update 条件封装操作类，用于更新。</span><br><span class="line">        -- AbstractLambdaWrapper 使用 Lambda 表达式封装 wrapper</span><br><span class="line">            -- LambdaQueryWrapper 使用 Lambda 语法封装条件，用于查询。</span><br><span class="line">            -- LambdaUpdateWrapper 使用 Lambda 语法封装条件，用于更新。</span><br><span class="line">    -- AbstractChainWrapper 链式查询条件封装 </span><br><span class="line">    	-- UpdateChainWrapper 链式条件封装操作类，用于更新。</span><br><span class="line">    	-- LambdaQueryChainWrapper 使用 Lambda 语法封装条件，支持链式调用，用于查询</span><br><span class="line">    	-- LambdaUpdateChainWrapper 使用 Lambda 语法封装条件，支持链式调用，用于更新</span><br><span class="line">    	-- QueryChainWrapper 链式条件封装操作类，用于查询。</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>ps：Kt 开头的类是使用 Kotlin 语言编写，咱是 Java，不用管。</p>
+</blockquote>
+<h4 id="1abstractwrapper"><a class="markdownIt-Anchor" href="#1abstractwrapper"></a> （1）AbstractWrapper</h4>
+<ol>
+<li>AbstractWrapper是QueryWrapper (LambdaQueryWrapper) 和 UpdateWrapper (LambdaUpdateWrapper) 的父类</li>
+<li>用于生成 sql 的 where 条件, entity 属性也用于生成 sql 的 where 条件</li>
+</ol>
+<h3 id="42常用方法"><a class="markdownIt-Anchor" href="#42常用方法"></a> 4.2.常用方法</h3>
+<h3 id="421-alleq多字段等于查询"><a class="markdownIt-Anchor" href="#421-alleq多字段等于查询"></a> 4.2.1 allEq：多字段等于查询</h3>
+<p>全部自动等于判断，或者个别自动非空判断：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// params : key 为数据库字段名, value 为字段值</span></span><br><span class="line">allEq(Map&lt;R, V&gt; params)</span><br><span class="line"><span class="comment">// null2IsNull : 为 true 则在 map 的 value 为 null 时调用 isNull 方法,为 false 时则忽略 value 为null的</span></span><br><span class="line">allEq(Map&lt;R, V&gt; params, <span class="type">boolean</span> null2IsNull)</span><br><span class="line">allEq(<span class="type">boolean</span> condition, Map&lt;R, V&gt; params, <span class="type">boolean</span> null2IsNull)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>代码示例1: <code>allEq(&#123;id:1,name:&quot;老王&quot;,age:null&#125;)</code> 相当于条件 <code>id = 1 and name = '老王' and age is null</code></li>
+<li>代码示例2: <code>allEq(&#123;id:1,name:&quot;老王&quot;,age:null&#125;, false)</code>相当于条件<code>id = 1 and name = '老王'</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// filter : 过滤函数,是否允许字段传入比对条件中</span></span><br><span class="line">allEq(BiPredicate&lt;R, V&gt; filter, Map&lt;R, V&gt; params)</span><br><span class="line"><span class="comment">// 同上</span></span><br><span class="line">allEq(BiPredicate&lt;R, V&gt; filter, Map&lt;R, V&gt; params, <span class="type">boolean</span> null2IsNull)</span><br><span class="line">allEq(<span class="type">boolean</span> condition, BiPredicate&lt;R, V&gt; filter, Map&lt;R, V&gt; params, <span class="type">boolean</span> null2IsNull) </span><br></pre></td></tr></table></figure>
+<ul>
+<li>代码示例1: <code>allEq((k,v) -&gt; k.contains(&quot;a&quot;), &#123;id:1,name:&quot;老王&quot;,age:null&#125;)</code>相当于条件<code>name = '老王' and age is null</code></li>
+<li>代码示例2: <code>allEq((k,v) -&gt; k.contains(&quot;a&quot;), &#123;id:1,name:&quot;老王&quot;,age:null&#125;, false)</code>相当于条件<code>name = '老王'</code></li>
+</ul>
+<h3 id="422-eq单字段等于"><a class="markdownIt-Anchor" href="#422-eq单字段等于"></a> 4.2.2 eq：单字段等于</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">eq(R column, Object val)</span><br><span class="line">eq(<span class="type">boolean</span> condition, R column, Object val)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>代码示例: <code>eq(&quot;name&quot;, &quot;老王&quot;)</code>相当于条件<code>name = '老王'</code></li>
+</ul>
+<h3 id="423-ne不等于"><a class="markdownIt-Anchor" href="#423-ne不等于"></a> 4.2.3 ne：不等于</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ne(R column, Object val)</span><br><span class="line">ne(<span class="type">boolean</span> condition, R column, Object val)</span><br></pre></td></tr></table></figure>
+<p>代码示例：<code>ne(&quot;name&quot;, &quot;老王&quot;)</code>相当于条件<code>name &lt;&gt; '老王'</code></p>
+<h3 id="424-gt大于"><a class="markdownIt-Anchor" href="#424-gt大于"></a> 4.2.4 gt：大于</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gt(R column, Object val)</span><br><span class="line">gt(<span class="type">boolean</span> condition, R column, Object val)</span><br></pre></td></tr></table></figure>
+<p>代码示例： <code>ge(&quot;age&quot;, 18)</code>相当于条件<code>age &gt;= 18</code></p>
+<h3 id="425-ge大于等于"><a class="markdownIt-Anchor" href="#425-ge大于等于"></a> 4.2.5 ge：大于等于</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ge(R column, Object val)</span><br><span class="line">ge(<span class="type">boolean</span> condition, R column, Object val)</span><br></pre></td></tr></table></figure>
+<h3 id="426-lt小于"><a class="markdownIt-Anchor" href="#426-lt小于"></a> 4.2.6 lt：小于</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lt(R column, Object val)</span><br><span class="line">lt(<span class="type">boolean</span> condition, R column, Object val)</span><br></pre></td></tr></table></figure>
+<h3 id="427-le小于等于"><a class="markdownIt-Anchor" href="#427-le小于等于"></a> 4.2.7 le：小于等于</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">le(R column, Object val)</span><br><span class="line">le(<span class="type">boolean</span> condition, R column, Object val)</span><br></pre></td></tr></table></figure>
+<h3 id="428-between之间"><a class="markdownIt-Anchor" href="#428-between之间"></a> 4.2.8 between：之间</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">between(R column, Object val1, Object val2)</span><br><span class="line">between(<span class="type">boolean</span> condition, R column, Object val1, Object val2)</span><br></pre></td></tr></table></figure>
+<h3 id="429-notbetween不在之间"><a class="markdownIt-Anchor" href="#429-notbetween不在之间"></a> 4.2.9 notBetween：不在之间</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">notBetween(R column, Object val1, Object val2)</span><br><span class="line">notBetween(<span class="type">boolean</span> condition, R column, Object val1, Object val2)</span><br></pre></td></tr></table></figure>
+<h3 id="4210-like模糊查询"><a class="markdownIt-Anchor" href="#4210-like模糊查询"></a> 4.2.10 like：模糊查询</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">like(R column, Object val)</span><br><span class="line">like(<span class="type">boolean</span> condition, R column, Object val)</span><br></pre></td></tr></table></figure>
+<p>作用：LIKE ‘%值%’</p>
+<ul>
+<li>例子：like(“name”, “王”)<code>相当于条件</code>name like ‘%王%’</li>
+</ul>
+<h3 id="4211-nolike"><a class="markdownIt-Anchor" href="#4211-nolike"></a> 4.2.11 nolike</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">notLike(R column, Object val)</span><br><span class="line">notLike(<span class="type">boolean</span> condition, R column, Object val)</span><br></pre></td></tr></table></figure>
+<h3 id="4212-likeleft"><a class="markdownIt-Anchor" href="#4212-likeleft"></a> 4.2.12 likeLeft</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">likeLeft(R column, Object val)</span><br><span class="line">likeLeft(<span class="type">boolean</span> condition, R column, Object val)</span><br></pre></td></tr></table></figure>
+<p>作用：LIKE ‘%值’</p>
+<p>例: <code>likeLeft(&quot;name&quot;, &quot;王&quot;)</code>相当于条件<code>name like '%王</code></p>
+<h3 id="4213-likeright"><a class="markdownIt-Anchor" href="#4213-likeright"></a> 4.2.13 likeRight</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">likeRight(R column, Object val)</span><br><span class="line">likeRight(<span class="type">boolean</span> condition, R column, Object val)</span><br></pre></td></tr></table></figure>
+<p>作用： LIKE ‘值%’</p>
+<p>例: <code>likeRight(&quot;name&quot;, &quot;王&quot;)</code>相当于条件<code>name like '王%</code></p>
+<h3 id="4214-isnull为空"><a class="markdownIt-Anchor" href="#4214-isnull为空"></a> 4.2.14 isNull：为空</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">isNull(R column)</span><br><span class="line">isNull(<span class="type">boolean</span> condition, R column)</span><br></pre></td></tr></table></figure>
+<h3 id="4215-isnotnull非空"><a class="markdownIt-Anchor" href="#4215-isnotnull非空"></a> 4.2.15 isNotNull：非空</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">isNotNull(R column)</span><br><span class="line">isNotNull(<span class="type">boolean</span> condition, R column)</span><br></pre></td></tr></table></figure>
+<h3 id="4216-in"><a class="markdownIt-Anchor" href="#4216-in"></a> 4.2.16 in</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">in(R column, Collection&lt;?&gt; value)</span><br><span class="line">in(<span class="type">boolean</span> condition, R column, Collection&lt;?&gt; value)</span><br></pre></td></tr></table></figure>
+<p>说明：字段 IN (value.get(0), value.get(1), …)</p>
+<ul>
+<li>例: <code>in(&quot;age&quot;,&#123;1,2,3&#125;)</code>相当于条件<code>age in (1,2,3)</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">in(R column, Object... values)</span><br><span class="line">in(<span class="type">boolean</span> condition, R column, Object... values)</span><br></pre></td></tr></table></figure>
+<p>说明：字段 IN (v0, v1, …)</p>
+<ul>
+<li>例: <code>in(&quot;age&quot;, 1, 2, 3)</code> 相当于条件<code>age in (1,2,3)</code></li>
+</ul>
+<h3 id="4217-not-in"><a class="markdownIt-Anchor" href="#4217-not-in"></a> 4.2.17 not in</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">notIn(R column, Collection&lt;?&gt; value)</span><br><span class="line">notIn(<span class="type">boolean</span> condition, R column, Collection&lt;?&gt; value)</span><br></pre></td></tr></table></figure>
+<p>作用：NOT IN (value.get(0), value.get(1), …)</p>
+<ul>
+<li>例: <code>notIn(&quot;age&quot;,&#123;1,2,3&#125;)</code>相当于条件<code>age not in (1,2,3)</code></li>
+</ul>
+<h3 id="4218-insql子查询"><a class="markdownIt-Anchor" href="#4218-insql子查询"></a> 4.2.18 inSql：子查询</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">inSql(R column, String inValue)</span><br><span class="line">inSql(<span class="type">boolean</span> condition, R column, String inValue)</span><br></pre></td></tr></table></figure>
+<p>作用：字段 IN ( sql语句 )</p>
+<ul>
+<li>例: <code>inSql(&quot;age&quot;, &quot;1,2,3,4,5,6&quot;)</code>相当于条件<code>age in (1,2,3,4,5,6)</code></li>
+<li>例: <code>inSql(&quot;id&quot;, &quot;select id from table where id &lt; 3&quot;)</code>相当于条件<code>id in (select id from table where id &lt; 3)</code></li>
+</ul>
+<h3 id="4219-notinsql"><a class="markdownIt-Anchor" href="#4219-notinsql"></a> 4.2.19 notInSql</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">notInSql(R column, String inValue)</span><br><span class="line">notInSql(<span class="type">boolean</span> condition, R column, String inValue)</span><br></pre></td></tr></table></figure>
+<p>作用：NOT IN ( sql语句 )</p>
+<ul>
+<li>例: <code>notInSql(&quot;age&quot;, &quot;1,2,3,4,5,6&quot;)</code>相当于条件<code>age not in (1,2,3,4,5,6)</code></li>
+<li>例: <code>notInSql(&quot;id&quot;, &quot;select id from table where id &lt; 3&quot;)</code>相当于条件<code>id not in (select id from table where id &lt; 3)</code></li>
+</ul>
+<h3 id="4220-group分组"><a class="markdownIt-Anchor" href="#4220-group分组"></a> 4.2.20 group：分组</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">groupBy(R... columns)</span><br><span class="line">groupBy(<span class="type">boolean</span> condition, R... columns)</span><br></pre></td></tr></table></figure>
+<p>说明：分组 GROUP BY 字段。</p>
+<ul>
+<li>例: <code>groupBy(&quot;id&quot;, &quot;name&quot;)</code>相当于条件<code>group by id,name</code>,</li>
+</ul>
+<h3 id="4221-orderbyasc升序"><a class="markdownIt-Anchor" href="#4221-orderbyasc升序"></a> 4.2.21 orderByAsc：升序</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">orderByAsc(R... columns)</span><br><span class="line">orderByAsc(<span class="type">boolean</span> condition, R... columns)</span><br></pre></td></tr></table></figure>
+<p>说明：升序排序：ORDER BY 字段, … ASC</p>
+<ul>
+<li>例: <code>orderByAsc(&quot;id&quot;, &quot;name&quot;)</code>相当于条件<code>order by id ASC,name ASC</code></li>
+</ul>
+<h3 id="4222-orderbydesc降序"><a class="markdownIt-Anchor" href="#4222-orderbydesc降序"></a> 4.2.22 orderByDesc：降序</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">orderByDesc(R... columns)</span><br><span class="line">orderByDesc(<span class="type">boolean</span> condition, R... columns)</span><br></pre></td></tr></table></figure>
+<p>说明：降序排序：ORDER BY 字段, … DESC</p>
+<ul>
+<li>例: <code>orderByDesc(&quot;id&quot;, &quot;name&quot;)</code>相当于条件<code>order by id DESC,name DESC</code></li>
+</ul>
+<h3 id="4223-orderby排序"><a class="markdownIt-Anchor" href="#4223-orderby排序"></a> 4.2.23 orderBy：排序</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">orderBy(<span class="type">boolean</span> condition, <span class="type">boolean</span> isAsc, R... columns)</span><br></pre></td></tr></table></figure>
+<p>说明：排序：ORDER BY 字段, …</p>
+<ul>
+<li>例: <code>orderBy(true, true, &quot;id&quot;, &quot;name&quot;)</code>相当于条件<code>order by id ASC,name ASC</code></li>
+</ul>
+<h3 id="4224-having"><a class="markdownIt-Anchor" href="#4224-having"></a> 4.2.24 having</h3>
+<p>作用：HAVING ( sql语句 )</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">having(String sqlHaving, Object... params)</span><br><span class="line">having(<span class="type">boolean</span> condition, String sqlHaving, Object... params)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>例: <code>having(&quot;sum(age) &gt; 10&quot;)</code>相当于条件<code>having sum(age) &gt; 10</code></li>
+<li>例: <code>having(&quot;sum(age) &gt; &#123;0&#125;&quot;, 11)</code>相当于条件<code>having sum(age) &gt; 11</code></li>
+</ul>
+<h3 id="4225-or拼接"><a class="markdownIt-Anchor" href="#4225-or拼接"></a> 4.2.25 or：拼接</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">or()</span><br><span class="line">or(<span class="type">boolean</span> condition)</span><br></pre></td></tr></table></figure>
+<p>例: <code>eq(&quot;id&quot;,1).or().eq(&quot;name&quot;,&quot;老王&quot;)</code>相当于条件<code>id = 1 or name = '老王'</code></p>
+<h3 id="4226-or嵌套"><a class="markdownIt-Anchor" href="#4226-or嵌套"></a> 4.2.26 or：嵌套</h3>
+<p>例: <code>or(i -&gt; i.eq(&quot;name&quot;, &quot;李白&quot;).ne(&quot;status&quot;, &quot;活着&quot;))</code>相当于条件<code>or (name = '李白' and status &lt;&gt; '活着')</code></p>
+<h3 id="4227-and嵌套"><a class="markdownIt-Anchor" href="#4227-and嵌套"></a> 4.2.27 and：嵌套</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">and(Consumer&lt;Param&gt; consumer)</span><br><span class="line">and(<span class="type">boolean</span> condition, Consumer&lt;Param&gt; consumer)</span><br></pre></td></tr></table></figure>
+<p>例: <code>and(i -&gt; i.eq(&quot;name&quot;, &quot;李白&quot;).ne(&quot;status&quot;, &quot;活着&quot;))</code>相当于条件<code>and (name = '李白' and status &lt;&gt; '活着')</code></p>
+<h3 id="4228-nested正常嵌套不带and-和-or"><a class="markdownIt-Anchor" href="#4228-nested正常嵌套不带and-和-or"></a> 4.2.28 nested：正常嵌套：不带And 和 Or</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nested(Consumer&lt;Param&gt; consumer)</span><br><span class="line">nested(<span class="type">boolean</span> condition, Consumer&lt;Param&gt; consumer)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>例: <code>nested(i -&gt; i.eq(&quot;name&quot;, &quot;李白&quot;).ne(&quot;status&quot;, &quot;活着&quot;))</code>相当于条件<code>(name = '李白' and status &lt;&gt; '活着')</code></li>
+</ul>
+<h2 id="43condition"><a class="markdownIt-Anchor" href="#43condition"></a> 4.3Condition</h2>
+<h3 id="431问题"><a class="markdownIt-Anchor" href="#431问题"></a> 4.3.1问题</h3>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/29d0ea1fb2a3984b531681b20aa81931.png" alt="image-20240306091013502" /></p>
+<h3 id="432定义"><a class="markdownIt-Anchor" href="#432定义"></a> 4.3.2定义</h3>
+<p>布尔类型的 <code>condition</code> 顾名思义就是<strong>条件判断</strong>。举个栗子，实际项目中，如果是一个查询分页数据的页面，用户通常可以手动选择多个条件进行查询，那么后台的代码实现上，Wrapper 条件就是动态组装的，需要对每一个可能会出现的条件进行判断，伪代码大致如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (字段<span class="number">1</span> != <span class="literal">null</span>) &#123;</span><br><span class="line">  wrapper.eq(<span class="string">&quot;name&quot;</span>, <span class="string">&quot;犬小哈&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (字段<span class="number">2</span> != <span class="literal">null</span>) &#123;</span><br><span class="line">  wrapper.ge(<span class="string">&quot;age&quot;</span>, <span class="number">20</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ...省略</span></span><br></pre></td></tr></table></figure>
+<p>如何 <code>if</code> 判断只有几个还好，一旦给你来 10 个，你就会发现代码又臭又长，于是救世主 <code>condition</code> 出现了，它可以帮助我们省略冗长的 <code>if</code> 代码，让动态组装的判断更加优雅。</p>
+<p>举个示例，假设分页接口中，前端可能传过来的动态条件字段为姓名，年龄（范围类型），那么可以通过 <code>condition</code> 可以如下实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">testCondition</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// 模拟前端传过来的数据</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> <span class="string">&quot;犬小哈&quot;</span>;</span><br><span class="line">    <span class="comment">// 年龄大于等于 20 且小于等于 30 的用户</span></span><br><span class="line">    <span class="type">Integer</span> <span class="variable">ageStart</span> <span class="operator">=</span> <span class="number">20</span>;</span><br><span class="line">    <span class="type">Integer</span> <span class="variable">ageEnd</span> <span class="operator">=</span> <span class="number">30</span>;</span><br><span class="line"></span><br><span class="line">    QueryWrapper&lt;User&gt; wrapper = <span class="keyword">new</span> <span class="title class_">QueryWrapper</span>&lt;&gt;();</span><br><span class="line">    wrapper.eq(StringUtils.isNotBlank(name), <span class="string">&quot;name&quot;</span>, name)</span><br><span class="line">    .ge(ageStart != <span class="literal">null</span>, <span class="string">&quot;age&quot;</span>, ageStart)</span><br><span class="line">    .le(ageEnd != <span class="literal">null</span>, <span class="string">&quot;name&quot;</span>, ageEnd);</span><br><span class="line"></span><br><span class="line">    List&lt;User&gt; users = userMapper.selectList(wrapper);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>lambda格式：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">testCondition</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// 模拟前端传过来的数据</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> <span class="string">&quot;犬小哈&quot;</span>;</span><br><span class="line">    <span class="comment">// 年龄大于等于 20 且小于等于 30 的用户</span></span><br><span class="line">    <span class="type">Integer</span> <span class="variable">ageStart</span> <span class="operator">=</span> <span class="number">20</span>;</span><br><span class="line">    <span class="type">Integer</span> <span class="variable">ageEnd</span> <span class="operator">=</span> <span class="number">30</span>;</span><br><span class="line"></span><br><span class="line">    LambdaQueryWrapper&lt;User&gt; wrapper = <span class="keyword">new</span> <span class="title class_">LambdaQueryWrapper</span>&lt;&gt;();</span><br><span class="line">    wrapper.eq(StringUtils.isNotBlank(name), User::getName, name)</span><br><span class="line">    .ge(ageStart != <span class="literal">null</span>, User::getAge, ageStart)</span><br><span class="line">    .le(ageEnd != <span class="literal">null</span>, User::getAge, ageEnd);</span><br><span class="line"></span><br><span class="line">    List&lt;User&gt; users = userMapper.selectList(wrapper);</span><br><span class="line">    users.forEach(System.out::println);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>得出SQL语句：</li>
+</ul>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/a11464f5e35fa9d63f5f4760b0157da1.png" alt="image-20240306091231206" /></p>
+<p>功能正常，相比较上面需要写一堆 <code>if</code> 判断，我们可以直接将判断条件传给 <code>condition</code> 参数，代码看上去舒服多了</p>
+</article><div class="post-copyright"><div class="post-copyright__title"><span class="post-copyright-info"><h>MyBatis-Plus框架学习</h></span></div><div class="post-copyright__type"><span class="post-copyright-info"><a href="https://www.haipeng-lin.cn/posts/10fd8da2.html">https://www.haipeng-lin.cn/posts/10fd8da2.html</a></span></div><div class="post-copyright-m"><div class="post-copyright-m-info"><div class="post-copyright-a" style="display: inline-block;width: 120px"><h>作者</h><div class="post-copyright-cc-info"><h>拾忆鱼</h></div></div><div class="post-copyright-c" style="display: inline-block;width: 120px"><h>发布于</h><div class="post-copyright-cc-info"><h>2024-08-28</h></div></div><div class="post-copyright-u" style="display: inline-block;width: 120px"><h>更新于</h><div class="post-copyright-cc-info"><h>2024-09-01</h></div></div><div class="post-copyright-c" style="display: inline-block;width: 120px"><h>许可协议</h><div class="post-copyright-cc-info"><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a rel="noopener" target="_blank" title="CC BY 4.0" href="https://creativecommons.org/licenses/by/4.0/deed.zh">CC BY 4.0</a></div></div></div></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://i-blog.csdnimg.cn/blog_migrate/078243f70aa2d275b1a0ced2768c8d57.jpeg#pic_center" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://lib.baomitu.com/social-share.js/1.0.16/css/share.min.css" media="print" onload="this.media='all'"><script src="https://lib.baomitu.com/social-share.js/1.0.16/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/b0e0901d.html"><img class="prev-cover" src="https://i-blog.csdnimg.cn/blog_migrate/57e8a40e4a1ba3c2c85557044ffe1fe8.jpeg#pic_center" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Spring框架上篇</div></div></a></div><div class="next-post pull-right"><a href="/posts/8141c840.html"><img class="next-cover" src="https://i-blog.csdnimg.cn/blog_migrate/7dbec79bc28104e325ab0353bc645b6e.jpeg#pic_center" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">MyBatis框架学习</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101530409.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">拾忆鱼</div><div class="author-info__description">一条菜鱼的小破站</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">59</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">小菜鱼正在从CSDN博客搬家，尽请期待　　      地址：<a target="_blank" rel="noopener" href="https://haipeng-lin.blog.csdn.net/">haipeng-lin.blog.csdn.net</a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1mybatis-plus%E4%BB%8B%E7%BB%8D"><span class="toc-text"> 1.Mybatis Plus介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#11mybatis%E5%92%8Cmybatis-plus%E7%9A%84%E5%8C%BA%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text"> 1.1Mybatis和Mybatis Plus的区别是什么</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#111%E4%BB%80%E4%B9%88%E6%98%AFmybatis"><span class="toc-text"> 1.1.1什么是Mybatis?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#112%E5%8C%BA%E5%88%86mybatis-plus%E5%92%8Cmybatis"><span class="toc-text"> 1.1.2区分Mybatis Plus和Mybatis</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12mybatis-plus%E7%89%B9%E7%82%B9"><span class="toc-text"> 1.2Mybatis Plus特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#13%E6%94%AF%E6%8C%81%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-text"> 1.3支持的数据库</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text"> 2.环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#21%E5%89%8D%E7%BD%AE%E6%9D%A1%E4%BB%B6%E6%96%B0%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E8%A1%A8"><span class="toc-text"> 2.1前置条件——新建数据库表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#22springboot%E6%95%B4%E5%90%88mybatis-plus"><span class="toc-text"> 2.2Springboot整合Mybatis Plus</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#221%E5%BC%95%E5%85%A5%E4%BE%9D%E8%B5%96"><span class="toc-text"> 2.2.1引入依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#222%E6%B7%BB%E5%8A%A0%E9%85%8D%E7%BD%AE"><span class="toc-text"> 2.2.2添加配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#223%E9%85%8D%E7%BD%AE%E7%B1%BB"><span class="toc-text"> 2.2.3配置类</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#23%E6%B7%BB%E5%8A%A0%E5%AE%9E%E4%BD%93%E7%B1%BB"><span class="toc-text"> 2.3添加实体类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#24%E6%B7%BB%E5%8A%A0mapperdao%E7%B1%BB"><span class="toc-text"> 2.4添加Mapper&#x2F;Dao类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#241%E8%A7%A3%E6%9E%90basemapper%E7%B1%BB"><span class="toc-text"> 2.4.1解析BaseMapper类</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3%E5%A2%9E%E5%88%A0%E6%9F%A5%E6%94%B9%E6%95%B0%E6%8D%AE"><span class="toc-text"> 3.增删查改数据</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#31%E6%96%B0%E5%A2%9E%E6%95%B0%E6%8D%AE"><span class="toc-text"> 3.1新增数据</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#311%E6%96%B0%E5%A2%9Eservice"><span class="toc-text"> 3.1.1新增Service</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#312%E6%B3%A8%E5%85%A5wareservice"><span class="toc-text"> 3.1.2注入WareService</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#32%E5%88%A0%E9%99%A4%E6%95%B0%E6%8D%AE"><span class="toc-text"> 3.2删除数据</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#321basemapper"><span class="toc-text"> 3.2.1BaseMapper</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#322serviceimpl"><span class="toc-text"> 3.2.2ServiceImpl</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#33%E6%9F%A5%E6%89%BE%E6%95%B0%E6%8D%AE"><span class="toc-text"> 3.3查找数据</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#331basemapper"><span class="toc-text"> 3.3.1BaseMapper</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E9%80%9A%E8%BF%87-wrapper-%E7%BB%84%E8%A3%85%E6%9F%A5%E8%AF%A2%E6%9D%A1%E4%BB%B6"><span class="toc-text"> （1）通过 Wrapper 组装查询条件</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#332serviceimpl"><span class="toc-text"> 3.3.2ServiceImpl</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1get%E7%9B%B8%E5%85%B3%E6%96%B9%E6%B3%95"><span class="toc-text"> （1）get相关方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2list%E7%9B%B8%E5%85%B3%E6%96%B9%E6%B3%95"><span class="toc-text"> （2）list相关方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3page%E5%88%86%E9%A1%B5%E7%9B%B8%E5%85%B3%E6%96%B9%E6%B3%95"><span class="toc-text"> （3）page分页相关方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4count%E6%9F%A5%E8%AF%A2%E8%AE%B0%E5%BD%95%E6%80%BB%E6%95%B0"><span class="toc-text"> （4）count查询记录总数</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#34%E4%BF%AE%E6%94%B9%E6%95%B0%E6%8D%AE"><span class="toc-text"> 3.4修改数据</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#341basemapper"><span class="toc-text"> 3.4.1BaseMapper</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#342serviceimpl"><span class="toc-text"> 3.4.2ServiceImpl</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#35%E5%88%86%E9%A1%B5%E6%9F%A5%E8%AF%A2"><span class="toc-text"> 3.5分页查询</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#351%E6%B7%BB%E5%8A%A0%E5%88%86%E9%A1%B5%E6%8F%92%E4%BB%B6"><span class="toc-text"> 3.5.1添加分页插件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#352basemapper"><span class="toc-text"> 3.5.2BaseMapper</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#353%E4%B8%BE%E4%BE%8B"><span class="toc-text"> 3.5.3举例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#354page%E7%B1%BB%E8%AF%B4%E6%98%8E"><span class="toc-text"> 3.5.4Page类说明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#355serviceimpl"><span class="toc-text"> 3.5.5ServiceImpl</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#36%E6%89%B9%E9%87%8F%E6%96%B0%E5%A2%9E"><span class="toc-text"> 3.6批量新增</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#361-mybatis-plus%E7%9A%84%E4%BC%AA%E6%89%B9%E9%87%8F%E6%8F%92%E5%85%A5"><span class="toc-text"> 3.6.1 Mybatis Plus的伪批量插入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#362%E5%88%A9%E7%94%A8sql%E6%B3%A8%E5%85%A5%E5%99%A8%E5%AE%9E%E7%8E%B0%E7%9C%9F%E6%89%B9%E9%87%8F%E6%8F%92%E5%85%A5"><span class="toc-text"> 3.6.2利用SQL注入器实现真批量插入</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E5%88%9B%E5%BB%BAsql%E6%B3%A8%E5%85%A5%E5%99%A8-insertbatchsqlinjector"><span class="toc-text"> （1）创建SQL注入器 InsertBatchSqlInjector</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2insertbatchsomecolumn%E8%AF%B4%E6%98%8E"><span class="toc-text"> （2）InsertBatchSomeColumn说明</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E9%85%8D%E7%BD%AE-sql%E6%B3%A8%E5%85%A5%E5%99%A8"><span class="toc-text"> （3）配置 SQL注入器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%E6%96%B0%E5%BB%BAmybasemapper"><span class="toc-text"> （4）新建MyBaseMapper</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#363%E4%B8%BE%E4%BE%8B"><span class="toc-text"> 3.6.3举例</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD"><span class="toc-text"> 4.核心功能</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#41%E5%B8%B8%E7%94%A8%E6%B3%A8%E8%A7%A3"><span class="toc-text"> 4.1常用注解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#411tablename"><span class="toc-text"> 4.1.1@TableName</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#412tableid"><span class="toc-text"> 4.1.2@TableId</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#413idtype"><span class="toc-text"> 4.1.3@IdType</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#414tablefield"><span class="toc-text"> 4.1.4@TableField</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#415tablelogic"><span class="toc-text"> 4.1.5@TableLogic</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#42wrapper%E6%9D%A1%E4%BB%B6%E6%9E%84%E9%80%A0%E5%99%A8"><span class="toc-text"> 4.2Wrapper条件构造器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#421%E4%BB%8B%E7%BB%8D"><span class="toc-text"> 4.2.1介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#422wrapper%E7%BB%A7%E6%89%BF%E5%85%B3%E7%B3%BB"><span class="toc-text"> 4.2.2Wrapper继承关系</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1abstractwrapper"><span class="toc-text"> （1）AbstractWrapper</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#42%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95"><span class="toc-text"> 4.2.常用方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#421-alleq%E5%A4%9A%E5%AD%97%E6%AE%B5%E7%AD%89%E4%BA%8E%E6%9F%A5%E8%AF%A2"><span class="toc-text"> 4.2.1 allEq：多字段等于查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#422-eq%E5%8D%95%E5%AD%97%E6%AE%B5%E7%AD%89%E4%BA%8E"><span class="toc-text"> 4.2.2 eq：单字段等于</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#423-ne%E4%B8%8D%E7%AD%89%E4%BA%8E"><span class="toc-text"> 4.2.3 ne：不等于</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#424-gt%E5%A4%A7%E4%BA%8E"><span class="toc-text"> 4.2.4 gt：大于</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#425-ge%E5%A4%A7%E4%BA%8E%E7%AD%89%E4%BA%8E"><span class="toc-text"> 4.2.5 ge：大于等于</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#426-lt%E5%B0%8F%E4%BA%8E"><span class="toc-text"> 4.2.6 lt：小于</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#427-le%E5%B0%8F%E4%BA%8E%E7%AD%89%E4%BA%8E"><span class="toc-text"> 4.2.7 le：小于等于</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#428-between%E4%B9%8B%E9%97%B4"><span class="toc-text"> 4.2.8 between：之间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#429-notbetween%E4%B8%8D%E5%9C%A8%E4%B9%8B%E9%97%B4"><span class="toc-text"> 4.2.9 notBetween：不在之间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4210-like%E6%A8%A1%E7%B3%8A%E6%9F%A5%E8%AF%A2"><span class="toc-text"> 4.2.10 like：模糊查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4211-nolike"><span class="toc-text"> 4.2.11 nolike</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4212-likeleft"><span class="toc-text"> 4.2.12 likeLeft</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4213-likeright"><span class="toc-text"> 4.2.13 likeRight</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4214-isnull%E4%B8%BA%E7%A9%BA"><span class="toc-text"> 4.2.14 isNull：为空</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4215-isnotnull%E9%9D%9E%E7%A9%BA"><span class="toc-text"> 4.2.15 isNotNull：非空</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4216-in"><span class="toc-text"> 4.2.16 in</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4217-not-in"><span class="toc-text"> 4.2.17 not in</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4218-insql%E5%AD%90%E6%9F%A5%E8%AF%A2"><span class="toc-text"> 4.2.18 inSql：子查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4219-notinsql"><span class="toc-text"> 4.2.19 notInSql</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4220-group%E5%88%86%E7%BB%84"><span class="toc-text"> 4.2.20 group：分组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4221-orderbyasc%E5%8D%87%E5%BA%8F"><span class="toc-text"> 4.2.21 orderByAsc：升序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4222-orderbydesc%E9%99%8D%E5%BA%8F"><span class="toc-text"> 4.2.22 orderByDesc：降序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4223-orderby%E6%8E%92%E5%BA%8F"><span class="toc-text"> 4.2.23 orderBy：排序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4224-having"><span class="toc-text"> 4.2.24 having</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4225-or%E6%8B%BC%E6%8E%A5"><span class="toc-text"> 4.2.25 or：拼接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4226-or%E5%B5%8C%E5%A5%97"><span class="toc-text"> 4.2.26 or：嵌套</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4227-and%E5%B5%8C%E5%A5%97"><span class="toc-text"> 4.2.27 and：嵌套</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4228-nested%E6%AD%A3%E5%B8%B8%E5%B5%8C%E5%A5%97%E4%B8%8D%E5%B8%A6and-%E5%92%8C-or"><span class="toc-text"> 4.2.28 nested：正常嵌套：不带And 和 Or</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#43condition"><span class="toc-text"> 4.3Condition</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#431%E9%97%AE%E9%A2%98"><span class="toc-text"> 4.3.1问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#432%E5%AE%9A%E4%B9%89"><span class="toc-text"> 4.3.2定义</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/8239deef.html" title="基于微信公众号+验证码实现微信登录"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410282106730.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="基于微信公众号+验证码实现微信登录"/></a><div class="content"><a class="title" href="/posts/8239deef.html" title="基于微信公众号+验证码实现微信登录">基于微信公众号+验证码实现微信登录</a><time datetime="2024-10-28T13:05:25.000Z" title="发表于 2024-10-28 21:05:25">2024-10-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/172c1a2d.html" title="ElasticSearch学习笔记"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410161138400.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ElasticSearch学习笔记"/></a><div class="content"><a class="title" href="/posts/172c1a2d.html" title="ElasticSearch学习笔记">ElasticSearch学习笔记</a><time datetime="2024-10-16T03:36:17.000Z" title="发表于 2024-10-16 11:36:17">2024-10-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/6982816f.html" title="RocketMQ学习笔记"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410131719724.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="RocketMQ学习笔记"/></a><div class="content"><a class="title" href="/posts/6982816f.html" title="RocketMQ学习笔记">RocketMQ学习笔记</a><time datetime="2024-10-13T09:17:30.000Z" title="发表于 2024-10-13 17:17:30">2024-10-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/d1f540b5.html" title="收集 | 有情怀的网站"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410111137749.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="收集 | 有情怀的网站"/></a><div class="content"><a class="title" href="/posts/d1f540b5.html" title="收集 | 有情怀的网站">收集 | 有情怀的网站</a><time datetime="2024-10-10T12:21:25.000Z" title="发表于 2024-10-10 20:21:25">2024-10-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/d0dd6ec8.html" title="为什么HashMap线程不安全"><img src="https://haipeng-lin.oss-cn-shenzhen.aliyuncs.com/202410101225904.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="为什么HashMap线程不安全"/></a><div class="content"><a class="title" href="/posts/d0dd6ec8.html" title="为什么HashMap线程不安全">为什么HashMap线程不安全</a><time datetime="2024-10-10T04:24:58.000Z" title="发表于 2024-10-10 12:24:58">2024-10-10</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div id="footer-left"><div class="footer-title"><span>拾忆鱼's Blog | </span><span class="footer-copyright">&copy;2024 By 拾忆鱼</span></div><div class="wordcount"></div><span>拾忆鱼 已经写了 260k 字，</span><span>好像写完一本 钱钟书 的 《围城》 了啊</span></div><div id="footer-right"><div class="footer_custom_text"><div id="runtime"></div></div><div class="footer-totop"><i class="fas fa-chevron-up" onclick="rmf.scrollToTop()"></i></div><div class="footer-info"><p>使用Hexo框架 | 基于butterfly修改 | 萌ICP备20240730号</p><!--a(title='湘公网安备 2023003198号' href='http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=2023003198')= '湘公网安备 2023003198号'--><!--a(title='湘ICP备2023003198号' href='https://beian.miit.gov.cn/')= '湘ICP备2023003198号'--></div><div class="footer-service"><a title="51LA" target="_blank" rel="noopener" href="https://www.51.la"><img alt="51LA" src="https://gitee.com/linhaipengg/md_-picture/raw/master/51la.png"/></a><a title="CC BY-NC-SA 4.0" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh"><img alt="CC BY-NC-SA 4.0" src="https://img.june-pj.cn/img/2024/01/16/cc.webp"/></a></div></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"><script>(()=>{
+  const init = () => {
+    twikoo.init(Object.assign({
+      el: '#twikoo-wrap',
+      envId: 'https://twikoo.haipeng-lin.cn',
+      region: '',
+      onCommentLoaded: function () {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      }
+    }, null))
+  }
+
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://twikoo.haipeng-lin.cn',
+      region: '',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(function (res) {
+      countELement.innerText = res[0].count
+    }).catch(function (err) {
+      console.error(err);
+    });
+  }
+
+  const runFn = () => {
+    init()
+    
+  }
+
+  const loadTwikoo = () => {
+    if (typeof twikoo === 'object') {
+      setTimeout(runFn,0)
+      return
+    } 
+    getScript('https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/twikoo/1.4.18/twikoo.all.min.js').then(runFn)
+  }
+
+  if ('Twikoo' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = () => {
+      loadTwikoo()
+    }
+  }
+})()</script></div><script data-pjax src="/gitcalendar/js/gitcalendar.js"></script><script data-pjax src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/js/swiper.min.js"></script><script src="/js/footer.js"></script><script type="text/javascript" src="/js/main.js"></script><script data-pjax type="text/javascript" src="/js/essay/essay.js"></script><script data-pjax type="text/javascript" src="/js/essay/waterfall.js"></script><link rel="stylesheet" href="/css/swiper.css"><script data-pjax src="/js/categoryBar/categoryBar.js"></script><link data-pjax defer="" rel="stylesheet" href="/css/categoryBar/heoMainColor.css"><link data-pjax defer="" rel="stylesheet" href="/css/categoryBar/categoryBar.css"><script type="text/javascript" src="/js/nav.js"></script><script src="/js/countup.js"></script><script data-pjax type="text/javascript" src="/js/memos/waterfall.min.js"></script><script data-pjax type="text/javascript" src="/js/memos/imgStatus.min.js"></script><script data-pjax type="text/javascript" src="/js/memos/lately.min.js"></script><script type="text/javascript" src="/js/memos/photo.js"></script><script type="text/javascript" src="/js/icat.js"></script><link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/aplayer/1.10.1/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/aplayer/1.10.1/APlayer.min.js"></script><script src="https://cdn1.tianli0.top/npm/js-heo@1.0.12/metingjs/Meting.min.js"></script><script src="https://lib.baomitu.com/pjax/0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  typeof disqusjs === 'object' && disqusjs.destroy()
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

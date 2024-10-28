@@ -1,0 +1,156 @@
+#article-container .tag-Link {
+    background: var(--june-secondbg);
+    border-radius: 12px !important;
+    display: flex;
+    border: var(--style-border);
+    flex-direction: column;
+    padding: 0.5rem 1rem;
+    border-width: 1px !important;
+    margin-top: 1rem;
+    text-decoration: none !important;
+    color: var(--june-fontcolor);
+    margin-bottom: 10px
+}
+
+#article-container .tag-Link:hover {
+    border-color: var(--june-theme);
+    background-color: var(--june-theme);
+    --gcolor: white !important;
+    box-shadow: 0 0 5px var(--june-theme);
+}
+
+#article-container .tag-Link .tag-link-tips {
+    border-bottom: var(--style-border);
+    padding-bottom: 4px;
+    font-size: 0.6rem;
+    color: var(--june-gray);
+    font-weight: normal;
+}
+
+#article-container .tag-Link:hover .tag-link-tips {
+    color: var(--june-white);
+}
+
+#article-container .tag-Link .tag-link-bottom {
+    display: flex;
+    margin-top: 0.5rem;
+    align-items: center;
+    justify-content: space-around;
+}
+
+#article-container .tag-Link .tag-link-bottom .tag-link-left {
+    width: 60px;
+    min-width: 60px;
+    height: 60px;
+    background-size: cover;
+}
+
+#article-container .tag-Link .tag-link-bottom .tag-link-right {
+    margin-left: 1rem;
+}
+
+#article-container .tag-Link .tag-link-bottom .tag-link-right .tag-link-title {
+    font-size: 1rem;
+    line-height: 1.2;
+}
+
+#article-container .tag-Link .tag-link-bottom .tag-link-right .tag-link-sitename {
+    font-size: 0.7rem;
+    color: var(--june-gray);
+    font-weight: normal;
+    margin-top: 4px;
+}
+
+#article-container .tag-Link:hover .tag-link-bottom .tag-link-right .tag-link-sitename {
+    color: var(--june-white);
+}
+
+#article-container .tag-Link .tag-link-bottom i {
+    margin-left: auto;
+}
+
+.tag-link-title {
+    color: var(--gcolor);
+}
+
+
+/* 折叠栏样式 */
+/* 折叠栏样式 */
+details.folding-tag[open] {
+    border-radius: 15px !important;
+    border-color: var(--june-main) !important;
+    border: 1px solid var(--june-main) !important;
+}
+
+li details.folding-tag {
+    border-radius: 8px;
+}
+
+li details.folding-tag summary {
+    border-radius: 8px;
+}
+
+details.folding-tag {
+    transition: border 0s ease !important;
+    border: none !important;
+}
+
+details.folding-tag[open]>summary {
+    color: var(--june-white) !important;
+    background: var(--june-main) !important;
+    border: 1px solid var(--june-main) !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+details.folding-tag>summary {
+    border: var(--style-border) !important;
+    background: var(--june-card-bg);
+    border-radius: 14px !important;
+    box-shadow: var(--june-shadow-border);
+    color: var(--font-color) !important;
+    user-select: none;
+}
+
+details.folding-tag>summary::marker {
+    color: var(--june-main);
+    font-size: 16px;
+}
+
+details.folding-tag>summary::before {
+    content: " ";
+    margin-right: 2px;
+}
+
+details.folding-tag[open]>div.content {
+    border-radius: 0 0 16px 16px;
+}
+
+details.folding-tag summary:hover::marker {
+    color: var(--june-white);
+}
+
+details.folding-tag[open]>summary::marker {
+    color: var(--june-white);
+}
+
+details.folding-tag summary:hover {
+    cursor: pointer;
+    background: var(--june-main) !important;
+    color: var(--june-white) !important;
+    transition: 0.3s;
+    box-shadow: var(--june-shadow-main);
+}
+
+details .content>*:nth-child(1) {
+    margin-top: 0 !important;
+}
+
+.flink details.folding-tag[open]>div.content {
+    padding: 20px;
+    margin: 0px;
+    margin-top: 0;
+}
